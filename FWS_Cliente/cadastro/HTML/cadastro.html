@@ -18,7 +18,8 @@
     <!-- place navbar here -->
   </header>
   <main>
-    <form action="../PHP/cadastro.php">
+    <form action="../PHP/cadastro.php" method="post">
+      <input type="hidden" name="cadastro_form" value="1">
       <div class="mb-3">
         <label for="nome" class="form-label">Nome completo:</label>
         <input type="text" class="form-control" id="nome" aria-describedby="nome">

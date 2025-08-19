@@ -1,55 +1,58 @@
 <?php
-session_start
+session_start();
 require "../../conn.php";
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['cadastro_form']) && $_POST['cadastro_form'] == 1) {
+        // Captura dos dados e limpeza
+        $nome = trim($_POST['nome']);
+        $data = trim($_POST['data']);
+        $email = trim($_POST['email']);
+        $senha = trim($_POST['senha']);
+        $con_senha = trim($_POST['con_senha']);
+        $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf']); // limpa o CPF para conter apenas números
 
+        // Verificação de senha e confirmação
+        if ($senha !== $con_senha) {
+            echo "<script>alert('As senhas não coincidem.'); history.back();</script>";
+            exit();
+        }
 
-if (server['REQUEST_METHOD'] == 'POST'){
-    if(isset($_POST['cadastro_form']) && $_POST['cadastro_form'] == 1){
-        $nome = trim($_POST ['nome']);
-        $data = trim($_POST ['data']);
-        $email = trim($_POST ['email']);
-        $senha = trim($_POST ['senha']);
-        $cpf = trim($_POST ['cpf']);
-        $con_senha = trim($_POST ['con_senha']);
-        
+        // Verifica se e-mail ou CPF já estão cadastrados
+        $stmt_email = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
+        $stmt_email->bind_param("s", $email);
+        $stmt_email->execute();
+        $stmt_email->store_result();
+        $email_existe = $stmt_email->num_rows > 0;
+        $stmt_email->close();
 
-        //para verificar se o email ou o cpf já existem:
+        $stmt_cpf = $conn->prepare("SELECT id FROM usuarios WHERE cpf = ?");
+        $stmt_cpf->bind_param("s", $cpf);
+        $stmt_cpf->execute();
+        $stmt_cpf->store_result();
+        $cpf_existe = $stmt_cpf->num_rows > 0;
+        $stmt_cpf->close();
 
-    $testeEmail = $conn->query("SELECT * FROM usuario WHERE email = '$email'");
-    $checarEmail = mysqli_num_rows($testeEmail);
+        if ($email_existe || $cpf_existe) {
+            echo "<script>alert('E-mail ou CPF já cadastrados.'); history.back();</script>";
+            exit();
+        }
 
-    $testarCPF = $conn->query("SELECT * FROM usuario WHERE cpf = $cpf");
-    $checarCPF = mysqli_num_rows($testarCPF);
+        // Criptografar senha
+        $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
+        // Inserir no banco de dados
+        $stmt_insert = $conn->prepare("INSERT INTO usuarios (nome, data_nascimento, cpf, email, senha) VALUES (?, ?, ?, ?, ?)");
+        $stmt_insert->bind_param("sssss", $nome, $data, $cpf, $email, $senha_hash);
 
-        //checar se existe um Email ou um CPF duplicados e criptografia:
-        if ($checarEmail > 0 && $checarCPF > 0){
-            echo "<script>alert('Email ou CPF já estão cadastrados! Por favor, verifique se os dados inseridos estão corretos.'); history.back();</script>";
-        }else {
-            $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO usuario (nome, data_nascimento, cpf, email, senha) VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("svs", $nome, $cpf, $senha_hash);
+        if ($stmt_insert->execute()) {
+            echo "<script>alert('Cadastro realizado com sucesso!'); window.location.href = '../login.html';</script>";
+        } else {
+            echo "<script>alert('Erro ao cadastrar usuário.'); history.back();</script>";
+        }
 
-        //salvar os dados no banco de dados:
-        $query = "INSERT INTO usuario (nome, data_nascimento, cpf, email, senha) VALUES ('$nome', '$data', '$cpf', '$email', '$senha')";
-
-
-
-
-
+        $stmt_insert->close();
+        $conn->close();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 ?>
