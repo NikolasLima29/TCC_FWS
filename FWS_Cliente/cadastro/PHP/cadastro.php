@@ -1,18 +1,23 @@
 <?php
-session_start();
 require "../../conn.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['cadastro_form']) && $_POST['cadastro_form'] == 1) {
-        // Captura dos dados e limpeza
-        $nome = trim($_POST['nome']);
-        $data = trim($_POST['data']);
-        $email = trim($_POST['email']);
-        $senha = trim($_POST['senha']);
-        $con_senha = trim($_POST['con_senha']);
-        $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf']); // limpa o CPF para conter apenas números
 
-        // Verificação de senha e confirmação
+        // Garante que todos os campos existem antes de usar
+        $nome = isset($_POST['nome']) ? trim($_POST['nome']) : '';
+        $data = isset($_POST['data']) ? trim($_POST['data']) : '';
+        $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+        $senha = isset($_POST['senha']) ? trim($_POST['senha']) : '';
+        $con_senha = isset($_POST['con_senha']) ? trim($_POST['con_senha']) : '';
+        $cpf = isset($_POST['cpf']) ? preg_replace('/[^0-9]/', '', $_POST['cpf']) : '';
+
+        // Validação básica
+        if (empty($nome) || empty($data) || empty($email) || empty($senha) || empty($con_senha) || empty($cpf)) {
+            echo "<script>alert('Todos os campos são obrigatórios.'); history.back();</script>";
+            exit();
+        }
+
         if ($senha !== $con_senha) {
             echo "<script>alert('As senhas não coincidem.'); history.back();</script>";
             exit();
