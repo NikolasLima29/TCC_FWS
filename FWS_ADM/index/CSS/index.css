@@ -110,3 +110,10 @@ body {
     background: #ffffff;
     color: #f4a01d;
 }
+
+.switch-tab.active {
+    background-color: #000;
+    color: #f4a01d;
+    font-weight: bold;
+  }
+  

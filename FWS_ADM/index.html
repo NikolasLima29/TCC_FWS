@@ -31,6 +31,12 @@
     <div class="wrapper">
     <form action="login/PHP/login.php" method="POST">
       <h1>Login</h1>
+      <!-- Switch visual entre CPF e E-mail -->
+<div class="d-flex mb-3" id="login-switch" style="border: 2px solid black; border-radius: 6px; overflow: hidden;">
+  <div class="flex-fill text-center p-2 switch-tab active" id="switch-cpf" style="cursor: pointer;">CPF</div>
+  <div class="flex-fill text-center p-2 switch-tab" id="switch-email" style="cursor: pointer;">E-mail</div>
+</div>
+
       <div class="input-box">
         <label for="cpf_email" class="form-label">CPF ou E-mail:</label>
         <input type="text" class="form-control" id="cpf_email" name="cpf_email" placeholder="Digite seu CPF ou e-mail" required>
@@ -44,6 +50,54 @@
     </div>
     </div>
   </main>
+
+  <script>
+    const switchCPF = document.getElementById('switch-cpf');
+    const switchEmail = document.getElementById('switch-email');
+    const inputCpfEmail = document.getElementById('cpf_email');
+  
+    function formatCPF(value) {
+      value = value.replace(/\D/g, '').slice(0, 11);
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      return value;
+    }
+  
+    function activateTab(isCPF) {
+      // Estilo de seleção
+      switchCPF.classList.toggle('active', isCPF);
+      switchEmail.classList.toggle('active', !isCPF);
+  
+      // Atualiza input
+      inputCpfEmail.value = '';
+      inputCpfEmail.type = isCPF ? 'text' : 'email';
+      inputCpfEmail.placeholder = isCPF ? 'Digite seu CPF' : 'Digite seu e-mail';
+      inputCpfEmail.maxLength = isCPF ? 14 : 50;
+  
+      if (isCPF) {
+        inputCpfEmail.addEventListener('input', handleCPFMask);
+      } else {
+        inputCpfEmail.removeEventListener('input', handleCPFMask);
+      }
+    }
+  
+    function handleCPFMask(e) {
+      e.target.value = formatCPF(e.target.value);
+    }
+  
+    switchCPF.addEventListener('click', () => activateTab(true));
+    switchEmail.addEventListener('click', () => activateTab(false));
+  
+    // Estilo visual ativo
+    document.querySelectorAll('.switch-tab').forEach(tab => {
+      tab.style.transition = 'background 0.2s ease';
+    });
+  
+    // Inicializa como CPF
+    activateTab(true);
+  </script>
+  
 
   <footer>
     <!-- place footer here -->
