@@ -1,31 +1,62 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Poppins", sans-serif; /*Mudar pra a fonte Cocomat Pro ou a outra*/
 }
 
-body{
-    background-color: #ffff;
+body {
+    background: url("../../index/IMG/fundo.png") no-repeat center center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    position: relative;
+    overflow: hidden;
 }
 
-.wrapper{
+.overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+}
+
+.logo img {
+    height: 60px;
+}
+
+.wrapper {
+    position: relative;
+    z-index: 1;
     width: 420px;
-    background-color:#f4a01d;
-    border: 2px solid rgba(255, 255, 255, .1);
-    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-    color: rgb(0, 0, 0);
-    border-radius: 10px;
     padding: 30px 40px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: #000;
 }
 
 .wrapper h1{
     font-size: 36px;
     text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #000;
+}
+
+.input-box {
+    margin-bottom: 20px;
 }
 
 .wrapper .input-box{
@@ -35,14 +66,43 @@ body{
     margin: 30px 0;
 }
 
-.input-box input{
+.input-box label {
+    font-weight: 500;
+    color: #000;
+}
+
+
+
+.input-box input {
     width: 100%;
-    height: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
     border: none;
     outline: none;
-    border: 2px solid rgba(255, 255, 255, .2);
-    border-radius: 40px;
+    background: rgba(255, 255, 255, 0.8);
     font-size: 16px;
-    color: white;
-    padding: 20px 45px 20px 20px;
+    transition: all 0.3s ease;
+}
+
+.input-box input:focus {
+    background: #fff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-entrar {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #000;
+    color: #f4a01d;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-entrar:hover {
+    background: #f4a01d;
+    color: #000;
 }

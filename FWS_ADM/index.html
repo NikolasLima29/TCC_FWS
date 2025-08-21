@@ -11,13 +11,23 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="index/CSS/index.css">
-
 </head>
 
 <body>
   <header>
     <!-- place navbar here -->
   </header>
+
+    <!-- Logo -->
+  <div class="logo">
+    <img src="index/IMG/logo.png" alt="Logo da empresa">
+  </div>
+
+  <!-- Fundo escurecido -->
+  <div class="overlay">
+    <img src="index/IMG/fundo.png" alt="Fundo da página">
+  </div>
+
   <main>
     <div class="wrapper">
     <form action="login/PHP/login.php" method="POST">
@@ -28,18 +38,17 @@
       </div>
       <div class="input-box">
         <label for="senha" class="form-label">Senha:</label>
-        <input type="password" class="form-control" id="senha" name="senha"
-          pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]).{6,}$"
-          title="A senha deve ter ao menos 6 caracteres, uma letra maiúscula, um número e um caractere especial."
-          required>
+        <input type="password" class="form-control" id="senha" name="senha" pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]).{6,}$" title="A senha deve ter ao menos 6 caracteres, uma letra maiúscula, um número e um caractere especial." required>
       </div>
-      <button type="submit" class="btn btn-primary" id="entrar">Entrar</button>
+      <button type="submit" class="btn-entrar">Entrar</button>
     </div>
-  </form>
+    </form>
   </main>
+
   <footer>
     <!-- place footer here -->
   </footer>
+
   <!-- Bootstrap JavaScript Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
