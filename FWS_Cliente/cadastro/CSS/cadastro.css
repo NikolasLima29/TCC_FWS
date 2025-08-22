@@ -7,7 +7,7 @@
 }
 
 body {
-    background: url("../IMG/fundo.png") no-repeat center center/cover;
+    background: url("../IMG/fundoo.png") no-repeat center center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -24,13 +24,20 @@ body {
     z-index: 0;
 }
 
+.logo-topo {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    height: 60px;
+}
+
 .wrapper-cadastro {
     position: relative;
     z-index: 1;
     width: 450px;
     padding: 35px 40px;
     border-radius: 15px;
-    background: #f4a01d; /* amarelo Shell */
+    background: #faba00;
     border: 1px solid rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(12px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -95,6 +102,11 @@ body {
 .form-text {
     font-size: 0.85rem;
     margin-top: 5px;
-    color: #222;
+    color: #d7301f;
 }
-    
+
+@media (max-width: 768px) {
+    body {
+        background: url("../IMG/fundooo.png") no-repeat center center/cover; /* Imagem de fundo para mobile */
+    }
+}
