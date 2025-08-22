@@ -4,11 +4,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /*Mudar pra a fonte Cocomat Pro ou a outra*/
 }
 
 body {
-    background: url("../../index/IMG/fundo.png") no-repeat center center/cover;
+    background: url("../IMG/fundo.png") no-repeat center center/cover;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -21,64 +20,44 @@ body {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     z-index: 0;
 }
 
-.logo {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.logo-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.logo img {
-    height: 150px;
-}
-
-.wrapper {
+.wrapper-cadastro {
     position: relative;
     z-index: 1;
-    width: 420px;
-    padding: 30px 40px;
+    width: 450px;
+    padding: 35px 40px;
     border-radius: 15px;
-    background: #f4a01d;
+    background: #f4a01d; /* amarelo Shell */
     border: 1px solid rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(12px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     color: #000;
 }
 
-.wrapper h1{
-    font-size: 36px;
+.wrapper-cadastro h1 {
+    font-size: 34px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     font-weight: bold;
     color: #000;
+    font-family: 'Cocomat Pro', sans-serif;
 }
 
-.input-box {
-    margin-bottom: 30px;
+.mb-3 {
+    margin-bottom: 25px;
 }
 
-.wrapper .input-box{
-    position: relative;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.input-box label {
+.mb-3 label {
     font-weight: 500;
     color: #000;
     display: block;
     margin-bottom: 8px;
 }
 
-.input-box input {
+.mb-3 input {
     width: 100%;
     padding: 12px 15px;
     border-radius: 10px;
@@ -89,12 +68,12 @@ body {
     transition: all 0.3s ease;
 }
 
-.input-box input:focus {
+.mb-3 input:focus {
     background: #fff;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
 
-.btn-entrar {
+.btn-primary {
     width: 100%;
     padding: 12px;
     border-radius: 10px;
@@ -105,37 +84,17 @@ body {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
-.btn-entrar:hover {
+.btn-primary:hover {
     background: #ffffff;
     color: #f4a01d;
 }
 
-.switch-tab.active {
-    background-color: #000;
-    color: #f4a01d;
-    font-weight: bold;
-  }
-
-
-.alert-sucesso {
-  background-color: #d4edda; /* verde claro */
-  color: #155724;
-  font-size: 0.85rem;
-  padding: 8px 12px;
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    color: #222;
 }
-
-.alert-erro {
-  background-color: #f8d7da; /* vermelho claro */
-  color: #721c24;
-  font-size: 0.85rem;
-  padding: 8px 12px;
-}
-
-.alerta-pequeno {
-  border-radius: 6px;
-  width: 100%;       /* ocupa toda a largura igual aos inputs */
-  display: block;    /* garante alinhamento */
-}
+    
