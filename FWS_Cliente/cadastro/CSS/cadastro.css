@@ -38,7 +38,7 @@ body {
 }
 
 .logo-central {
-    height: 120px;
+    height: 80px;
     object-fit: contain;
     z-index: 10;
     position: relative;
