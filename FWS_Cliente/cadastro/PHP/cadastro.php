@@ -1,5 +1,5 @@
 <?php
-require "../../conn.php";
+include "..\..\conn.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['cadastro_form']) && $_POST['cadastro_form'] == 1) {
