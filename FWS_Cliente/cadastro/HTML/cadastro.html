@@ -26,44 +26,53 @@
   <img src="../IMG/shellselect.png" alt="Logo Shell" class="logo-central">
 
   <main>
-    <form action="../PHP/cadastro.php" method="post" class="wrapper-cadastro">
+    <form action="../PHP/cadastro.php" method="post" class="wrapper-cadastro container">
       <img src="../IMG/shell.png" alt="Logo Shell" class="logo-topo">
       <h1>Cadastro</h1>
       <input type="hidden" name="cadastro_form" value="1">
-
-      <div class="mb-3">
-        <label for="nome" class="form-label">Nome completo:</label>
-        <input type="text" class="form-control" id="nome" name="nome" required>
+    
+      <div class="row">
+        <!-- Coluna 1 -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="nome" class="form-label">Nome completo:</label>
+            <input type="text" class="form-control" id="nome" name="nome" required>
+          </div>
+    
+          <div class="mb-3">
+            <label for="data" class="form-label">Data de Nascimento:</label>
+            <input type="date" class="form-control" id="data" name="data" required>
+          </div>
+    
+          <div class="mb-3">
+            <label for="cpf" class="form-label">CPF:</label>
+            <input type="text" class="form-control" id="cpf" name="cpf" required oninput="maskCpf(this)">
+          </div>
+        </div>
+    
+        <!-- Coluna 2 -->
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="email" class="form-label">E-mail:</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Ex: Nathally@gmail.com" required>
+          </div>
+    
+          <div class="mb-3">
+            <label for="senha" class="form-label">Senha:</label>
+            <input type="password" class="form-control" id="senha" name="senha" required pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}">
+            <div class="form-text">A senha deve conter pelo menos 6 caracteres, uma letra maiúscula, um número e um caractere especial.</div>
+          </div>
+    
+          <div class="mb-3">
+            <label for="con_senha" class="form-label">Confirmar senha:</label>
+            <input type="password" class="form-control" id="con_senha" name="con_senha" required>
+          </div>
+        </div>
       </div>
-
-      <div class="mb-3">
-        <label for="data" class="form-label">Data de Nascimento:</label>
-        <input type="date" class="form-control" id="data" name="data" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="cpf" class="form-label">CPF:</label>
-        <input type="text" class="form-control" id="cpf" name="cpf" required oninput="maskCpf(this)">
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">E-mail:</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Ex: Nathally@gmail.com" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="senha" class="form-label">Senha:</label>
-        <input type="password" class="form-control" id="senha" name="senha" required pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}">
-        <div class="form-text">A senha deve conter pelo menos 6 caracteres, uma letra maiúscula, um número e um caractere especial.</div>
-      </div>
-
-      <div class="mb-3">
-        <label for="con_senha" class="form-label">Confirmar senha:</label>
-        <input type="password" class="form-control" id="con_senha" name="con_senha" required>
-      </div>
-
+    
       <button type="submit" class="btn-primary">Cadastrar</button>
     </form>
+    
   </div>
   </main>
 
