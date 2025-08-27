@@ -73,14 +73,10 @@
                   </div>
               </div>
           </div>
-          <div class="col py-3">
-            <a href="../PHP/vendas_do_dia.php"><button type="button" class="btn btn-primary btn-lg" id="vendas">Vendas do dia</button></a>
-            <a href="../PHP/lucro.php"><button type="button" class="btn btn-secondary btn-lg" id="lucro">Lucro</button></a>
-            <a href="../PHP/estoque_baixo.php"><button type="button" class="btn btn-primary btn-lg" id="estoque">Estoque Baixo</button></a>
-          </div>
       </div>
   </div>  
 
+  <div></div>
 </main>
   <footer>
     <!-- place footer here -->
