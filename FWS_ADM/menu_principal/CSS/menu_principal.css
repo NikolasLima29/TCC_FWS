@@ -1,1 +1,10 @@
 @import url('../../Fonte_Config/fonte_geral.css');
+
+#vendas{
+    background-color: #ff9100;
+    
+}
+
+#vendas img{
+    width: 50px;
+}
