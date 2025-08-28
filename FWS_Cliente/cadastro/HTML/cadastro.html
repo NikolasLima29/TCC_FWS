@@ -104,6 +104,21 @@
 
       e.target.value = value;
     });
+
+    document.querySelector("form").addEventListener("submit", function (e) {
+    const dataNascimento = document.getElementById("data").value;
+    const hoje = new Date();
+    const nascimento = new Date(dataNascimento);
+
+    const idade = hoje.getFullYear() - nascimento.getFullYear();
+    const m = hoje.getMonth() - nascimento.getMonth();
+    const dia = hoje.getDate() - nascimento.getDate();
+
+    if (idade < 18 || (idade === 18 && (m < 0 || (m === 0 && dia < 0)))) {
+      e.preventDefault();
+      alert("Você deve ter pelo menos 18 anos para se cadastrar.");
+    }
+  });
   </script>
 </body>
 
