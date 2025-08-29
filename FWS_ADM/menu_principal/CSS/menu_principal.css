@@ -1,10 +1,16 @@
 @import url('../../Fonte_Config/fonte_geral.css');
 
-#vendas{
-    background-color: #ff9100;
-    
+#texto{
+    text-align: center;
+    font-size: 80px;
+    height: 140px;
 }
 
-#vendas img{
+#botoes{
+    background-color: #ff9100;
+    border-color: black;
+}
+
+#botoes img{
     width: 50px;
 }
