@@ -2,71 +2,78 @@
 <html lang="pt-br">
 
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Página de Login</title>
   <link rel="icon" type="image/x-icon" href="logotipo.png">
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Bootstrap CSS v5.2.1 -->
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+  <!-- CSS Personalizado -->
   <link rel="stylesheet" href="login/CSS/login.css">
 </head>
 
 <body>
   <header>
-    <!-- place navbar here -->
+    <!-- Navegação se necessário -->
   </header>
 
-  <!-- Logo -->
+  <!-- Container principal com fundo e logo -->
   <div class="logo-container">
     <div class="logo">
       <img src="index/IMG/logo.png" alt="Logo da empresa">
     </div>
-
-    <!-- Fundo -->
     <div class="overlay"></div>
 
     <main>
       <div class="wrapper">
-        <form action="login/PHP/login.php" method="POST">
+        <!-- Formulário de Login -->
+        <form action="login/PHP/login.php" method="POST" novalidate>
           <h1>Login</h1>
-          <!-- Switch visual entre CPF e E-mail -->
+
+          <!-- Alternância entre CPF e E-mail -->
           <div class="d-flex mb-3" id="login-switch"
             style="border: 2px solid black; border-radius: 6px; overflow: hidden;">
-            <div class="flex-fill text-center p-2 switch-tab active" id="switch-cpf" style="cursor: pointer;">CPF</div>
-            <div class="flex-fill text-center p-2 switch-tab" id="switch-email" style="cursor: pointer;">E-mail</div>
+            <div class="flex-fill text-center p-2 switch-tab active" id="switch-cpf" role="button" tabindex="0">CPF</div>
+            <div class="flex-fill text-center p-2 switch-tab" id="switch-email" role="button" tabindex="0">E-mail</div>
           </div>
 
+          <!-- Campo CPF ou E-mail -->
           <div class="input-box">
             <label for="cpf_email" class="form-label">CPF ou E-mail:</label>
             <input type="text" class="form-control" id="cpf_email" name="cpf_email"
-              placeholder="Digite seu CPF ou e-mail" required>
+              placeholder="Digite seu CPF ou e-mail" required aria-required="true" maxlength="50">
           </div>
+
+          <!-- Campo Senha -->
           <div class="input-box">
             <label for="senha" class="form-label">Senha:</label>
             <input type="password" class="form-control" id="senha" name="senha"
               pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?]).{6,}$"
               title="A senha deve ter ao menos 6 caracteres, uma letra maiúscula, um número e um caractere especial."
-              required>
+              required aria-required="true">
           </div>
-        <div id="alertaLogin" class="mt-2 fw-semibold d-none alerta-pequeno"></div>
 
+          <!-- Alerta de Erros / Sucesso -->
+          <div id="alertaLogin" class="mt-2 fw-semibold d-none alerta-pequeno" role="alert" aria-live="polite"></div>
 
-
-
-          <button type="submit" class="btn-entrar">Entrar</button>
+          <!-- Botão de Envio -->
+          <button type="submit" class="btn-entrar w-100 mt-3">Entrar</button>
         </form>
       </div>
+    </main>
   </div>
 
-  <!-- Modal -->
+  <footer>
+    <!-- Rodapé se necessário -->
+  </footer>
 
-
-  </main>
-
+  <!-- Scripts -->
   <script>
+    // Alterna entre input de CPF e Email
     const switchCPF = document.getElementById('switch-cpf');
     const switchEmail = document.getElementById('switch-email');
     const inputCpfEmail = document.getElementById('cpf_email');
@@ -80,11 +87,9 @@
     }
 
     function activateTab(isCPF) {
-      // Estilo de seleção
       switchCPF.classList.toggle('active', isCPF);
       switchEmail.classList.toggle('active', !isCPF);
 
-      // Atualiza input
       inputCpfEmail.value = '';
       inputCpfEmail.type = isCPF ? 'text' : 'email';
       inputCpfEmail.placeholder = isCPF ? 'Digite seu CPF' : 'Digite seu e-mail';
@@ -104,8 +109,14 @@
     switchCPF.addEventListener('click', () => activateTab(true));
     switchEmail.addEventListener('click', () => activateTab(false));
 
-    // Estilo visual ativo
-    document.querySelectorAll('.switch-tab').forEach(tab => {
+    // Teclado acessível (Enter ou Espaço nos botões)
+    [switchCPF, switchEmail].forEach(tab => {
+      tab.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          tab.click();
+        }
+      });
       tab.style.transition = 'background 0.2s ease';
     });
 
@@ -113,55 +124,49 @@
     activateTab(true);
   </script>
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("status");
-    const msg = params.get("msg");
+  <script>
+    // Lida com os parâmetros GET da URL para mostrar mensagens de login
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("status");
+      const msg = params.get("msg");
 
-    if (status && msg) {
-      const alerta = document.getElementById("alertaLogin");
-      alerta.classList.remove("d-none");
+      if (status && msg) {
+        const alerta = document.getElementById("alertaLogin");
+        alerta.classList.remove("d-none");
 
-      if (status === "sucesso") {
-        alerta.classList.add("alert-sucesso");
-        alerta.innerHTML = "✅ " + msg;
+        if (status === "sucesso") {
+          alerta.classList.add("alert-sucesso");
+          alerta.innerHTML = "✅ " + decodeURIComponent(msg);
 
-        // Mostrar spinner depois
-        setTimeout(() => {
-          alerta.innerHTML += 
-            '<div class="mt-1 d-flex justify-content-center align-items-center">' +
-            '<div class="spinner-border text-dark me-2" role="status"></div>' +
-            '<span class="texto-spinner">Carregando...</span>' +
-            '</div>';
-        }, 1200);
+          setTimeout(() => {
+            alerta.innerHTML += `
+              <div class="mt-1 d-flex justify-content-center align-items-center">
+                <div class="spinner-border text-dark me-2" role="status" aria-hidden="true"></div>
+                <span class="texto-spinner">Carregando...</span>
+              </div>
+            `;
+          }, 1200);
 
-        // Redireciona depois
-        setTimeout(() => {
-          window.location.href = "menu_principal/HTML/menu_principal.html";
-        }, 3500);
+          setTimeout(() => {
+            window.location.href = "menu_principal/HTML/menu_principal.html";
+          }, 3500);
 
-      } else {
-        alerta.classList.add("alert-erro");
-        alerta.innerHTML = "❌ " + msg;
+        } else {
+          alerta.classList.add("alert-erro");
+          alerta.innerHTML = "❌ " + decodeURIComponent(msg);
+        }
       }
-    }
-  });
-</script>
+    });
+  </script>
 
-
-  <footer>
-    <!-- place footer here -->
-  </footer>
-
-  <!-- Bootstrap JavaScript Libraries -->
+  <!-- Bootstrap JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-    </script>
-
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-    </script>
+  </script>
 </body>
 
 </html>

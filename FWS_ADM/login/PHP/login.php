@@ -1,32 +1,63 @@
 <?php
 session_start();
 
-// Conexão
-$sql = new mysqli("localhost", "root", "", "FWS");
+// Configurações de conexão com o banco
+include "..\..\conn.php";
+
+
 if ($sql->connect_error) {
-    die("Erro na conexão: " . $sql->connect_error);
+    // Erro na conexão — logar e mostrar mensagem genérica
+    error_log("Erro na conexão com o banco: " . $sql->connect_error);
+    header("Location: ../../index.html?status=erro&msg=Erro interno. Tente novamente.");
+    exit;
 }
+
+// Define charset para suportar caracteres especiais
 $sql->set_charset("utf8");
 
+// Verifica se o formulário foi enviado via POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $cpf_email = trim($_POST["cpf_email"]);
-    $senha = $_POST["senha"];
+    // Sanitiza e captura os dados enviados
+    $cpf_email = trim($_POST["cpf_email"] ?? '');
+    $senha = $_POST["senha"] ?? '';
 
+    // Validação: campos não podem estar vazios
     if (empty($cpf_email) || empty($senha)) {
         header("Location: ../../index.html?status=erro&msg=Preencha todos os campos");
         exit;
     }
 
+    // Prepara a consulta SQL com prepared statements
     $query = "SELECT * FROM funcionarios WHERE cpf = ? OR email = ?";
     $stmt = $sql->prepare($query);
+
+    if (!$stmt) {
+        // Falha ao preparar a query — logar e mostrar erro genérico
+        error_log("Erro ao preparar a query: " . $sql->error);
+        header("Location: ../../index.html?status=erro&msg=Erro interno. Tente novamente.");
+        exit;
+    }
+
+    // Associa os parâmetros
     $stmt->bind_param("ss", $cpf_email, $cpf_email);
-    $stmt->execute();
+
+    // Executa a query
+    if (!$stmt->execute()) {
+        // Falha na execução — logar e mostrar erro genérico
+        error_log("Erro na execução da query: " . $stmt->error);
+        header("Location: ../../index.html?status=erro&msg=Erro interno. Tente novamente.");
+        exit;
+    }
+
     $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
+    // Verifica se o usuário foi encontrado
+    if ($result && $result->num_rows > 0) {
         $usuario = $result->fetch_assoc();
 
+        // Verifica se a senha fornecida corresponde ao hash
         if (password_verify($senha, $usuario['senha'])) {
+            // Login bem-sucedido — registra informações na sessão
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
             $_SESSION['usuario_email'] = $usuario['email'];
@@ -34,10 +65,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             header("Location: ../../index.html?status=sucesso&msg=Login realizado com sucesso");
             exit;
         } else {
-            header("Location: ../../index.html?status=erro&msg=Senha incorreta ou Usuário não encontrado ");
+            // Senha incorreta
+            header("Location: ../../index.html?status=erro&msg=Senha incorreta ou Usuário não encontrado");
             exit;
         }
     } else {
+        // Nenhum usuário encontrado
         header("Location: ../../index.html?status=erro&msg=Senha incorreta ou Usuário não encontrado");
         exit;
     }
