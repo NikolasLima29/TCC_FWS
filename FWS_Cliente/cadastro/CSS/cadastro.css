@@ -18,6 +18,7 @@ body {
     overflow-x: hidden;
     text-align: center;
     padding: 20px;
+    
 }
 
 .overlay {
@@ -38,7 +39,7 @@ body {
 }
 
 .logo-central {
-    height: 80px;
+    height: 85px;
     object-fit: contain;
     z-index: 10;
     position: relative;
@@ -58,7 +59,7 @@ body {
     max-width: 650px;
     padding: 25px 20px;
     border-radius: 15px;
-    background: #faba00;
+    background: #FFD100;
     border: 1px solid rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(12px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -107,7 +108,7 @@ body {
     border-radius: 10px;
     border: none;
     background: #000;
-    color: #f4a01d;
+    color: #FFD100;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
