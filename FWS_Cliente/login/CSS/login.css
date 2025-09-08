@@ -1,0 +1,161 @@
+@import url('../../Fonte_Config/fonte_geral.css');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: url("../IMG/fundoo.png") no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    text-align: center;
+    padding: 20px;
+    
+}
+
+.overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 0;
+}
+
+.container-cadastro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    justify-content: flex-start;
+    padding: 40px 20px;
+    gap: 20px;
+}
+
+.logo-central {
+    height: 85px;
+    object-fit: contain;
+    z-index: 10;
+    position: relative;
+}
+
+.logo-topo {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    height: 60px;
+}
+
+.wrapper-cadastro {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 650px;
+    padding: 25px 20px;
+    border-radius: 15px;
+    background: #FFD100;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    color: #000;
+}
+
+.wrapper-cadastro h1 {
+    font-size: 34px;
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: bold;
+    color: #000;
+    font-family: 'Cocomat Pro', sans-serif;
+}
+
+.mb-3 {
+    margin-bottom: 25px;
+}
+
+.mb-3 label {
+    font-weight: 500;
+    color: #000;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.mb-3 input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.mb-3 input:focus {
+    background: #fff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #000;
+    color: #FFD100;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background: #ffffff;
+    color: #f4a01d;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 5px;
+    color: #d7301f;
+}
+
+.switch-tab.active {
+    background-color: #000;
+    color: #f4a01d;
+    font-weight: bold;
+}
+
+.alert-sucesso {
+  background-color: #d4edda; /* verde claro */
+  color: #155724;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+
+.alert-erro {
+  background-color: #f8d7da; /* vermelho claro */
+  color: #721c24;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+
+.alerta-pequeno {
+  border-radius: 6px;
+  width: 100%;       /* ocupa toda a largura igual aos inputs */
+  display: block;    /* garante alinhamento */
+}
+
+
+@media (max-width: 768px) {
+    body {
+        background: url("../IMG/fundooo.png") no-repeat center center/cover; /* Imagem de fundo para mobile */
+    }
+}
