@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <title>Página de Cadastro</title>
+  <link rel="icon" type="image/x-icon" href="../IMG/Shell.png">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <link rel="stylesheet" href="../CSS/cadastro.css">
+</head>
+
+<body>
+  <div class="overlay"></div>
+
+  <header>
+    <!-- Barra de navegação (se houver) -->
+  </header>
+
+  <div class="container-cadastro">
+
+    <!-- Logo central -->
+    <img src="../IMG/shellselect.png" alt="Logo Shell" class="logo-central">
+
+    <main>
+      <form action="../PHP/cadastro.php" method="post" class="wrapper-cadastro container">
+     
+        <h1>Cadastro</h1>
+
+        <input type="hidden" name="cadastro_form" value="1">
+
+        <div class="row">
+          <!-- Coluna 1 -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="nome" class="form-label">Nome completo:</label>
+              <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="data" class="form-label">Data de Nascimento:</label>
+              <input type="date" class="form-control" id="data" name="data" required>
+            </div>
+
+             <div class="mb-3">
+              <label for="senha" class="form-label">Senha:</label>
+              <input type="password" class="form-control" id="senha" name="senha" required
+                pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}">
+              <!-- Removido o form-text, a validação será via JS -->
+            </div>
+
+
+          </div>
+
+          <!-- Coluna 2 -->
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="email" class="form-label">E-mail:</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="Ex: Nathally@gmail.com"
+                required>
+            </div>
+
+
+            <div class="mb-3">
+              <label for="cpf" class="form-label">CPF:</label>
+              <input type="text" class="form-control" id="cpf" name="cpf" required oninput="maskCpf(this)">
+            </div>
+
+            <div class="mb-3">
+              <label for="con_senha" class="form-label">Confirmar senha:</label>
+              <input type="password" class="form-control" id="con_senha" name="con_senha" required>
+            </div>
+          </div>
+        </div>
+
+        <div id="alertaCadastro" class="alert d-none mt-3 text-center" role="alert"></div>
+
+        <button type="submit" class="btn-primary">Cadastrar</button>
+      </form>
+
+    </main>
+  </div>
+
+  <footer>
+    <!-- Rodapé (opcional) -->
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+    </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+    </script>
+
+  <script>
+    // Máscara de CPF
+    document.getElementById("cpf").addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+
+      if (value.length > 11) {
+        value = value.slice(0, 11);
+      }
+
+      value = value.replace(/(\d{3})(\d)/, "$1.$2");
+      value = value.replace(/(\d{3})(\d)/, "$1.$2");
+      value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+      e.target.value = value;
+    });
+
+    // Validação da senha em tempo real
+    document.getElementById("senha").addEventListener("input", function () {
+      const senha = this.value;
+      const senhaRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}$/;
+
+      if (!senhaRegex.test(senha)) {
+        this.setCustomValidity("A senha deve conter pelo menos 6 caracteres, uma letra maiúscula, um número e um caractere especial.");
+      } else {
+        this.setCustomValidity("");
+      }
+    });
+
+    // Validação da idade em tempo real (18 anos)
+    document.getElementById("data").addEventListener("input", function () {
+      const input = this;
+      const valor = input.value;
+
+      if (!valor) {
+        input.setCustomValidity("Por favor, insira sua data de nascimento.");
+        return;
+      }
+
+      const hoje = new Date();
+      const nascimento = new Date(valor);
+
+      let idade = hoje.getFullYear() - nascimento.getFullYear();
+      const mes = hoje.getMonth() - nascimento.getMonth();
+      const dia = hoje.getDate() - nascimento.getDate();
+
+      if (mes < 0 || (mes === 0 && dia < 0)) {
+        idade--;
+      }
+
+      if (idade < 18) {
+        input.setCustomValidity("Você deve ter pelo menos 18 anos para se cadastrar.");
+      } else {
+        input.setCustomValidity("");
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("status");
+      const msg = params.get("msg");
+
+      const alerta = document.getElementById("alertaCadastro");
+      const form = document.querySelector("form");
+
+      if (status && msg) {
+        alerta.classList.remove("d-none", "alert-success", "alert-danger");
+
+        if (status === "sucesso") {
+          alerta.classList.add("alert", "alert-success");
+          alerta.innerHTML = "✅ " + decodeURIComponent(msg);
+
+          setTimeout(() => {
+            alerta.innerHTML += `
+          <div class="mt-1 d-flex justify-content-center align-items-center">
+            <div class="spinner-border text-dark me-2" role="status" aria-hidden="true"></div>
+            <span class="texto-spinner">Redirecionando...</span>
+          </div>
+        `;
+          }, 2500);
+
+          setTimeout(() => {
+            window.location.href = "../login.html";
+          }, 3500);
+
+        } else {
+          alerta.classList.add("alert", "alert-danger");
+          alerta.innerHTML = "❌ " + decodeURIComponent(msg);
+
+          const msgDecoded = decodeURIComponent(msg);
+
+          if (msgDecoded === "senhas não coincidem, tente novamente") {
+            form.querySelector("#senha").value = "";
+            form.querySelector("#con_senha").value = "";
+            form.querySelector("#senha").focus();
+          } else if (msgDecoded === "E-mail ou CPF já cadastrados") {
+            form.reset();
+          }
+
+          // Outros erros (como campos obrigatórios) não limpam nada, mantendo o que o usuário digitou
+        }
+      }
+    });
+  </script>
+
+
+</body>
+
+</html>
