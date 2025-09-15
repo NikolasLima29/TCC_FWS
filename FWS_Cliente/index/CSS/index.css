@@ -4,6 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    text-decoration: none;
 }
 
 header {
@@ -22,7 +23,6 @@ header {
 nav ul {
     display: flex;
     list-style-type: none;
-
 }
 
 nav ul li {
@@ -33,37 +33,22 @@ nav ul li a {
     color: white;
     font-size: 18px;
     display: block;
+    text-decoration: none;
 }
 
-nav ul li a ol {
-    color: #f8a3b3;
-    font-size: 18px;
-    display: block;
-}
-
-nav ul a:not(.btn):after{
+nav ul li a:not(.btn):after{
     content: "";
-    background-color: #f8a3b3;
+    background-color: #ffffff;
     height: 3px;
     width: 0%;
     display: block;
     transition: 0.3s;
 }
 
-nav ul a:hover::after{
-    width: 100%;
-}
+a:hover {
+    color: white;
+  }
 
-nav ul a ol:not(.btn):after{
-    content: "";
-    background-color: #a74759;
-    height: 3px;
-    width: 0%;
-    display: block;
-    margin: 0 auto;
-    transition: 0.3s;
-}
-
-nav ul a ol:hover::after{
+nav ul li a:hover::after{
     width: 100%;
 }
