@@ -7,6 +7,10 @@
     text-decoration: none;
 }
 
+body {
+    background-color: black;
+}
+
 header {
     display: flex;
     justify-content: space-between;
@@ -51,4 +55,26 @@ a:hover {
 
 nav ul li a:hover::after{
     width: 100%;
+}
+
+.btn-1{
+    margin-top: 15px;
+    width: 150px;
+    border-radius: 20px;
+    border-style: none;
+    background-color: white;
+}
+
+.btn-2{
+    width: 120px;
+    border-radius: 20px;
+    border-style: none;
+    background-color: white;
+}
+
+#aa {
+    color: black;
+    background-color: white;
+    text-decoration: none !important;
+    font-size: 22px;
 }
