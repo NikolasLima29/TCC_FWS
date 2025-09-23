@@ -1,5 +1,9 @@
 @import url('../../Fonte_Config/fonte_geral.css');
 
+@media (max-width: 768px) {
+    
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -55,6 +59,12 @@ a:hover {
 
 nav ul li a:hover::after {
     width: 100%;
+}
+
+.botoes {
+    padding-left: 1250px;
+    background: url("../IMG/index_cliente.png") no-repeat;
+    height: 500px;
 }
 
 .btn-1 {
