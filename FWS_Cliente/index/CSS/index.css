@@ -88,3 +88,7 @@ nav ul li a:hover::after {
     text-decoration: none !important;
     font-size: 22px;
 }
+
+#logos{
+    align-items: center;
+}
