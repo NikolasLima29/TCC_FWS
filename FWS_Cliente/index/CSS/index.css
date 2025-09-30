@@ -61,8 +61,23 @@ nav ul li a:hover::after {
     width: 100%;
 }
 
+#nav2 {
+    color: #ffffff;
+    background-color: #d7301f;
+}
+
+h1 {
+    font-size: 30px;
+    text-decoration: underline;
+    margin-left: 10px;
+}
+
+#logo2 {
+    margin-left: 10px;
+    height: 40px;
+}
+
 .botoes {
-    padding-left: 1250px;
     background: url("../IMG/index_cliente.png") no-repeat;
     height: 500px;
 }
@@ -91,4 +106,5 @@ nav ul li a:hover::after {
 
 #logos{
     align-items: center;
+    height: 300px;
 }
