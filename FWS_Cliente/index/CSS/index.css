@@ -104,7 +104,11 @@ h1 {
     font-size: 22px;
 }
 
-#logos{
+#logos {
     align-items: center;
     height: 300px;
+}
+
+.carousel-slide {
+    
 }
