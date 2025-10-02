@@ -15,20 +15,21 @@
 <body>
   <!-- Primeiro cabeçalho -->
   <header id="header">
+    <!-- Logo -->
+    <div class="logo">
+      <a href="index.html">
+        <img src="index/IMG/shell_select.png" alt="logo" />
+      </a>
+    </div>
     <nav>
-      <!-- Logo, produtos e sobre nós -->
+      <!-- Produtos e sobre nós -->
       <ul class="ul">
-        <div class="carrinho-e-logo">
-          <a href="index.html">
-            <img src="cadastro/IMG/shellselect.png" alt="logo" />
-          </a>
-        </div>
         <li><a href="#">Produtos</a></li>
         <li><a href="#">Sobre nós</a></li>
       </ul>
     </nav>
     <!-- Carrinho -->
-    <div class="carrinho-e-logo">
+    <div class="carrinho">
       <a href="#">
         <img src="index/IMG/carrinho.png" alt="carrinho" />
       </a>
@@ -36,23 +37,22 @@
   </header>
 
   <!-- Primeiro corpo -->
-  <main>
+  <section class="section">
+    <!-- Botões de cadastro e login -->
     <div class="botoes">
-      <button type="submit" class="btn-1"><a href="cadastro/HTML/cadastro.html"
-          id="cadastro-login">Cadastre-se</a></button>
-      <button type="submit" class="btn-2"><a href="login/HTML/login.html" id="cadastro-login">Entrar</a></button>
-      <div>
-        <img id="jd-america" src="index/IMG/jd_america.png">
-      </div>
+      <a href="cadastro/HTML/cadastro.html" class="btn">Cadastre-se</a></button>
+      <a href="login/HTML/login.html" class="btn">Entrar</a></button>
     </div>
-  </main>
+    <!-- Logo do Jd. América -->
+    <div class="div-jd-america">
+      <img class="jd-america" src="index/IMG/jd_america.png">
+    </div>
+  </section>
 
   <!-- Segundo cabeçalho -->
-  <main>
-    <nav id="nav1">
-      <h1>Mais Vendidos<img id="sacola" src="index/IMG/sacola.png"></h1>
-    </nav>
-  </main>
+  <section class="mais-vendidos">
+    <h1>Mais Vendidos<img src="index/IMG/sacola.png" alt="sacola"></h1>
+  </section>
 
   <!-- Carrossel (segundo corpo) -->
   <div id="carouselExampleCaptions" class="carousel slide">
@@ -98,11 +98,11 @@
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
+      <span class="visually-hidden">Anterior</span>
     </button>
     <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
+      <span class="visually-hidden">Próximo</span>
     </button>
   </div>
 

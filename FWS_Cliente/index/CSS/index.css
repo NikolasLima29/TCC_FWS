@@ -15,31 +15,33 @@ body {
 
 header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    vertical-align: bottom;
+    justify-content: space-between;
     background-color: #d7301f;
-    padding: 10px 20px;
+    padding: 15px 60px;
+    position: relative;
 }
 
-.carrinho-e-logo img {
-    height: 50px;
+header .logo img {
+    height: 60px;
 }
 
-nav ul {
+header nav ul {
     display: flex;
-    list-style-type: none;
+    gap: 20px;
+    list-style: none;
+    margin-left: 20px;
 }
 
-nav ul li {
-    padding-left: 50px;
-}
-
-nav ul li a {
+header nav ul li a {
     color: white;
-    font-size: 18px;
-    display: block;
-    text-decoration: none;
+    font-size: 20px;
+    text-decoration: none !important;
+}
+
+.carrinho img {
+    height: 35px;
+    cursor: pointer;
 }
 
 nav ul li a:not(.btn):after {
@@ -59,50 +61,69 @@ nav ul li a:hover::after {
     width: 100%;
 }
 
-#nav1 {
-    color: #ffffff;
-    background-color: #d7301f;
-}
-
-h1 {
-    font-size: 30px;
-    text-decoration: underline;
-    margin-left: 10px;
-}
-
-#sacola {
-    margin-left: 10px;
-    height: 40px;
+.section {
+    position: relative;
+    background: url("../IMG/fundo.png") no-repeat center/cover;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
 }
 
 .botoes {
-    background: url("../IMG/index_cliente.png") no-repeat;
-    height: 500px;
+    position: absolute;
+    top: 20px;
+    right: 60px;
+    display: flex;
+    gap: 20px;
 }
 
-.btn-1 {
-    margin-top: 15px;
-    width: 150px;
-    border-radius: 20px;
-    border-style: none;
-    background-color: white;
+.botoes .btn {
+    background: white;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 15px;
+    font-weight: bold;
 }
 
-.btn-2 {
-    width: 120px;
-    border-radius: 20px;
-    border-style: none;
-    background-color: white;
+.botoes .btn:hover {
+    background: #f5f5f5;
+    color: #000;
+    text-decoration: none;
 }
 
-#cadastro-login {
-    color: black;
-    background-color: white;
-    text-decoration: none !important;
-    font-size: 22px;
+.jd-america {
+    height: 250px;
+    margin-bottom: 20px;
 }
 
-#jd-america {
+.mais-vendidos {
+    background: #d7301f;
+    color: white;
+    padding: 20px 0;
+    text-align: left;
+    padding-left: 60px;
+}
+
+.mais-vendidos h1 {
+    font-size: 2.0rem;
+    display: flex;
     align-items: center;
-    height: 300px;
+    gap: 15px;
+}
+
+.mais-vendidos h1 img {
+    height: 40px;
+}
+
+.carousel {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.carousel-item img {
+    height: 500px;
+    object-fit: cover;
 }
