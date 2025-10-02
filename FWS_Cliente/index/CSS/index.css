@@ -64,7 +64,8 @@ nav ul li a:hover::after {
 .section {
     position: relative;
     background: url("../IMG/fundo.png") no-repeat center/cover;
-    height: 600px;
+    background-color: rgba(0, 0, 0, 0.3);
+    height: 350px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,7 +96,7 @@ nav ul li a:hover::after {
 }
 
 .jd-america {
-    height: 250px;
+    height: 240px;
     margin-bottom: 20px;
 }
 
@@ -118,9 +119,31 @@ nav ul li a:hover::after {
     height: 40px;
 }
 
+.carrossel {
+    background-color: #ffffff;
+}
+
 .carousel {
     width: 80%;
     margin: 0 auto;
+}
+
+#descricao {
+    color: #000;
+}
+
+#nome {
+    color: #000;
+}
+
+.carousel-control-prev-icon, .carousel-control-next-icon {
+    height: 100px;
+    width: 100px;
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.3);
+    background-size: 100%, 100%;
+    border-radius: 50%;
+    border: 1px solid black;
 }
 
 .carousel-item img {
