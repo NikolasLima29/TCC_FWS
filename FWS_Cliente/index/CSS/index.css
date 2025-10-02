@@ -1,8 +1,6 @@
 @import url('../../Fonte_Config/fonte_geral.css');
 
-@media (max-width: 768px) {
-    
-}
+@media (max-width: 768px) {}
 
 * {
     margin: 0;
@@ -24,7 +22,7 @@ header {
     padding: 10px 20px;
 }
 
-.carrinho img {
+.carrinho-e-logo img {
     height: 50px;
 }
 
@@ -61,7 +59,7 @@ nav ul li a:hover::after {
     width: 100%;
 }
 
-#nav2 {
+#nav1 {
     color: #ffffff;
     background-color: #d7301f;
 }
@@ -72,7 +70,7 @@ h1 {
     margin-left: 10px;
 }
 
-#logo2 {
+#sacola {
     margin-left: 10px;
     height: 40px;
 }
@@ -97,14 +95,14 @@ h1 {
     background-color: white;
 }
 
-#aa {
+#cadastro-login {
     color: black;
     background-color: white;
     text-decoration: none !important;
     font-size: 22px;
 }
 
-#logos {
+#jd-america {
     align-items: center;
     height: 300px;
 }
