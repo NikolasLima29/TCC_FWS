@@ -30,7 +30,6 @@ header nav ul {
     display: flex;
     gap: 20px;
     list-style: none;
-    margin-left: 20px;
 }
 
 header nav ul li a {
@@ -143,7 +142,6 @@ nav ul li a:hover::after {
     background-color: rgba(0, 0, 0, 0.3);
     background-size: 100%, 100%;
     border-radius: 50%;
-    border: 1px solid black;
 }
 
 .carousel-item img {
