@@ -34,12 +34,12 @@ header nav ul {
 
 header nav ul li a {
     color: white;
-    font-size: 20px;
+    font-size: 25px;
     text-decoration: none !important;
 }
 
 .carrinho img {
-    height: 35px;
+    height: 45px;
     cursor: pointer;
 }
 
@@ -63,7 +63,6 @@ nav ul li a:hover::after {
 .section {
     position: relative;
     background: url("../IMG/fundo.png") no-repeat center/cover;
-    background-color: rgba(0, 0, 0, 0.3);
     height: 350px;
     display: flex;
     justify-content: center;
@@ -135,7 +134,8 @@ nav ul li a:hover::after {
     color: #000;
 }
 
-.carousel-control-prev-icon, .carousel-control-next-icon {
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
     height: 100px;
     width: 100px;
     outline: none;
