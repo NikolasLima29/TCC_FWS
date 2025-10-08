@@ -14,6 +14,11 @@
 
   <!-- Seu CSS personalizado -->
   <link rel="stylesheet" href="../CSS/login.css">
+
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
 </head>
 
 <body>
@@ -45,7 +50,8 @@
         <!-- Campo CPF ou E-mail -->
         <div class="mb-3">
           <label for="cpf_email" class="form-label">CPF ou E-mail:</label>
-          <input type="text" class="form-control" id="cpf_email" name="cpf_email" placeholder="Digite seu CPF ou e-mail">
+          <input type="text" class="form-control" id="cpf_email" name="cpf_email"
+            placeholder="Digite seu CPF ou e-mail">
         </div>
 
         <!-- Campo Senha -->
@@ -61,12 +67,9 @@
         <div id="alertaLogin" class="mt-2 fw-semibold d-none alerta-pequeno" role="alert" aria-live="polite"></div>
 
         <!-- Login com Google -->
-        <div id="g_id_onload"
-          data-client_id="819532091119-afi9om14kjrp0s11aapravd1s4a7o1d6.apps.googleusercontent.com"
-          data-context="signin"
-          data-ux_mode="redirect"
-          data-login_uri="http://localhost/FWS/FWS_Cliente/login/PHP/login.php"
-          data-auto_prompt="false">
+        <div id="g_id_onload" data-client_id="819532091119-afi9om14kjrp0s11aapravd1s4a7o1d6.apps.googleusercontent.com"
+          data-context="signin" data-ux_mode="redirect"
+          data-login_uri="http://localhost/FWS/FWS_Cliente/login/PHP/login.php" data-auto_prompt="false">
         </div>
 
         <div class="g_id_signin" data-type="standard"></div>
@@ -80,7 +83,8 @@
   <footer></footer>
 
   <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
   <!-- SCRIPT: Alternância CPF/E-mail -->
@@ -147,25 +151,31 @@
         if (status === "sucesso") {
           alerta.classList.add("alert-sucesso");
           alerta.innerHTML = "✅ " + decodeURIComponent(msg);
-
           setTimeout(() => {
             alerta.innerHTML += `
-              <div class="mt-1 d-flex justify-content-center align-items-center">
-                <div class="spinner-border text-dark me-2" role="status" aria-hidden="true"></div>
-                <span class="texto-spinner">Carregando...</span>
-              </div>
-            `;
+        <div class="mt-1 d-flex justify-content-center align-items-center">
+          <div class="spinner-border text-dark me-2" role="status" aria-hidden="true"></div>
+          <span class="texto-spinner">Carregando...</span>
+        </div>
+      `;
           }, 1200);
-
           setTimeout(() => {
-            window.location.href = "../menu_principal/HTML/menu_principal.html";
+            // redireciona pro menu (ou não)
+            window.location.href = "../../index.php";
           }, 3500);
 
         } else {
           alerta.classList.add("alert-erro");
           alerta.innerHTML = "❌ " + decodeURIComponent(msg);
         }
+
+        // ✅ Limpa os parâmetros da URL sem recarregar a página
+        const url = new URL(window.location);
+        url.searchParams.delete("status");
+        url.searchParams.delete("msg");
+        window.history.replaceState({}, document.title, url.toString());
       }
+
     });
   </script>
 

@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!doctype html>
 <html lang="pt-BR">
 
@@ -10,40 +13,102 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="index/CSS/index.css">
+
+  <style>
+ #header {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #c40000; /* vermelho */
+  color: white;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+nav {
+  margin-left: 40px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.carrinho {
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.carrinho img {
+  height: 25px;
+}
+
+#bem-vindo {
+  font-weight: bold;
+  font-size: 16px;
+  color: white;
+}
+
+</style>
+
 </head>
 
 <body>
-  <!-- Primeiro cabeçalho -->
+  <!-- Cabeçalho -->
   <header id="header">
     <!-- Logo -->
     <div class="logo">
-      <a href="index.html">
+      <a href="index.php">
         <img src="index/IMG/shell_select.png" alt="logo" />
       </a>
     </div>
+
+    <!-- Menu -->
     <nav>
-      <!-- Produtos e sobre nós -->
       <ul class="ul">
         <li><a href="produto/HTML/produto.html">Produtos</a></li>
         <li><a href="tela_sobre_nos/HTML/sobre_nos.html">Sobre nós</a></li>
       </ul>
     </nav>
+
     <!-- Carrinho -->
     <div class="carrinho">
       <a href="#">
         <img src="index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
       </a>
     </div>
+
+    <!-- Mensagem de boas-vindas -->
+    <div id="bem-vindo">
+      <?php
+      if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
+          echo "Bem-vindo, " . htmlspecialchars($_SESSION['usuario_nome']);
+      } else {
+          echo "Bem-vindo.";
+      }
+      ?>
+    </div>
   </header>
 
   <!-- Primeiro corpo -->
   <section class="section">
-    <!-- Botões de cadastro e login -->
     <div class="botoes">
-      <a href="cadastro/HTML/cadastro.html" class="btn">Cadastre-se</a></button>
-      <a href="login/HTML/login.html" class="btn">Entrar</a></button>
+      <a href="cadastro/HTML/cadastro.html" class="btn">Cadastre-se</a>
+      <a href="login/HTML/login.html" class="btn">Entrar</a>
     </div>
-    <!-- Logo do Jd. América -->
     <div class="div-jd-america">
       <img class="jd-america" src="index/IMG/jd_america.png">
     </div>
@@ -51,10 +116,10 @@
 
   <!-- Segundo cabeçalho -->
   <section class="mais-vendidos">
-    <h1>Mais Vendidos<img src="index/IMG/sacola.png" alt="sacola"></h1>
+    <h1>Mais Vendidos <img src="index/IMG/sacola.png" alt="sacola"></h1>
   </section>
 
-  <!-- Carrossel (segundo corpo) -->
+  <!-- Carrossel -->
   <section class="carrossel">
     <div id="carouselExampleCaptions" class="carousel slide">
       <div class="carousel-indicators">
@@ -114,7 +179,7 @@
     <!-- place footer here -->
   </footer>
 
-  <!-- Bootstrap JavaScript Libraries -->
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
   </script>
