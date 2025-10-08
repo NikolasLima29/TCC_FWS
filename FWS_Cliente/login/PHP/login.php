@@ -14,7 +14,13 @@ $conn->set_charset("utf8");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $cpf_email = trim($_POST["cpf_email"] ?? '');
+    $cpf_email = trim($_POST["cpf_email"] ?? '');
+
+if (strpos($cpf_email, '@') === false) {
+    // Se não for e-mail, assume que é CPF e limpa os caracteres
     $cpf_email = str_replace(['.', '-', ' '], '', $cpf_email);
+}
+
     $senha = $_POST["senha"] ?? '';
 
     if (empty($cpf_email) || empty($senha)) {
