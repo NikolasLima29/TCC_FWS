@@ -100,17 +100,18 @@ main p {
     text-align: justify;
     font-size: 20px;
     padding-bottom: 10px;
-    padding-left: 100px;
-    padding-right: 100px;
+    padding-left: 140px;
+    padding-right: 140px;
 }
 
 main #imagem {
     align-items: center;
 }
 
-#carrossel {
-    height: 600px;
-    width: 60px;
+.carousel {
+    width: 40%;
+    margin: 0 auto;
+    padding-bottom: 30px;
 }
 
 .footer {
