@@ -130,6 +130,7 @@ main img {
 .footer {
     background-color: #FFD100;
     color: black;
+    align-content: center !important;
 }
 
 .footer h1 {
@@ -138,8 +139,8 @@ main img {
 }
 
 .footer svg {
+    margin-top: 20px !important;
     height: 20px;
-    align-items: center;
 }
 
 .footer .bi {
