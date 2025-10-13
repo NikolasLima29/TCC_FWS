@@ -46,11 +46,9 @@
               <input type="date" class="form-control" id="data" name="data" required>
             </div>
 
-             <div class="mb-3">
-              <label for="senha" class="form-label">Senha:</label>
-              <input type="password" class="form-control" id="senha" name="senha" required
-                pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}">
-              <!-- Removido o form-text, a validação será via JS -->
+            <div class="mb-3">
+              <label for="cpf" class="form-label">CPF:</label>
+              <input type="text" class="form-control" id="cpf" name="cpf" required oninput="maskCpf(this)">
             </div>
 
 
@@ -65,9 +63,13 @@
             </div>
 
 
-            <div class="mb-3">
-              <label for="cpf" class="form-label">CPF:</label>
-              <input type="text" class="form-control" id="cpf" name="cpf" required oninput="maskCpf(this)">
+           
+
+              <div class="mb-3">
+              <label for="senha" class="form-label">Senha:</label>
+              <input type="password" class="form-control" id="senha" name="senha" required
+                pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}">
+              <!-- Removido o form-text, a validação será via JS -->
             </div>
 
             <div class="mb-3">
