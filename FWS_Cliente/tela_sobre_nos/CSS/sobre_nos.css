@@ -104,8 +104,21 @@ main p {
     padding-right: 140px;
 }
 
-main #imagem {
-    align-items: center;
+main {
+    align-content: center;
+}
+
+main img {
+    
+}
+
+#imagem {
+    height: 440px;
+    width: 680px;
+    padding-bottom: 20px;
+    display: block;
+    margin: auto;
+
 }
 
 .carousel {
@@ -131,4 +144,5 @@ main #imagem {
 
 .footer .bi {
     height: 40px !important;
+    margin: auto;
 }
