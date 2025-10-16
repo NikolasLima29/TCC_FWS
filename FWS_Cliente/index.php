@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+echo '<pre>';
+print_r($_SESSION);
+echo '</pre>';
+?>
+
 ?>
 <!doctype html>
 <html lang="pt-BR">
@@ -104,15 +110,17 @@ nav ul li a {
   </header>
 
   <!-- Primeiro corpo -->
+   
   <section class="section">
     <div class="botoes">
+    <?php if(!isset($_SESSION['logado']) || $_SESSION['logado'] !== true):?>
       <a href="cadastro/HTML/cadastro.html" class="btn">Cadastre-se</a>
       <a href="login/HTML/login.html" class="btn">Entrar</a>
+      <?php endif;?>
     </div>
     <div class="div-jd-america">
       <img class="jd-america" src="index/IMG/jd_america.png">
-    </div>
-  </section>
+    </div></section>
 
   <!-- Segundo cabeçalho -->
   <section class="mais-vendidos">
