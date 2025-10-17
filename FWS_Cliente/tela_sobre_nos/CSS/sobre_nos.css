@@ -10,7 +10,7 @@
 }
 
 body {
-    background-color: black;
+    background-color: white;
 }
 
 #header {
@@ -88,7 +88,7 @@ nav ul li a:hover::after {
 }
 
 #sobre_nos {
-    color: white;
+    color: black;
     text-align: center;
     font-size: 54px;
     padding-bottom: 20px;
@@ -96,7 +96,7 @@ nav ul li a:hover::after {
 }
 
 main p {
-    color: #ffffff;
+    color: black;
     text-align: justify;
     font-size: 20px;
     padding-bottom: 10px;
