@@ -1,5 +1,7 @@
 <?php
 session_start();
+$_SESSION['logado'] = false;
+
 
 // Conexão com o banco de dados
 include "../../conn.php";
@@ -56,6 +58,7 @@ if (strpos($cpf_email, '@') === false) {
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
             $_SESSION['usuario_email'] = $usuario['email'];
+            $_SESSION['logado'] = true;
 
             // Atualiza último login
             $update = $conn->prepare("UPDATE usuarios SET ultimo_login = NOW() WHERE id = ?");
