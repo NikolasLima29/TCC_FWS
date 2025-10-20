@@ -1,6 +1,5 @@
 @import url('../../Fonte_Config/fonte_geral.css');
 
-@media (max-width: 800px) {}
 
 * {
     margin: 0;
@@ -147,4 +146,31 @@ nav ul li a:hover::after {
 .carousel-item img {
     height: 500px;
     object-fit: cover;
+}
+
+@media (max-width: 768px) {
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #d7301f;
+        padding: 5px 30px;
+        position: relative;
+        width: 100%;
+    }
+
+    .jd-america {
+        height: 120px;
+        margin-bottom: 20px;
+    }
+
+    .mais-vendidos {
+        background: #d7301f;
+        width: 100%;
+        color: white;
+        padding: 20px 0;
+        text-align: left;
+        padding-left: 60px;
+    }
 }
