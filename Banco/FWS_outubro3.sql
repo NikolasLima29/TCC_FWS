@@ -43,11 +43,21 @@ CREATE TABLE IF NOT EXISTS `categorias` (
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.categorias: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela fws.categorias: ~11 rows (aproximadamente)
 INSERT INTO `categorias` (`id`, `nome`) VALUES
-	(1, 'Categoria Teste');
+	(1, 'BEBIDAS ALCOÓLICAS'),
+	(2, 'BEBIDAS NÃO ALCOÓLICAS'),
+	(8, 'BISCOITOS'),
+	(9, 'CIGARROS E ITENS DE FUMO'),
+	(4, 'DOCES'),
+	(7, 'LATICÍNIOS'),
+	(11, 'OUTROS'),
+	(5, 'PROTEICOS'),
+	(10, 'SALGADOS'),
+	(6, 'SNACKS'),
+	(3, 'SORVETES');
 
 -- Copiando estrutura para tabela fws.despesas
 CREATE TABLE IF NOT EXISTS `despesas` (
@@ -120,9 +130,11 @@ CREATE TABLE IF NOT EXISTS `expiracoes_pre_compras` (
   KEY `fk_exp_venda` (`venda_id`),
   CONSTRAINT `fk_exp_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `fk_exp_venda` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.expiracoes_pre_compras: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela fws.expiracoes_pre_compras: ~1 rows (aproximadamente)
+INSERT INTO `expiracoes_pre_compras` (`id`, `usuario_id`, `venda_id`, `data_expiracao`) VALUES
+	(7, 2, 10, '2025-10-20 17:58:14');
 
 -- Copiando estrutura para tabela fws.fornecedores
 CREATE TABLE IF NOT EXISTS `fornecedores` (
@@ -135,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `fornecedores` (
   UNIQUE KEY `cnpj` (`cnpj`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.fornecedores: ~22 rows (aproximadamente)
+-- Copiando dados para a tabela fws.fornecedores: ~23 rows (aproximadamente)
 INSERT INTO `fornecedores` (`id`, `nome`, `cnpj`, `telefone`, `email`) VALUES
 	(1, 'SR VINHO COMÉRCIO DE VINHOS E BEBIDAS LTDA', '24330541000146', '11947927692', 'contato@srvinhos.com.br'),
 	(2, 'MULT E DIGITAL COMERCIO DE PRODUTOS ALIMENTICIOS LTDA', '37885698000180', '1141310409', 'jocalbuquerque@bol.com.br'),
@@ -238,11 +250,30 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   KEY `fornecedor_id` (`fornecedor_id`),
   CONSTRAINT `produtos_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`),
   CONSTRAINT `produtos_ibfk_2` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.produtos: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela fws.produtos: ~20 rows (aproximadamente)
 INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descricao`, `foto_produto`, `preco_venda`, `preco_compra`, `estoque`, `status`, `criado_em`) VALUES
-	(1, 'Produto Teste', 1, 1, NULL, NULL, 10.00, NULL, 100, 'ativo', '2025-10-19 22:59:38');
+	(1, 'VINHO BUENO AIRES MALBE 750ML', 1, 1, 'Um vinho Malbec elegante, produzido com uvas selecionadas que garantem sabor intenso, aromas frutados e taninos suaves. Ideal para acompanhar carnes vermelhas e momentos especiais.', '/IMG_Produtos/1.png', 69.90, 54.90, 1, 'ativo', '2025-10-20 17:54:49'),
+	(2, 'VINHO FABRICANTE DE LOS MAN CABERNET SAUVIGNON BRANCO OU TINTO GF 750ML', 1, 1, 'Vinho Cabernet Sauvignon, disponível nas versões branco ou tinto, feito com uvas premium que trazem equilíbrio entre acidez e corpo, perfeito para harmonizar com queijos e pratos sofisticados.', '/IMG_Produtos/2.png', 69.90, 54.90, 3, 'ativo', '2025-10-20 17:54:49'),
+	(3, 'ÁGUA DE COCO KERO COCO 1L', 2, 3, 'Água de coco 100% natural, rica em eletrólitos essenciais para hidratação rápida e renovação de energia, perfeita para o dia a dia e práticas esportivas.', '/IMG_Produtos/3.png', 31.99, 15.87, 5, 'ativo', '2025-10-20 17:54:49'),
+	(4, 'ÁGUA DE COCO KERO COCO 330ML', 2, 3, 'Em embalagem prática, essa água de coco natural é fonte de potássio e minerais, ideal para refrescar e manter a hidratação em qualquer momento.', '/IMG_Produtos/4.png', 14.50, 6.56, 16, 'ativo', '2025-10-20 17:54:49'),
+	(5, 'ÁGUA DE COCO KERO COCO CX 200ML', 2, 3, 'Compacta e nutritiva, essa água de coco oferece hidratação natural e energia, com sabor refrescante e leve, ótima para levar na bolsa ou lancheira.', '/IMG_Produtos/5.png', 6.90, 3.20, 15, 'ativo', '2025-10-20 17:54:49'),
+	(6, 'ÁGUA MINERAL CRYSTAL COM GÁS PET 500ML', 2, 4, 'Água mineral com gás Crystal, puro frescor e efervescência suave que revitalizam seu paladar a qualquer hora do dia.', '/IMG_Produtos/6.png', 6.50, 2.24, 1, 'ativo', '2025-10-20 17:54:49'),
+	(7, 'ÁGUA MINERAL MINALBA COM GÁS PET 1,5L', 2, 5, 'Água mineral com gás Minalba em embalagem econômica, leve e refrescante, perfeita para acompanhar suas refeições ou momentos de lazer.', '/IMG_Produtos/7.png', 8.99, 3.17, 13, 'ativo', '2025-10-20 17:54:49'),
+	(8, 'ÁGUA MINERAL PRATA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Prata, naturalmente equilibrada em minerais essenciais para uma hidratação pura e saudável.', '/IMG_Produtos/8.png', 7.00, 2.85, 54, 'ativo', '2025-10-20 17:54:49'),
+	(9, 'ÁGUA MINERAL MINALBA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Minalba, de sabor leve e refrescante, ideal para manter seu corpo hidratado com qualidade e naturalidade.', '/IMG_Produtos/9.png', 6.50, 2.75, 67, 'ativo', '2025-10-20 17:54:49'),
+	(10, 'ÁGUA TONICA ANTARCTICA DIET LT 350ML', 2, 7, 'Água tônica dietética Antarctica, com sabor marcante e refrescante, adoçada artificialmente para quem busca sabor sem calorias.', '/IMG_Produtos/10.png', 8.00, 2.60, 7, 'ativo', '2025-10-20 17:54:49'),
+	(11, 'ÁGUA TONICA ANTARCTICA LT 350ML', 2, 7, 'Água tônica Antarctica clássica, com mistura perfeita de quinino e gás que proporciona um sabor único e refrescante para seus drinks ou momentos de relaxamento.', '/IMG_Produtos/11.png', 8.00, 2.52, 10, 'ativo', '2025-10-20 17:54:49'),
+	(12, 'AP BARBEAR BIC CONF3 NORMAL', 11, 2, 'Kit de aparelhos de barbear BIC com 3 lâminas, oferecendo precisão e conforto para um barbear eficiente e seguro, ideal para o cuidado diário da pele.', '/IMG_Produtos/12.png', 8.50, 4.11, 8, 'ativo', '2025-10-20 17:54:49'),
+	(13, 'BALA DROPS HALLS MENTA PCT 28G', 4, 8, 'Bala Drops Halls sabor menta, proporciona frescor imediato para a garganta, ajudando a aliviar desconfortos e refrescar o hálito.', '/IMG_Produtos/13.png', 3.50, 1.19, 22, 'ativo', '2025-10-20 17:54:49'),
+	(14, 'BALA DROPS HALLS MENTA PRATA PCT 28G', 4, 8, 'Bala Drops Halls Menta Prata com sabor intenso e refrescante, formulada para aliviar irritações na garganta e manter o hálito puro.', '/IMG_Produtos/14.png', 3.50, 1.14, 47, 'ativo', '2025-10-20 17:54:49'),
+	(15, 'BALA DROPS HALLS MENTOL PCT 28G', 4, 8, 'Bala Drops Halls Mentol, combinando frescor e alívio imediato para a garganta, ideal para dias frios ou ambientes secos.', '/IMG_Produtos/15.png', 3.50, 1.19, 27, 'ativo', '2025-10-20 17:54:49'),
+	(16, 'BALA DROPS HALLS MORANGO PCT 28G', 4, 8, 'Bala Drops Halls sabor morango, doce e refrescante, que suaviza a garganta enquanto oferece um gostinho frutado irresistível.', '/IMG_Produtos/16.png', 3.50, 1.19, 34, 'ativo', '2025-10-20 17:54:49'),
+	(17, 'BALA DROPS HALLS UVA VERDE PCT 28G', 4, 8, 'Bala Drops Halls sabor uva verde, mistura um sabor frutado com efeito refrescante, perfeita para quem busca alívio e sabor juntos.', '/IMG_Produtos/17.png', 3.50, 1.19, 28, 'ativo', '2025-10-20 17:54:49'),
+	(18, 'BALA FINI BEIJOS MORANGO DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini formato beijo sabor morango, macia e saborosa, perfeita para adoçar o dia com uma explosão de sabor frutado.', '/IMG_Produtos/18.png', 9.99, 4.99, 2, 'ativo', '2025-10-20 17:54:49'),
+	(19, 'BALA FINI DENTADURA DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini dentadura sabor doce, divertida e saborosa, ideal para crianças e adultos que gostam de doces macios e divertidos.', '/IMG_Produtos/19.png', 10.99, 4.99, 5, 'ativo', '2025-10-20 17:54:49'),
+	(20, 'BALA FINI TUBES MORANGO DE GOMA PCT 80G', 4, 9, 'Bala de goma Fini sabor morango, em formato de tubo, macia e saborosa, proporciona uma experiência divertida e deliciosa para qualquer hora.', '/IMG_Produtos/20.png', 9.99, 4.99, 13, 'ativo', '2025-10-20 17:54:49');
 
 -- Copiando estrutura para tabela fws.retiradas
 CREATE TABLE IF NOT EXISTS `retiradas` (
@@ -304,9 +335,11 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`),
   CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.vendas: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela fws.vendas: ~1 rows (aproximadamente)
+INSERT INTO `vendas` (`id`, `funcionario_id`, `usuario_id`, `total`, `status_pagamento`, `situacao_compra`, `metodo_pagamento`, `tempo_chegada`, `data_criacao`, `data_finalizacao`) VALUES
+	(10, 1, 2, 10.00, 'pendente', 'cancelada', 'dinheiro', '00:01:00', '2025-10-20 17:55:35', NULL);
 
 -- Copiando estrutura para trigger fws.trg_estoque_insuficiente
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
