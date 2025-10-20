@@ -19,15 +19,35 @@
 CREATE DATABASE IF NOT EXISTS `fws` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `fws`;
 
+-- Copiando estrutura para tabela fws.carrinho
+CREATE TABLE IF NOT EXISTS `carrinho` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario_id` int NOT NULL,
+  `produto_id` int NOT NULL,
+  `quantidade` int NOT NULL,
+  `preco_unitario` decimal(10,2) NOT NULL,
+  `codigo_cupom` varchar(50) DEFAULT NULL,
+  `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `usuario_produto` (`usuario_id`,`produto_id`),
+  KEY `produto_id` (`produto_id`),
+  CONSTRAINT `carrinho_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
+  CONSTRAINT `carrinho_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Copiando dados para a tabela fws.carrinho: ~0 rows (aproximadamente)
+
 -- Copiando estrutura para tabela fws.categorias
 CREATE TABLE IF NOT EXISTS `categorias` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.categorias: ~0 rows (aproximadamente)
+INSERT INTO `categorias` (`id`, `nome`) VALUES
+	(1, 'Categoria Teste');
 
 -- Copiando estrutura para tabela fws.despesas
 CREATE TABLE IF NOT EXISTS `despesas` (
@@ -44,6 +64,66 @@ CREATE TABLE IF NOT EXISTS `despesas` (
 
 -- Copiando dados para a tabela fws.despesas: ~0 rows (aproximadamente)
 
+-- Copiando estrutura para evento fws.ev_expirar_pre_compras
+DELIMITER //
+CREATE EVENT `ev_expirar_pre_compras` ON SCHEDULE EVERY 1 MINUTE STARTS '2025-10-19 20:51:14' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    
+    INSERT INTO expiracoes_pre_compras (usuario_id, venda_id, data_expiracao)
+    SELECT usuario_id, id, NOW()
+    FROM vendas
+    WHERE situacao_compra = 'pre_compra'
+      AND TIMESTAMPDIFF(SECOND, data_criacao, NOW()) > TIME_TO_SEC(tempo_chegada);
+
+    
+    UPDATE vendas
+    SET situacao_compra = 'cancelada'
+    WHERE situacao_compra = 'pre_compra'
+      AND TIMESTAMPDIFF(SECOND, data_criacao, NOW()) > TIME_TO_SEC(tempo_chegada);
+END//
+DELIMITER ;
+
+-- Copiando estrutura para evento fws.ev_usuarios_7d
+DELIMITER //
+CREATE EVENT `ev_usuarios_7d` ON SCHEDULE EVERY 1 MINUTE STARTS '2025-10-19 21:09:20' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    
+    UPDATE usuarios u
+    LEFT JOIN (
+        SELECT usuario_id, COUNT(*) AS expiracoes_7d
+        FROM expiracoes_pre_compras
+        WHERE data_expiracao >= NOW() - INTERVAL 7 DAY
+        GROUP BY usuario_id
+    ) e ON u.id = e.usuario_id
+    SET u.ativo = 1
+    WHERE COALESCE(e.expiracoes_7d, 0) <= 1;
+
+    
+    UPDATE usuarios u
+    JOIN (
+        SELECT usuario_id, COUNT(*) AS expiracoes_7d
+        FROM expiracoes_pre_compras
+        WHERE data_expiracao >= NOW() - INTERVAL 7 DAY
+        GROUP BY usuario_id
+        HAVING expiracoes_7d >= 2
+    ) e ON u.id = e.usuario_id
+    SET u.ativo = 0;
+END//
+DELIMITER ;
+
+-- Copiando estrutura para tabela fws.expiracoes_pre_compras
+CREATE TABLE IF NOT EXISTS `expiracoes_pre_compras` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario_id` int NOT NULL,
+  `venda_id` int NOT NULL,
+  `data_expiracao` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `usuario_id` (`usuario_id`),
+  KEY `fk_exp_venda` (`venda_id`),
+  CONSTRAINT `fk_exp_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_exp_venda` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Copiando dados para a tabela fws.expiracoes_pre_compras: ~0 rows (aproximadamente)
+
 -- Copiando estrutura para tabela fws.fornecedores
 CREATE TABLE IF NOT EXISTS `fornecedores` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -53,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `fornecedores` (
   `email` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cnpj` (`cnpj`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.fornecedores: ~22 rows (aproximadamente)
 INSERT INTO `fornecedores` (`id`, `nome`, `cnpj`, `telefone`, `email`) VALUES
@@ -78,7 +158,8 @@ INSERT INTO `fornecedores` (`id`, `nome`, `cnpj`, `telefone`, `email`) VALUES
 	(19, 'RZS NICOLA FABRICACAO E COMERCIO DE GELO - ME', '07733106000143', '1132582632', 'luiz@fastgelo.com.br'),
 	(20, 'DMA INDUSTRIA E COMERCIO DE PRODUTOS ALIMENTICIOS LTDA', '05212531000161', '1132289925', 'yscontabil@gmail.com'),
 	(21, 'UNILEVER BRASIL LTDA', '61068276000104', '1135688000', 'sac@ades.com.br'),
-	(22, 'LP COMERCIO DE SALGADOS LTDA', '24836224000104', '1138715778', 'legal@mwa.com.br');
+	(22, 'LP COMERCIO DE SALGADOS LTDA', '24836224000104', '1138715778', 'legal@mwa.com.br'),
+	(23, 'Fornecedor Teste', '99999999000199', NULL, NULL);
 
 -- Copiando estrutura para tabela fws.funcionarios
 CREATE TABLE IF NOT EXISTS `funcionarios` (
@@ -113,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `itens_vendidos` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `itens_vendidos_ibfk_1` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`),
   CONSTRAINT `itens_vendidos_ibfk_2` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.itens_vendidos: ~0 rows (aproximadamente)
 
@@ -138,25 +219,10 @@ CREATE TABLE IF NOT EXISTS `movimentacao_estoque` (
 
 -- Copiando dados para a tabela fws.movimentacao_estoque: ~0 rows (aproximadamente)
 
--- Copiando estrutura para tabela fws.pagamentos
-CREATE TABLE IF NOT EXISTS `pagamentos` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `venda_id` int NOT NULL,
-  `valor_pago` decimal(10,2) NOT NULL,
-  `data_pagamento` datetime DEFAULT CURRENT_TIMESTAMP,
-  `metodo` enum('dinheiro','cartao_credito','cartao_debito','pix','boleto','outros') DEFAULT 'dinheiro',
-  PRIMARY KEY (`id`),
-  KEY `venda_id` (`venda_id`),
-  CONSTRAINT `pagamentos_ibfk_1` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- Copiando dados para a tabela fws.pagamentos: ~0 rows (aproximadamente)
-
 -- Copiando estrutura para tabela fws.produtos
 CREATE TABLE IF NOT EXISTS `produtos` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
-  `codigo` varchar(50) NOT NULL,
   `categoria_id` int NOT NULL,
   `fornecedor_id` int NOT NULL,
   `descricao` text,
@@ -167,14 +233,16 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   `status` enum('ativo','inativo') DEFAULT 'ativo',
   `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `codigo` (`codigo`),
+  UNIQUE KEY `id` (`id`),
   KEY `categoria_id` (`categoria_id`),
   KEY `fornecedor_id` (`fornecedor_id`),
   CONSTRAINT `produtos_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`),
   CONSTRAINT `produtos_ibfk_2` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.produtos: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela fws.produtos: ~1 rows (aproximadamente)
+INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descricao`, `foto_produto`, `preco_venda`, `preco_compra`, `estoque`, `status`, `criado_em`) VALUES
+	(1, 'Produto Teste', 1, 1, NULL, NULL, 10.00, NULL, 100, 'ativo', '2025-10-19 22:59:38');
 
 -- Copiando estrutura para tabela fws.retiradas
 CREATE TABLE IF NOT EXISTS `retiradas` (
@@ -212,7 +280,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf` (`cpf`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.usuarios: ~2 rows (aproximadamente)
 INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
@@ -226,20 +294,42 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   `usuario_id` int DEFAULT NULL,
   `total` decimal(10,2) NOT NULL,
   `status_pagamento` enum('pago','pendente','cancelado') DEFAULT 'pendente',
-  `data_venda` datetime DEFAULT CURRENT_TIMESTAMP,
+  `situacao_compra` enum('pre_compra','finalizada','cancelada') DEFAULT 'pre_compra',
+  `metodo_pagamento` enum('dinheiro','cartao_credito','cartao_debito','pix','boleto','outros') DEFAULT 'dinheiro',
+  `tempo_chegada` time DEFAULT NULL,
+  `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
+  `data_finalizacao` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `funcionario_id` (`funcionario_id`),
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`),
   CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.vendas: ~0 rows (aproximadamente)
 
--- Copiando estrutura para trigger fws.atualizar_estoque
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
+-- Copiando estrutura para trigger fws.trg_estoque_insuficiente
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
-CREATE TRIGGER `atualizar_estoque` AFTER INSERT ON `movimentacao_estoque` FOR EACH ROW BEGIN
+CREATE TRIGGER `trg_estoque_insuficiente` BEFORE INSERT ON `movimentacao_estoque` FOR EACH ROW BEGIN
+    DECLARE estoque_atual INT;
+
+    SELECT estoque INTO estoque_atual
+    FROM produtos
+    WHERE id = NEW.produto_id;
+
+    IF NEW.tipo_movimentacao = 'saida' AND estoque_atual < NEW.quantidade THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Estoque insuficiente para essa saída';
+    END IF;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
+-- Copiando estrutura para trigger fws.trg_movimentacao_estoque
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `trg_movimentacao_estoque` AFTER INSERT ON `movimentacao_estoque` FOR EACH ROW BEGIN
     IF NEW.tipo_movimentacao = 'entrada' THEN
         UPDATE produtos
         SET estoque = estoque + NEW.quantidade
@@ -253,29 +343,27 @@ END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
--- Copiando estrutura para trigger fws.registrar_saida_venda
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
+-- Copiando estrutura para trigger fws.trg_nao_cancelar_finalizada
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
-CREATE TRIGGER `registrar_saida_venda` AFTER INSERT ON `itens_vendidos` FOR EACH ROW BEGIN
-    INSERT INTO movimentacao_estoque (produto_id, quantidade, tipo_movimentacao, venda_id, descricao)
-    VALUES (NEW.produto_id, NEW.quantidade, 'saida', NEW.venda_id, CONCAT('Venda ID ', NEW.venda_id));
+CREATE TRIGGER `trg_nao_cancelar_finalizada` BEFORE UPDATE ON `vendas` FOR EACH ROW BEGIN
+    IF OLD.situacao_compra = 'finalizada' AND NEW.situacao_compra = 'cancelada' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Não é possível cancelar uma venda finalizada';
+    END IF;
 END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
--- Copiando estrutura para trigger fws.validar_estoque
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO';
+-- Copiando estrutura para trigger fws.trg_vendas_finalizadas
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
-CREATE TRIGGER `validar_estoque` BEFORE INSERT ON `movimentacao_estoque` FOR EACH ROW BEGIN
-    DECLARE estoque_atual INT DEFAULT 0;
-
-    SELECT estoque INTO estoque_atual 
-    FROM produtos 
-    WHERE id = NEW.produto_id;
-
-    IF NEW.tipo_movimentacao = 'saida' AND estoque_atual < NEW.quantidade THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Estoque insuficiente para essa saída';
+CREATE TRIGGER `trg_vendas_finalizadas` AFTER UPDATE ON `vendas` FOR EACH ROW BEGIN
+    IF NEW.situacao_compra = 'finalizada' AND OLD.situacao_compra = 'pre_compra' THEN
+        INSERT INTO movimentacao_estoque (produto_id, quantidade, tipo_movimentacao, venda_id, descricao)
+        SELECT produto_id, quantidade, 'saida', NEW.id, CONCAT('Venda ID ', NEW.id)
+        FROM itens_vendidos
+        WHERE venda_id = NEW.id;
     END IF;
 END//
 DELIMITER ;
