@@ -1,6 +1,6 @@
 @import url('../../Fonte_Config/fonte_geral.css');
 
-@media (max-width: 800px) {}
+
 
 * {
     margin: 0;
@@ -147,3 +147,5 @@ main img {
     height: 40px !important;
     margin: auto;
 }
+
+@media (max-width: 768px) {}
