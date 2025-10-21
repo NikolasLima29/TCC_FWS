@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `categorias` (
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.categorias: ~11 rows (aproximadamente)
+-- Copiando dados para a tabela fws.categorias: ~10 rows (aproximadamente)
 INSERT INTO `categorias` (`id`, `nome`) VALUES
 	(1, 'BEBIDAS ALCOÓLICAS'),
 	(2, 'BEBIDAS NÃO ALCOÓLICAS'),
@@ -132,9 +132,7 @@ CREATE TABLE IF NOT EXISTS `expiracoes_pre_compras` (
   CONSTRAINT `fk_exp_venda` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.expiracoes_pre_compras: ~1 rows (aproximadamente)
-INSERT INTO `expiracoes_pre_compras` (`id`, `usuario_id`, `venda_id`, `data_expiracao`) VALUES
-	(7, 2, 10, '2025-10-20 17:58:14');
+-- Copiando dados para a tabela fws.expiracoes_pre_compras: ~0 rows (aproximadamente)
 
 -- Copiando estrutura para tabela fws.fornecedores
 CREATE TABLE IF NOT EXISTS `fornecedores` (
@@ -252,7 +250,7 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   CONSTRAINT `produtos_ibfk_2` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.produtos: ~20 rows (aproximadamente)
+-- Copiando dados para a tabela fws.produtos: ~0 rows (aproximadamente)
 INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descricao`, `foto_produto`, `preco_venda`, `preco_compra`, `estoque`, `status`, `criado_em`) VALUES
 	(1, 'VINHO BUENO AIRES MALBE 750ML', 1, 1, 'Um vinho Malbec elegante, produzido com uvas selecionadas que garantem sabor intenso, aromas frutados e taninos suaves. Ideal para acompanhar carnes vermelhas e momentos especiais.', '/IMG_Produtos/1.png', 69.90, 54.90, 1, 'ativo', '2025-10-20 17:54:49'),
 	(2, 'VINHO FABRICANTE DE LOS MAN CABERNET SAUVIGNON BRANCO OU TINTO GF 750ML', 1, 1, 'Vinho Cabernet Sauvignon, disponível nas versões branco ou tinto, feito com uvas premium que trazem equilíbrio entre acidez e corpo, perfeito para harmonizar com queijos e pratos sofisticados.', '/IMG_Produtos/2.png', 69.90, 54.90, 3, 'ativo', '2025-10-20 17:54:49'),
@@ -301,7 +299,8 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `data_nascimento` date NOT NULL,
-  `cpf` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `telefone` varchar(50) NOT NULL DEFAULT '',
+  `cpf` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `email` varchar(100) NOT NULL,
   `senha` varchar(255) NOT NULL,
   `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -310,13 +309,13 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `google_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `cpf` (`cpf`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `cpf` (`cpf`),
+  UNIQUE KEY `telefone` (`telefone`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.usuarios: ~2 rows (aproximadamente)
-INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
-	(1, 'nikolas', '2007-04-29', '11111111111', 'nathally@gmail.com', '$2y$10$McU82llwKohDhO0HP3jYseTFLndusQV/kSm.Z.VqW/aj3NeScuxlW', '2025-10-08 16:20:15', '2025-10-08 13:21:55', 1, NULL),
-	(2, 'rafael', '2007-06-15', '22222222222', 'rafael11@gmail.com', '$2y$10$nE61x7RZrBoid/mxuoT2j.y3qleoLe90RfQbNox.tJFfwglF40pje', '2025-10-08 16:30:49', '2025-10-08 13:31:15', 1, NULL);
+-- Copiando dados para a tabela fws.usuarios: ~1 rows (aproximadamente)
+INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `telefone`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
+	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '11968544146', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-10-20 22:02:50', 1, NULL);
 
 -- Copiando estrutura para tabela fws.vendas
 CREATE TABLE IF NOT EXISTS `vendas` (
@@ -337,9 +336,7 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.vendas: ~1 rows (aproximadamente)
-INSERT INTO `vendas` (`id`, `funcionario_id`, `usuario_id`, `total`, `status_pagamento`, `situacao_compra`, `metodo_pagamento`, `tempo_chegada`, `data_criacao`, `data_finalizacao`) VALUES
-	(10, 1, 2, 10.00, 'pendente', 'cancelada', 'dinheiro', '00:01:00', '2025-10-20 17:55:35', NULL);
+-- Copiando dados para a tabela fws.vendas: ~0 rows (aproximadamente)
 
 -- Copiando estrutura para trigger fws.trg_estoque_insuficiente
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';

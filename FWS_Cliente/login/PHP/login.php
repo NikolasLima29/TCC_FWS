@@ -2,7 +2,6 @@
 session_start();
 $_SESSION['logado'] = false;
 
-
 // Conexão com o banco de dados
 include "../../conn.php";
 
@@ -16,13 +15,6 @@ $conn->set_charset("utf8");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $cpf_email = trim($_POST["cpf_email"] ?? '');
-    $cpf_email = trim($_POST["cpf_email"] ?? '');
-
-if (strpos($cpf_email, '@') === false) {
-    // Se não for e-mail, assume que é CPF e limpa os caracteres
-    $cpf_email = str_replace(['.', '-', ' '], '', $cpf_email);
-}
-
     $senha = $_POST["senha"] ?? '';
 
     if (empty($cpf_email) || empty($senha)) {
@@ -30,8 +22,13 @@ if (strpos($cpf_email, '@') === false) {
         exit;
     }
 
-    // Consulta na tabela de USUÁRIOS
-    $query = "SELECT * FROM usuarios WHERE cpf = ? OR email = ?";
+    // Se for telefone, limpa caracteres especiais
+    if (filter_var($cpf_email, FILTER_VALIDATE_EMAIL) === false) {
+        $cpf_email = preg_replace('/[^\d]/', '', $cpf_email); // deixa só números
+    }
+
+    // Consulta na tabela de usuarios buscando por telefone ou email
+    $query = "SELECT * FROM usuarios WHERE telefone = ? OR email = ?";
     $stmt = $conn->prepare($query);
 
     if (!$stmt) {
@@ -54,7 +51,7 @@ if (strpos($cpf_email, '@') === false) {
         $usuario = $result->fetch_assoc();
 
         if (password_verify($senha, $usuario['senha'])) {
-            // Login bem-sucedido: registra informações na sessão
+            // Login bem-sucedido: registra sessão
             $_SESSION['usuario_id'] = $usuario['id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
             $_SESSION['usuario_email'] = $usuario['email'];
@@ -68,12 +65,10 @@ if (strpos($cpf_email, '@') === false) {
             header("Location: ../HTML/login.html?status=sucesso&msg=Login realizado com sucesso");
             exit;
         } else {
-            // Senha incorreta
             header("Location: ../HTML/login.html?status=erro&msg=Senha incorreta ou usuário não encontrado");
             exit;
         }
     } else {
-        // Usuário não encontrado
         header("Location: ../HTML/login.html?status=erro&msg=Senha incorreta ou usuário não encontrado");
         exit;
     }
