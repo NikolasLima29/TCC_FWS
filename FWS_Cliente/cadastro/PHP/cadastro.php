@@ -13,21 +13,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $cpf = isset($_POST['cpf']) ? preg_replace('/[^0-9]/', '', $_POST['cpf']) : '';
         $telefone = isset($_POST['telefone']) ? preg_replace('/\D/', '', trim($_POST['telefone'])) : '';
 
+        // Função para montar query string com segurança
+        function montarQS($msg, $dados) {
+            $params = array_merge([
+                'status' => 'erro',
+                'msg' => $msg
+            ], $dados);
+            return http_build_query($params);
+        }
+
+        // Array com dados para repassar
+        $dados_form = [
+            'nome' => $nome,
+            'data' => $data,
+            'email' => $email,
+            'cpf' => $cpf,
+            'telefone' => $telefone
+        ];
+
         // Verifica se o usuário aceitou os termos
         if (!isset($_POST['termos'])) {
-            header("Location: ../HTML/cadastro.html?status=erro&msg=" . urlencode("Você deve concordar com os termos e políticas."));
+            $qs = montarQS("Você deve concordar com os termos e políticas.", $dados_form);
+            header("Location: ../HTML/cadastro.html?$qs");
             exit();
         }
 
         // Validação básica
         if (empty($nome) || empty($data) || empty($email) || empty($senha) || empty($con_senha) || empty($cpf) || empty($telefone)) {
-            header("Location: ../HTML/cadastro.html?status=erro&msg=" . urlencode("Todos os campos são obrigatórios."));
+            $qs = montarQS("Todos os campos são obrigatórios.", $dados_form);
+            header("Location: ../HTML/cadastro.html?$qs");
             exit();
         }
 
         // Verifica se as senhas conferem
         if ($senha !== $con_senha) {
-            header("Location: ../HTML/cadastro.html?status=erro&msg=" . urlencode("senhas não coincidem, tente novamente"));
+            $qs = montarQS("senhas não coincidem, tente novamente", $dados_form);
+            header("Location: ../HTML/cadastro.html?$qs");
             exit();
         }
 
@@ -56,7 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_telefone->close();
 
         if ($email_existe || $cpf_existe || $telefone_existe) {
-            header("Location: ../HTML/cadastro.html?status=erro&msg=" . urlencode("E-mail, CPF ou Telefone já cadastrados."));
+            $qs = montarQS("E-mail, CPF ou Telefone já cadastrados.", $dados_form);
+            header("Location: ../HTML/cadastro.html?$qs");
             exit();
         }
 
@@ -71,7 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: ../HTML/cadastro.html?status=sucesso&msg=" . urlencode("Cadastro realizado com sucesso!"));
             exit();
         } else {
-            header("Location: ../HTML/cadastro.html?status=erro&msg=" . urlencode("Erro ao cadastrar usuário."));
+            $qs = montarQS("Erro ao cadastrar usuário.", $dados_form);
+            header("Location: ../HTML/cadastro.html?$qs");
             exit();
         }
 

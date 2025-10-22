@@ -1,59 +1,75 @@
+<?php
+session_start();
+?>
+
 <!doctype html>
 <html lang="pt-BR">
 
 <head>
     <title>Sobre Nós</title>
     <link rel="icon" type="image/x-icon" href="../../cadastro/IMG/Shell.png">
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS v5.2.1 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
-    <link rel="stylesheet" href="../CSS/sobre_nos.css">
+    <!-- Bootstrap CSS v5.2.1 for consistency -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
 
-    <!-- Font Awesome (ícones das redes sociais) -->
+    <link rel="stylesheet" href="../CSS/sobre_nos.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-    <!-- MDBootstrap (efeitos de botão ripple, opcional) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
-
 </head>
 
 <body>
-    <!-- Cabeçalho -->
+    <!-- Header with same nav, style, and behavior -->
     <header id="header">
-        <!-- Logo -->
         <div class="logo">
             <a href="../../index.php">
                 <img src="../../index/IMG/shell_select.png" alt="logo" />
             </a>
         </div>
 
-        <!-- Botão do menu hambúrguer (aparece apenas no mobile) -->
         <button class="menu-toggle" aria-label="Abrir menu">
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- Menu -->
-        <nav class="nav-links">
-            <ul class="ul">
-                <li><a href="../../produto/HTML/produto.html">Produtos</a></li>
-                <li><a href="sobre_nos.html">Sobre nós</a></li>
-            </ul>
-        </nav>
+         <nav>
+      <ul class="ul align-items-center">
+        <li>
+          <a href="../../produto/HTML/produto.html">Produtos</a>
+        </li>
+        <li>
+          <form class="d-flex" role="search" action="busca.php" method="get" style="margin: 0 10px;">
+            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..."
+              aria-label="Pesquisar">
+            <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+        </li>
+        <li>
+          <a href="../../tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a>
+        </li>
+      </ul>
+    </nav>
 
-        <!-- Carrinho -->
         <div class="carrinho">
             <a href="#">
                 <img src="../../index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
             </a>
         </div>
+
+        <div id="bem-vindo">
+            <?php
+            if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
+                echo "Bem-vindo, " . htmlspecialchars($_SESSION['usuario_nome']);
+            } else {
+                echo "Bem-vindo.";
+            }
+            ?>
+        </div>
     </header>
-
-
-    <main>
+<main>
         <h1 id="sobre_nos">Sobre Nós</h1>
         <p>
             A Shell Select representa a evolução das lojas de conveniência no Brasil, trazendo praticidade, qualidade e
@@ -144,53 +160,47 @@
         </div>
         <!-- Copyright -->
     </footer>
-
-    <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+    <!-- Bootstrap JS and Popper for 5.2.1 -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+        integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
     </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const toggleButton = document.querySelector('.menu-toggle');
-            const navLinks = document.querySelector('.nav-links');
+            const navLinks = document.querySelector('nav ul.ul');
 
-            if (!toggleButton || !navLinks) return; // segurança
+            if (!toggleButton || !navLinks) return;
 
-            // Inicializa estado
             toggleButton.setAttribute('aria-expanded', 'false');
 
-            // Função para abrir/fechar menu
             function setMenu(open) {
                 if (open) {
                     navLinks.classList.add('active');
                     toggleButton.setAttribute('aria-expanded', 'true');
-                    toggleButton.innerHTML = '<i class="fas fa-times"></i>'; // X
+                    toggleButton.innerHTML = '<i class="fas fa-times"></i>';
                     navLinks.setAttribute('aria-hidden', 'false');
                 } else {
                     navLinks.classList.remove('active');
                     toggleButton.setAttribute('aria-expanded', 'false');
-                    toggleButton.innerHTML = '<i class="fas fa-bars"></i>'; // hambúrguer
+                    toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
                     navLinks.setAttribute('aria-hidden', 'true');
                 }
             }
 
-            // Toggle ao clicar no botão
             toggleButton.addEventListener('click', (e) => {
                 e.stopPropagation();
                 setMenu(!navLinks.classList.contains('active'));
             });
 
-            // Fecha quando clicar em qualquer link do menu (útil em mobile)
             navLinks.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => setMenu(false));
             });
 
-            // Fecha ao clicar fora do menu
             document.addEventListener('click', (e) => {
                 if (!navLinks.classList.contains('active')) return;
                 if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
@@ -198,28 +208,77 @@
                 }
             });
 
-            // Fecha ao pressionar Esc
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && navLinks.classList.contains('active')) {
                     setMenu(false);
                 }
             });
 
-            // Se a janela for redimensionada para desktop, garante que o menu fique visível (ou oculto corretamente)
             window.addEventListener('resize', () => {
                 if (window.innerWidth > 768) {
                     navLinks.classList.remove('active');
                     toggleButton.setAttribute('aria-expanded', 'false');
                     toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
-                    navLinks.setAttribute('aria-hidden',
-                    'false'); // nav sempre visível no desktop via CSS
+                    navLinks.setAttribute('aria-hidden', 'false');
                 } else {
                     navLinks.setAttribute('aria-hidden', 'true');
                 }
             });
-
         });
     </script>
+
+    <style>
+        #header {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #c40000;
+            color: white;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        nav {
+            margin-left: 40px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .carrinho {
+            margin-left: auto;
+            margin-right: 20px;
+        }
+
+        .carrinho img {
+            height: 25px;
+        }
+
+        #bem-vindo {
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+        }
+
+        header nav ul li a {
+            font-size: 24px;
+        }
+    </style>
 
 </body>
 

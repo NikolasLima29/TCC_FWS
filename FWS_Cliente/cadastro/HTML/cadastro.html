@@ -93,43 +93,6 @@
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
 
 
-     
-  <script>
-    // Máscara de CPF
-    document.getElementById("cpf").addEventListener("input", function (e) {
-      let value = e.target.value.replace(/\D/g, "");
-      if (value.length > 11) value = value.slice(0, 11);
-      value = value.replace(/(\d{3})(\d)/, "$1.$2");
-      value = value.replace(/(\d{3})(\d)/, "$1.$2");
-      value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-      e.target.value = value;
-    });
-
-    // Máscara de telefone
-    document.getElementById("telefone").addEventListener("input", function (e) {
-      let value = e.target.value.replace(/\D/g, "");
-      if (value.length > 11) value = value.slice(0, 11);
-      value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
-      value = value.replace(/(\d{5})(\d{1,4})$/, "$1-$2");
-      e.target.value = value;
-    });
-
-    // Validação de senha
-    document.getElementById("senha").addEventListener("input", function () {
-      const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}$/;
-      this.setCustomValidity(regex.test(this.value) ? "" : "A senha deve ter 6 caracteres, uma maiúscula, um número e um símbolo.");
-    });
-
-    // Validação de idade mínima
-    document.getElementById("data").addEventListener("input", function () {
-      const nasc = new Date(this.value);
-      const hoje = new Date();
-      let idade = hoje.getFullYear() - nasc.getFullYear();
-      const m = hoje.getMonth() - nasc.getMonth();
-      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
-      this.setCustomValidity(idade < 18 ? "Você deve ter pelo menos 18 anos." : "");
-    });
-  </script>
 
 
   <script>
@@ -189,46 +152,100 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const params = new URLSearchParams(window.location.search);
-      const status = params.get("status");
-      const msg = params.get("msg");
-      const alerta = document.getElementById("alertaCadastro");
-      const form = document.querySelector("form");
-      if (status && msg) {
-        alerta.classList.remove("d-none", "alert-success", "alert-danger");
-        if (status === "sucesso") {
-          alerta.classList.add("alert", "alert-success");
-          alerta.innerHTML = "✅ " + decodeURIComponent(msg);
-          setTimeout(() => {
-            alerta.innerHTML += `
-            <div class="mt-1 d-flex justify-content-center align-items-center">
-              <div class="spinner-border text-dark me-2" role="status" aria-hidden="true"></div>
-              <span class="texto-spinner">Redirecionando...</span>
-            </div>
-          `;
-          }, 2500);
-          setTimeout(() => {
-            window.location.href = "../../login/HTML/login.html";
-          }, 3500);
-        } else {
-          alerta.classList.add("alert", "alert-danger");
-          alerta.innerHTML = "❌ " + decodeURIComponent(msg);
-          const msgDecoded = decodeURIComponent(msg);
-          if (msgDecoded === "senhas não coincidem, tente novamente") {
-            form.querySelector("#senha").value = "";
-            form.querySelector("#con_senha").value = "";
-            form.querySelector("#senha").focus();
-          } else if (msgDecoded === "E-mail ou CPF já cadastrados" || msgDecoded === "E-mail, CPF ou Telefone já cadastrados.") {
-            form.reset();
-          }
-          // Outros erros não limpam campos
-        }
+window.onload = function() {
+  // Preencher inputs pelos parâmetros da URL
+  const params = new URLSearchParams(window.location.search);
+  ['nome', 'data', 'email', 'cpf', 'telefone'].forEach(field => {
+    const val = params.get(field);
+    if (val) {
+      const input = document.getElementById(field);
+      if (input) input.value = val;
+    }
+  });
+
+  // Resto do seu código para mostrar alertas e manipular localStorage...
+  const status = params.get("status");
+  const msg = params.get("msg");
+  const alerta = document.getElementById("alertaCadastro");
+  const form = document.querySelector("form");
+
+  if (status && msg) {
+    alerta.classList.remove("d-none", "alert-success", "alert-danger");
+
+    if (status === "sucesso") {
+      alerta.classList.add("alert", "alert-success");
+      alerta.innerHTML = "✅ " + decodeURIComponent(msg);
+
+      localStorage.removeItem("formData");
+
+      setTimeout(() => {
+        alerta.innerHTML += `
+          <div class="mt-1 d-flex justify-content-center align-items-center">
+            <div class="spinner-border text-dark me-2" role="status" aria-hidden="true"></div>
+            <span class="texto-spinner">Redirecionando...</span>
+          </div>
+        `;
+      }, 2500);
+      setTimeout(() => {
+        window.location.href = "../../login/HTML/login.html";
+      }, 3500);
+    } else {
+      alerta.classList.add("alert", "alert-danger");
+      alerta.innerHTML = "❌ " + decodeURIComponent(msg);
+      const msgDecoded = decodeURIComponent(msg);
+
+      if (msgDecoded === "senhas não coincidem, tente novamente") {
+        form.querySelector("#senha").value = "";
+        form.querySelector("#con_senha").value = "";
+        form.querySelector("#senha").focus();
       }
-    });
+      // Para os erros de cadastro duplicado, não limpar o formulário (apenas mostrar erro)
+      else if (msgDecoded === "E-mail ou CPF já cadastrados" || msgDecoded === "E-mail, CPF ou Telefone já cadastrados.") {
+        // Nada aqui para não apagar inputs
+      }
+    }
+  }
+};
+
   </script>
 
+     
+  <script>
+    // Máscara de CPF
+    document.getElementById("cpf").addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 11) value = value.slice(0, 11);
+      value = value.replace(/(\d{3})(\d)/, "$1.$2");
+      value = value.replace(/(\d{3})(\d)/, "$1.$2");
+      value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      e.target.value = value;
+    });
 
+    // Máscara de telefone
+    document.getElementById("telefone").addEventListener("input", function (e) {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length > 11) value = value.slice(0, 11);
+      value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+      value = value.replace(/(\d{5})(\d{1,4})$/, "$1-$2");
+      e.target.value = value;
+    });
+
+    // Validação de senha
+    document.getElementById("senha").addEventListener("input", function () {
+      const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}$/;
+      this.setCustomValidity(regex.test(this.value) ? "" : "A senha deve ter 6 caracteres, uma maiúscula, um número e um símbolo.");
+    });
+
+    // Validação de idade mínima
+    document.getElementById("data").addEventListener("input", function () {
+      const nasc = new Date(this.value);
+      const hoje = new Date();
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+      this.setCustomValidity(idade < 18 ? "Você deve ter pelo menos 18 anos." : "");
+    });
+  </script>
 
 
 </body>
