@@ -1,3 +1,17 @@
+<?php  
+include "..\..\conn.php";
+
+if (!$conn){
+  die ("conexão falhou: " . mysqli_connect_error());
+
+  $sql = "SELECT * FROM produto";
+  $result = $conn->query($sql);
+
+  if(!result){
+    echo "Erro na consulta: " . $conn->error;}
+  }
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -29,7 +43,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background-color: white;
+      background-color: black;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     thead {
@@ -103,8 +117,7 @@
 
 </body>
 </html>
-
-<?php 
+<?php
 
 
 
