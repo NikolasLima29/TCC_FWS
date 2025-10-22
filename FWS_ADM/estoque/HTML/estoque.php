@@ -20,7 +20,7 @@
       margin-bottom: 15px;
       padding: 8px;
       font-size: 16px;
-      border: 2px solid #007BFF;
+      border: 2px solid #f4a01d;
       border-radius: 4px;
       display: block;
       margin-left: auto;
@@ -33,7 +33,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     thead {
-      background-color: #007BFF;
+      background-color: #f4a01d;
       color: white;
     }
     th, td {
@@ -65,8 +65,8 @@
       <tr>
         <th>ID</th>
         <th>Nome</th>
-        <th>Id_Categoria</th>
-        <th>Fornecedor_ID</th>
+        <th>Categoria</th>
+        <th>Fornecedor</th>
         <th>Descrição</th>
         <th>Foto</th>
         <th>Preço</th>
