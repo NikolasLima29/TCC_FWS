@@ -87,7 +87,7 @@ session_start();
     <nav>
       <ul class="ul align-items-center">
         <li>
-          <a href="produto/HTML/produto.html">Produtos</a>
+          <a href="produto/HTML/produto.php">Produtos</a>
         </li>
         <li>
           <form class="d-flex" role="search" action="busca.php" method="get" style="margin: 0 10px;">
@@ -113,15 +113,18 @@ session_start();
     </div>
 
     <!-- Mensagem de boas-vindas -->
-    <div id="bem-vindo">
-      <?php
-      if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
-        echo "Bem-vindo, " . htmlspecialchars($_SESSION['usuario_nome']);
-      } else {
-        echo "Bem-vindo.";
-      }
-      ?>
-    </div>
+ <div id="bem-vindo">
+  <?php
+  if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
+    $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
+    $primeiroNome = explode(' ', $nomeCompleto)[0];
+    echo "Bem-vindo(a), " . $primeiroNome;
+  } else {
+    echo "Bem-vindo(a).";
+  }
+  ?>
+</div>
+
   </header>
 
   <!-- Primeiro corpo -->

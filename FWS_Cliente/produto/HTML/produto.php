@@ -6,7 +6,7 @@ session_start();
 <html lang="pt-BR">
 
 <head>
-    <title>Sobre Nós</title>
+    <title>Produtos</title>
     <link rel="icon" type="image/x-icon" href="../../cadastro/IMG/Shell.png">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -15,7 +15,7 @@ session_start();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" />
 
-    <link rel="stylesheet" href="../CSS/sobre_nos.css" />
+    <link rel="stylesheet" href="../CSS/produto.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
@@ -33,25 +33,25 @@ session_start();
             <i class="fas fa-bars"></i>
         </button>
 
-         <nav>
-      <ul class="ul align-items-center">
-        <li>
-          <a href="../../produto/HTML/produto.php">Produtos</a>
-        </li>
-        <li>
-          <form class="d-flex" role="search" action="busca.php" method="get" style="margin: 0 10px;">
-            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..."
-              aria-label="Pesquisar">
-            <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
-              <i class="bi bi-search"></i>
-            </button>
-          </form>
-        </li>
-        <li>
-          <a href="../../tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a>
-        </li>
-      </ul>
-    </nav>
+        <nav>
+            <ul class="ul align-items-center">
+                <li>
+                    <a href="../../produto/HTML/produto.php">Produtos</a>
+                </li>
+                <li>
+                    <form class="d-flex" role="search" action="busca.php" method="get" style="margin: 0 10px;">
+                        <input class="form-control form-control-sm me-2" type="search" name="q"
+                            placeholder="Pesquisar..." aria-label="Pesquisar">
+                        <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <a href="../../tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a>
+                </li>
+            </ul>
+        </nav>
 
         <div class="carrinho">
             <a href="#">
@@ -59,82 +59,24 @@ session_start();
             </a>
         </div>
 
-    <div id="bem-vindo">
-  <?php
-  if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
-    $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
-    $primeiroNome = explode(' ', $nomeCompleto)[0];
-    echo "Bem-vindo(a), " . $primeiroNome;
-  } else {
-    echo "Bem-vindo(a).";
-  }
-  ?>
-</div>
+        <div id="bem-vindo">
+            <?php
+            if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
+                $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
+                $primeiroNome = explode(' ', $nomeCompleto)[0];
+                echo "Bem-vindo(a), " . $primeiroNome;
+            } else {
+                echo "Bem-vindo(a).";
+            }
+            ?>
+        </div>
 
 
     </header>
-<main>
-        <h1 id="sobre_nos">Sobre Nós</h1>
-        <p>
-            A Shell Select representa a evolução das lojas de conveniência no Brasil, trazendo praticidade, qualidade e
-            um ambiente acolhedor para o dia a dia. Desde que as primeiras lojas surgiram, nos anos 1920 nos Estados
-            Unidos, o conceito de conveniência passou a significar mais do que apenas produtos rápidos: tornou-se uma
-            extensão da rotina urbana.
-        </p>
-        <p>
-            No Brasil, as lojas de conveniência ganharam força nos anos 1990, e a Shell foi uma das pioneiras ao
-            transformar os postos de combustíveis em pontos completos de serviço. Hoje, a Shell Select combina o que há
-            de melhor em snacks, bebidas, cafés e refeições rápidas, com um atendimento pensado para oferecer mais que
-            uma compra rápida — uma experiência prática e agradável a qualquer hora do dia.
-        </p>
-        <div id="carouselExample" class="carousel slide">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="../IMG/exterior1.jpeg" class="d-block w-100" id="carrossel" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../IMG/interior1.jpeg" class="d-block w-100" id="carrossel" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../IMG/interior2.jpeg" class="d-block w-100" id="carrossel" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../IMG/interior3.jpeg" class="d-block w-100" id="carrossel" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../IMG/interior4.jpeg" class="d-block w-100" id="carrossel" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../IMG/interior5.jpeg" class="d-block w-100" id="carrossel" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../IMG/interior6.jpeg" class="d-block w-100" id="carrossel" alt="...">
-                </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
-        </div>
-        <p>
-            Você sabia que a ideia de loja de conveniência surgiu porque as pessoas queriam comprar o essencial sem
-            precisar entrar em um supermercado enorme? Lá nos anos 20, nos EUA, nasceu esse conceito — e desde então ele
-            só cresceu!
-        </p>
-        <p>
-            Aqui no Brasil, a Shell Select reinventou o que significa parar no posto. É café quente, snack gostoso,
-            wi-fi e aquele atendimento que salva o seu corre. Seja no caminho do trabalho, voltando da balada ou só
-            dando uma escapada rápida, a Shell Select tá sempre ali, pronta pra te atender com qualidade e
-            praticidade.Aqui no Brasil, a Shell Select reinventou o que significa parar no posto. É café quente, snack
-            gostoso, wi-fi e aquele atendimento que salva o seu corre. Seja no caminho do trabalho, voltando da balada
-            ou só dando uma escapada rápida, a Shell Select tá sempre ali, pronta pra te atender com qualidade e
-            praticidade.
-        </p>
-        <img src="../IMG/interior7.jpeg" id="imagem">
+    <main>
+
+
+
     </main>
 
     <footer class="text-center bg-body-tertiary">
@@ -167,11 +109,11 @@ session_start();
     <!-- Bootstrap JS and Popper for 5.2.1 -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
         integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-    </script>
+        </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
         integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-    </script>
+        </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
