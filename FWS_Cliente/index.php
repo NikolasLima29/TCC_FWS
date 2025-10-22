@@ -77,6 +77,11 @@ nav ul li a {
       </a>
     </div>
 
+    <!-- Botão do menu hambúrguer (aparece apenas no mobile) -->
+    <button class="menu-toggle" aria-label="Abrir menu">
+      <i class="fas fa-bars"></i>
+    </button>
+
     <!-- Menu -->
     <nav>
       <ul class="ul">
@@ -214,6 +219,74 @@ nav ul li a {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
   </script>
+
+  <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+
+            if (!toggleButton || !navLinks) return; // segurança
+
+            // Inicializa estado
+            toggleButton.setAttribute('aria-expanded', 'false');
+
+            // Função para abrir/fechar menu
+            function setMenu(open) {
+                if (open) {
+                    navLinks.classList.add('active');
+                    toggleButton.setAttribute('aria-expanded', 'true');
+                    toggleButton.innerHTML = '<i class="fas fa-times"></i>'; // X
+                    navLinks.setAttribute('aria-hidden', 'false');
+                } else {
+                    navLinks.classList.remove('active');
+                    toggleButton.setAttribute('aria-expanded', 'false');
+                    toggleButton.innerHTML = '<i class="fas fa-bars"></i>'; // hambúrguer
+                    navLinks.setAttribute('aria-hidden', 'true');
+                }
+            }
+
+            // Toggle ao clicar no botão
+            toggleButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setMenu(!navLinks.classList.contains('active'));
+            });
+
+            // Fecha quando clicar em qualquer link do menu (útil em mobile)
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => setMenu(false));
+            });
+
+            // Fecha ao clicar fora do menu
+            document.addEventListener('click', (e) => {
+                if (!navLinks.classList.contains('active')) return;
+                if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
+                    setMenu(false);
+                }
+            });
+
+            // Fecha ao pressionar Esc
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+                    setMenu(false);
+                }
+            });
+
+            // Se a janela for redimensionada para desktop, garante que o menu fique visível (ou oculto corretamente)
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    navLinks.classList.remove('active');
+                    toggleButton.setAttribute('aria-expanded', 'false');
+                    toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+                    navLinks.setAttribute('aria-hidden',
+                    'false'); // nav sempre visível no desktop via CSS
+                } else {
+                    navLinks.setAttribute('aria-hidden', 'true');
+                }
+            });
+
+        });
+    </script>
+
 </body>
 
 </html>
