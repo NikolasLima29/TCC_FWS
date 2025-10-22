@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $senha = $_POST["senha"] ?? '';
 
     if (empty($cpf_email) || empty($senha)) {
-        header("Location: ../../index.html?status=erro&msg=Preencha todos os campos");
+        header("Location: ../HTML/login.html?status=erro&msg=Preencha todos os campos");
         exit;
     }
 
