@@ -82,18 +82,3 @@ a:hover {
 nav ul li a:hover::after {
     width: 100%;
 }
-
-.historico {
-    background: #d7301f;
-    color: white;
-    padding: 20px 0;
-    text-align: left;
-    padding-left: 60px;
-}
-
-.historico h1 {
-    font-size: 2.0rem;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
