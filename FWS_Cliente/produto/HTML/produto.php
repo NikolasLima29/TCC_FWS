@@ -1,6 +1,42 @@
 <?php
 session_start();
+include "../../conn.php";
+
+$produtos_por_pagina = 30;
+$pagina_atual = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$offset = ($pagina_atual - 1) * $produtos_por_pagina;
+
+// Captura o termo de busca enviada pelo formulário "search" e salva na sessão
+if (isset($_GET['q'])) {
+    $_SESSION['busca'] = trim($_GET['q']);
+}
+// Recupera o termo salvo na sessão, ou vazio se não existir
+$busca = isset($_SESSION['busca']) ? $_SESSION['busca'] : '';
+
+// Monta a parte fixa da query SQL
+$sql_base = "FROM produtos p 
+             INNER JOIN categorias c ON p.categoria_id = c.id 
+             WHERE p.status = 'ativo'";
+
+// Se houver termo de busca, adiciona condição LIKE seguro
+if ($busca !== '') {
+    $busca_esc = mysqli_real_escape_string($conn, $busca);
+    $sql_base .= " AND p.nome LIKE '%$busca_esc%'";
+}
+
+// Consulta total de produtos conforme filtro
+$sql_total = "SELECT COUNT(*) as total $sql_base";
+$result_total = mysqli_query($conn, $sql_total);
+$total_produtos = mysqli_fetch_assoc($result_total)['total'];
+$total_paginas = ceil($total_produtos / $produtos_por_pagina);
+
+// Consulta produtos paginados conforme filtro e pagina atual
+$sql = "SELECT p.id, p.nome, p.preco_venda, p.foto_produto, c.nome AS categoria, c.cor 
+        $sql_base LIMIT $produtos_por_pagina OFFSET $offset";
+
+$resultado = mysqli_query($conn, $sql);
 ?>
+
 
 <!doctype html>
 <html lang="pt-BR">
@@ -18,8 +54,66 @@ session_start();
     <link rel="stylesheet" href="../CSS/produto.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-</head>
+  
+  
+  
+    <!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- JQuery UI -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<!-- JQuery UI css -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+
+</head>
+<script>
+$(function() {
+  var autocomplete = $("#search").autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: '../../produto/PHP/api-produtos.php',
+        dataType: 'json',
+        data: { q: request.term },
+        success: function(data) {
+          response(data);
+        }
+      });
+    },
+    minLength: 2,
+    select: function(event, ui) {
+      window.location.href = '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+    }
+  }).data('ui-autocomplete') || $("#search").data('autocomplete');
+
+  if (autocomplete) {
+    autocomplete._renderItem = function(ul, item) {
+      return $("<li>")
+        .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" + item.label + "</div>")
+        .appendTo(ul);
+    };
+  }
+});
+
+
+</script>
+
+<style>.ui-menu .ui-menu-item.ui-state-focus,
+.ui-menu .ui-menu-item:hover {
+    background-color: #FFD100 !important;
+    background-image: none !important;
+    color: #000 !important;
+    cursor: pointer;
+}
+
+
+
+.ui-menu .ui-menu-item.ui-state-focus,
+.ui-menu .ui-menu-item:hover {
+    box-shadow: none !important;
+}
+
+</style>
 <body>
     <!-- Header with same nav, style, and behavior -->
     <header id="header">
@@ -39,13 +133,15 @@ session_start();
                     <a href="../../produto/HTML/produto.php">Produtos</a>
                 </li>
                 <li>
-                    <form class="d-flex" role="search" action="busca.php" method="get" style="margin: 0 10px;">
-                        <input class="form-control form-control-sm me-2" type="search" name="q"
+                    <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get"
+                        style="margin: 0 10px;">
+                        <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
                             placeholder="Pesquisar..." aria-label="Pesquisar">
                         <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
                             <i class="bi bi-search"></i>
                         </button>
                     </form>
+
                 </li>
                 <li>
                     <a href="../../tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a>
@@ -73,11 +169,143 @@ session_start();
 
 
     </header>
-    <main>
+    <main class="my-5">
+        <div class="container">
+            <!-- Barra de pesquisa -->
+            <form class="d-flex mb-4" role="search" method="get" action="">
+                <input id="search"class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
+                    aria-label="Pesquisar" value="<?php echo htmlspecialchars($busca); ?>" />
+                <button class="btn btn-warning" type="submit">Buscar</button>
+            </form>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4 justify-content-start">
+
+                <?php
+                // Se não encontrar produtos com o termo pesquisado
+                if ($total_produtos == 0 && $busca !== '') {
+                    echo '<p class="text-center w-100" style="margin-top: 40px;">Nenhum produto encontrado para "'
+                        . htmlspecialchars($busca) . '". Mas veja nossos outros produtos:</p>';
+
+                    // Faz a consulta sem filtro
+                    $sql_sem_filtro = "SELECT p.id, p.nome, p.preco_venda, p.foto_produto, c.nome AS categoria, c.cor
+                                   FROM produtos p
+                                   INNER JOIN categorias c ON p.categoria_id = c.id
+                                   WHERE p.status = 'ativo'
+                                   LIMIT $produtos_por_pagina OFFSET $offset";
+
+                    $resultado_sem_filtro = mysqli_query($conn, $sql_sem_filtro);
+
+                    // Atualiza total e total_paginas baseados na consulta sem filtro
+                    $sql_total_sem_filtro = "SELECT COUNT(*) as total FROM produtos WHERE status = 'ativo'";
+                    $resultado_total_sem_filtro = mysqli_query($conn, $sql_total_sem_filtro);
+                    $total_produtos = mysqli_fetch_assoc($resultado_total_sem_filtro)['total'];
+                    $total_paginas = ceil($total_produtos / $produtos_por_pagina);
+
+                    // Exibe os produtos sem filtro
+                    while ($produto = mysqli_fetch_assoc($resultado_sem_filtro)) {
+                        $id = $produto["id"];
+                        $nome = ucwords(strtolower(htmlspecialchars($produto["nome"])));
+                        $preco = number_format($produto["preco_venda"], 2, ',', '.');
+                        $foto = htmlspecialchars($produto["foto_produto"]);
+                        $categoria = htmlspecialchars($produto["categoria"]);
+                        $cor = htmlspecialchars($produto["cor"]);
+
+                        if (empty($foto)) {
+                            $foto = "/TCC_FWS/IMG_Produtos/sem_imagem.png";
+                        }
+
+                        echo '
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="' . $foto . '" class="card-img-top" alt="' . $nome . '">
+                            <div class="card-body">
+                                <h6 class="card-title mb-2 fs-7" style="font-weight: normal !important;">
+                                    <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                                       style="text-decoration: none; color: inherit;">' . $nome . '</a>
+                                </h6>
+                                <p class="card-text mb-2" style="font-weight: bold; color: green;">R$ ' . $preco . '</p>
+                                <span class="badge" style="background-color: ' . $cor . '; color: white; padding: 6px 10px; border-radius: 12px;">' . $categoria . '</span>
+                                <div class="mt-3">
+                                    <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                                       class="btn btn-primary btn-sm" style="background:#c40000; border-color:#c40000;">Ver mais</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                    }
+
+                } else {
+                    // Exibe resultados normais da busca (ou todos produtos se busca vazia)
+                    if (mysqli_num_rows($resultado) > 0) {
+                        while ($produto = mysqli_fetch_assoc($resultado)) {
+                            $id = $produto["id"];
+                            $nome = ucwords(strtolower(htmlspecialchars($produto["nome"])));
+                            $preco = number_format($produto["preco_venda"], 2, ',', '.');
+                            $foto = htmlspecialchars($produto["foto_produto"]);
+                            $categoria = htmlspecialchars($produto["categoria"]);
+                            $cor = htmlspecialchars($produto["cor"]);
+
+                            if (empty($foto)) {
+                                $foto = "/TCC_FWS/IMG_Produtos/sem_imagem.png";
+                            }
+
+                            echo '
+                        <div class="col">
+                            <div class="card h-100">
+                                <img src="' . $foto . '" class="card-img-top" alt="' . $nome . '">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-2 fs-7" style="font-weight: normal !important;">
+                                        <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                                           style="text-decoration: none; color: inherit;">' . $nome . '</a>
+                                    </h6>
+                                    <p class="card-text mb-2" style="font-weight: bold; color: green;">R$ ' . $preco . '</p>
+                                    <span class="badge" style="background-color: ' . $cor . '; color: white; padding: 6px 10px; border-radius: 12px;">' . $categoria . '</span>
+                                    <div class="mt-3">
+                                        <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                                           class="btn btn-primary btn-sm" style="background:#c40000; border-color:#c40000;">Ver mais</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>';
+                        }
+                    }
+                }
+                ?>
+            </div>
 
 
+            <?php
+            // Paginação com preservação do termo busca na URL
+            $pagina_query = $busca !== '' ? '&q=' . urlencode($busca) : '';
 
+            echo '<nav aria-label="Page navigation">';
+            echo '<ul class="pagination justify-content-center mt-4">';
+
+            // Link anterior
+            if ($pagina_atual > 1) {
+                echo '<li class="page-item"><a class="page-link" href="?page=' . ($pagina_atual - 1) . $pagina_query . '">Anterior</a></li>';
+            } else {
+                echo '<li class="page-item disabled"><span class="page-link">Anterior</span></li>';
+            }
+
+            // Links numéricos das páginas (pode limitar a algumas, se desejar)
+            for ($i = 1; $i <= $total_paginas; $i++) {
+                $active = ($i == $pagina_atual) ? 'active' : '';
+                echo '<li class="page-item ' . $active . '"><a class="page-link" href="?page=' . $i . $pagina_query . '">' . $i . '</a></li>';
+            }
+
+            // Link próximo
+            if ($pagina_atual < $total_paginas) {
+                echo '<li class="page-item"><a class="page-link" href="?page=' . ($pagina_atual + 1) . $pagina_query . '">Próximo</a></li>';
+            } else {
+                echo '<li class="page-item disabled"><span class="page-link">Próximo</span></li>';
+            }
+            echo '</ul></nav>';
+            ?>
+        </div>
     </main>
+
+
 
     <footer class="text-center bg-body-tertiary">
         <div class="container pt-4">
@@ -224,7 +452,16 @@ session_start();
         header nav ul li a {
             font-size: 24px;
         }
+
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        }
     </style>
+
+
 
 </body>
 

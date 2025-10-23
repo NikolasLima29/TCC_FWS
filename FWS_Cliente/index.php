@@ -16,6 +16,18 @@ session_start();
   <link rel="stylesheet" href="index/CSS/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
 
+
+  
+    <!-- JQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- JQuery UI -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<!-- JQuery UI css -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+
+
   <style>
     #header {
       display: flex;
@@ -66,6 +78,10 @@ session_start();
     }
   </style>
 
+
+
+
+
 </head>
 
 <body>
@@ -90,13 +106,14 @@ session_start();
           <a href="produto/HTML/produto.php">Produtos</a>
         </li>
         <li>
-          <form class="d-flex" role="search" action="busca.php" method="get" style="margin: 0 10px;">
-            <input class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..."
-              aria-label="Pesquisar">
-            <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
-              <i class="bi bi-search"></i>
-            </button>
-          </form>
+           <form class="d-flex" role="search" action="produto/HTML/produto.php" method="get"
+                        style="margin: 0 10px;">
+                        <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
+                            placeholder="Pesquisar..." aria-label="Pesquisar">
+                        <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
         </li>
         <li>
           <a href="tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a>
@@ -256,6 +273,7 @@ session_start();
           toggleButton.setAttribute('aria-expanded', 'true');
           toggleButton.innerHTML = '<i class="fas fa-times"></i>'; // X
           navLinks.setAttribute('aria-hidden', 'false');
+
         } else {
           navLinks.classList.remove('active');
           toggleButton.setAttribute('aria-expanded', 'false');
@@ -315,6 +333,59 @@ header nav ul li a {
 
 
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<script>
+$(function() {
+  var autocomplete = $("#search").autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: 'produto/PHP/api-produtos.php',
+        dataType: 'json',
+        data: { q: request.term },
+        success: function(data) {
+          response(data);
+        }
+      });
+    },
+    minLength: 2,
+    select: function(event, ui) {
+      window.location.href = 'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+    }
+  }).data('ui-autocomplete') || $("#search").data('autocomplete');
+
+  if (autocomplete) {
+    autocomplete._renderItem = function(ul, item) {
+      return $("<li>")
+        .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" + item.label + "</div>")
+        .appendTo(ul);
+    };
+  }
+});
+
+
+</script>
+
+<style>.ui-menu .ui-menu-item.ui-state-focus,
+.ui-menu .ui-menu-item:hover {
+    background-color: #FFD100 !important;
+    background-image: none !important;
+    color: #000 !important;
+    cursor: pointer;
+}
+
+
+
+.ui-menu .ui-menu-item.ui-state-focus,
+.ui-menu .ui-menu-item:hover {
+    box-shadow: none !important;
+}
+
+</style>
+
 
 </body>
 

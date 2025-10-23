@@ -95,8 +95,8 @@ nav ul li a:hover::after {
 
 
 
-.container {
-    align-content: left;
+main {
+    align-content: center;
 
 }
 
@@ -114,11 +114,6 @@ nav ul li a:hover::after {
     margin: 0 auto;
     padding-bottom: 30px;
 }
-
-.row {
-  justify-content: flex-start !important;
-}
-
 
 /* Menu hambúrguer */
 .menu-toggle {

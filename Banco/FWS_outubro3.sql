@@ -41,23 +41,24 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
 CREATE TABLE IF NOT EXISTS `categorias` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
+  `cor` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.categorias: ~10 rows (aproximadamente)
-INSERT INTO `categorias` (`id`, `nome`) VALUES
-	(1, 'BEBIDAS ALCOÓLICAS'),
-	(2, 'BEBIDAS NÃO ALCOÓLICAS'),
-	(8, 'BISCOITOS'),
-	(9, 'CIGARROS E ITENS DE FUMO'),
-	(4, 'DOCES'),
-	(7, 'LATICÍNIOS'),
-	(11, 'OUTROS'),
-	(5, 'PROTEICOS'),
-	(10, 'SALGADOS'),
-	(6, 'SNACKS'),
-	(3, 'SORVETES');
+-- Copiando dados para a tabela fws.categorias: ~11 rows (aproximadamente)
+INSERT INTO `categorias` (`id`, `nome`, `cor`) VALUES
+	(1, 'BEBIDAS ALCOÓLICAS', '#8B0000'),
+	(2, 'BEBIDAS NÃO ALCOÓLICAS', '#1E90FF'),
+	(3, 'SORVETES', '#FF69B4'),
+	(4, 'DOCES', '#FF69B4'),
+	(5, 'PROTEICOS', '#228B22'),
+	(6, 'SNACKS', '#FFA500'),
+	(7, 'LATICÍNIOS', '#FFFFE0'),
+	(8, 'BISCOITOS', '#D2B48C'),
+	(9, 'CIGARROS E ITENS DE FUMO', '#696969'),
+	(10, 'SALGADOS', '#FFD700'),
+	(11, 'OUTROS', '#A9A9A9');
 
 -- Copiando estrutura para tabela fws.despesas
 CREATE TABLE IF NOT EXISTS `despesas` (
@@ -188,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
   CONSTRAINT `funcionarios_chk_1` CHECK ((`nivel_permissao` between 1 and 3))
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.funcionarios: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela fws.funcionarios: ~1 rows (aproximadamente)
 INSERT INTO `funcionarios` (`id`, `nome`, `cpf`, `email`, `senha`, `nivel_permissao`, `criado_em`, `ultimo_login`, `ativo`) VALUES
 	(1, 'Mônica', '123.456.789-10', 'Monica@redecampeao.com.br', '$2y$10$6hajNuGfFlg6txtji4XJ..HQCDtd.bonljgRVxPfqEE30GIOXNxIu', 3, '2025-08-13 13:43:01', NULL, 1);
 
@@ -250,28 +251,28 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   CONSTRAINT `produtos_ibfk_2` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.produtos: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela fws.produtos: ~20 rows (aproximadamente)
 INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descricao`, `foto_produto`, `preco_venda`, `preco_compra`, `estoque`, `status`, `criado_em`) VALUES
-	(1, 'VINHO BUENO AIRES MALBE 750ML', 1, 1, 'Um vinho Malbec elegante, produzido com uvas selecionadas que garantem sabor intenso, aromas frutados e taninos suaves. Ideal para acompanhar carnes vermelhas e momentos especiais.', '/IMG_Produtos/1.png', 69.90, 54.90, 1, 'ativo', '2025-10-20 17:54:49'),
-	(2, 'VINHO FABRICANTE DE LOS MAN CABERNET SAUVIGNON BRANCO OU TINTO GF 750ML', 1, 1, 'Vinho Cabernet Sauvignon, disponível nas versões branco ou tinto, feito com uvas premium que trazem equilíbrio entre acidez e corpo, perfeito para harmonizar com queijos e pratos sofisticados.', '/IMG_Produtos/2.png', 69.90, 54.90, 3, 'ativo', '2025-10-20 17:54:49'),
-	(3, 'ÁGUA DE COCO KERO COCO 1L', 2, 3, 'Água de coco 100% natural, rica em eletrólitos essenciais para hidratação rápida e renovação de energia, perfeita para o dia a dia e práticas esportivas.', '/IMG_Produtos/3.png', 31.99, 15.87, 5, 'ativo', '2025-10-20 17:54:49'),
-	(4, 'ÁGUA DE COCO KERO COCO 330ML', 2, 3, 'Em embalagem prática, essa água de coco natural é fonte de potássio e minerais, ideal para refrescar e manter a hidratação em qualquer momento.', '/IMG_Produtos/4.png', 14.50, 6.56, 16, 'ativo', '2025-10-20 17:54:49'),
-	(5, 'ÁGUA DE COCO KERO COCO CX 200ML', 2, 3, 'Compacta e nutritiva, essa água de coco oferece hidratação natural e energia, com sabor refrescante e leve, ótima para levar na bolsa ou lancheira.', '/IMG_Produtos/5.png', 6.90, 3.20, 15, 'ativo', '2025-10-20 17:54:49'),
-	(6, 'ÁGUA MINERAL CRYSTAL COM GÁS PET 500ML', 2, 4, 'Água mineral com gás Crystal, puro frescor e efervescência suave que revitalizam seu paladar a qualquer hora do dia.', '/IMG_Produtos/6.png', 6.50, 2.24, 1, 'ativo', '2025-10-20 17:54:49'),
-	(7, 'ÁGUA MINERAL MINALBA COM GÁS PET 1,5L', 2, 5, 'Água mineral com gás Minalba em embalagem econômica, leve e refrescante, perfeita para acompanhar suas refeições ou momentos de lazer.', '/IMG_Produtos/7.png', 8.99, 3.17, 13, 'ativo', '2025-10-20 17:54:49'),
-	(8, 'ÁGUA MINERAL PRATA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Prata, naturalmente equilibrada em minerais essenciais para uma hidratação pura e saudável.', '/IMG_Produtos/8.png', 7.00, 2.85, 54, 'ativo', '2025-10-20 17:54:49'),
-	(9, 'ÁGUA MINERAL MINALBA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Minalba, de sabor leve e refrescante, ideal para manter seu corpo hidratado com qualidade e naturalidade.', '/IMG_Produtos/9.png', 6.50, 2.75, 67, 'ativo', '2025-10-20 17:54:49'),
-	(10, 'ÁGUA TONICA ANTARCTICA DIET LT 350ML', 2, 7, 'Água tônica dietética Antarctica, com sabor marcante e refrescante, adoçada artificialmente para quem busca sabor sem calorias.', '/IMG_Produtos/10.png', 8.00, 2.60, 7, 'ativo', '2025-10-20 17:54:49'),
-	(11, 'ÁGUA TONICA ANTARCTICA LT 350ML', 2, 7, 'Água tônica Antarctica clássica, com mistura perfeita de quinino e gás que proporciona um sabor único e refrescante para seus drinks ou momentos de relaxamento.', '/IMG_Produtos/11.png', 8.00, 2.52, 10, 'ativo', '2025-10-20 17:54:49'),
-	(12, 'AP BARBEAR BIC CONF3 NORMAL', 11, 2, 'Kit de aparelhos de barbear BIC com 3 lâminas, oferecendo precisão e conforto para um barbear eficiente e seguro, ideal para o cuidado diário da pele.', '/IMG_Produtos/12.png', 8.50, 4.11, 8, 'ativo', '2025-10-20 17:54:49'),
-	(13, 'BALA DROPS HALLS MENTA PCT 28G', 4, 8, 'Bala Drops Halls sabor menta, proporciona frescor imediato para a garganta, ajudando a aliviar desconfortos e refrescar o hálito.', '/IMG_Produtos/13.png', 3.50, 1.19, 22, 'ativo', '2025-10-20 17:54:49'),
-	(14, 'BALA DROPS HALLS MENTA PRATA PCT 28G', 4, 8, 'Bala Drops Halls Menta Prata com sabor intenso e refrescante, formulada para aliviar irritações na garganta e manter o hálito puro.', '/IMG_Produtos/14.png', 3.50, 1.14, 47, 'ativo', '2025-10-20 17:54:49'),
-	(15, 'BALA DROPS HALLS MENTOL PCT 28G', 4, 8, 'Bala Drops Halls Mentol, combinando frescor e alívio imediato para a garganta, ideal para dias frios ou ambientes secos.', '/IMG_Produtos/15.png', 3.50, 1.19, 27, 'ativo', '2025-10-20 17:54:49'),
-	(16, 'BALA DROPS HALLS MORANGO PCT 28G', 4, 8, 'Bala Drops Halls sabor morango, doce e refrescante, que suaviza a garganta enquanto oferece um gostinho frutado irresistível.', '/IMG_Produtos/16.png', 3.50, 1.19, 34, 'ativo', '2025-10-20 17:54:49'),
-	(17, 'BALA DROPS HALLS UVA VERDE PCT 28G', 4, 8, 'Bala Drops Halls sabor uva verde, mistura um sabor frutado com efeito refrescante, perfeita para quem busca alívio e sabor juntos.', '/IMG_Produtos/17.png', 3.50, 1.19, 28, 'ativo', '2025-10-20 17:54:49'),
-	(18, 'BALA FINI BEIJOS MORANGO DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini formato beijo sabor morango, macia e saborosa, perfeita para adoçar o dia com uma explosão de sabor frutado.', '/IMG_Produtos/18.png', 9.99, 4.99, 2, 'ativo', '2025-10-20 17:54:49'),
-	(19, 'BALA FINI DENTADURA DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini dentadura sabor doce, divertida e saborosa, ideal para crianças e adultos que gostam de doces macios e divertidos.', '/IMG_Produtos/19.png', 10.99, 4.99, 5, 'ativo', '2025-10-20 17:54:49'),
-	(20, 'BALA FINI TUBES MORANGO DE GOMA PCT 80G', 4, 9, 'Bala de goma Fini sabor morango, em formato de tubo, macia e saborosa, proporciona uma experiência divertida e deliciosa para qualquer hora.', '/IMG_Produtos/20.png', 9.99, 4.99, 13, 'ativo', '2025-10-20 17:54:49');
+	(1, 'VINHO BUENO AIRES MALBE 750ML', 1, 1, 'Um vinho Malbec elegante, produzido com uvas selecionadas que garantem sabor intenso, aromas frutados e taninos suaves. Ideal para acompanhar carnes vermelhas e momentos especiais.', '/TCC_FWS/IMG_Produtos/1.png', 69.90, 54.90, 1, 'ativo', '2025-10-20 17:54:49'),
+	(2, 'VINHO DE LOS MAN CABERNET SAUVIGNON BRANCO 750ML', 1, 1, 'Vinho Cabernet Sauvignon, disponível nas versões branco ou tinto, feito com uvas premium que trazem equilíbrio entre acidez e corpo, perfeito para harmonizar com queijos e pratos sofisticados.', '/TCC_FWS/IMG_Produtos/2.png', 69.90, 54.90, 3, 'ativo', '2025-10-20 17:54:49'),
+	(3, 'ÁGUA DE COCO KERO COCO 1L', 2, 3, 'Água de coco 100% natural, rica em eletrólitos essenciais para hidratação rápida e renovação de energia, perfeita para o dia a dia e práticas esportivas.', '/TCC_FWS/IMG_Produtos/3.png', 31.99, 15.87, 5, 'ativo', '2025-10-20 17:54:49'),
+	(4, 'ÁGUA DE COCO KERO COCO 330ML', 2, 3, 'Em embalagem prática, essa água de coco natural é fonte de potássio e minerais, ideal para refrescar e manter a hidratação em qualquer momento.', '/TCC_FWS/IMG_Produtos/4.png', 14.50, 6.56, 16, 'ativo', '2025-10-20 17:54:49'),
+	(5, 'ÁGUA DE COCO KERO COCO CX 200ML', 2, 3, 'Compacta e nutritiva, essa água de coco oferece hidratação natural e energia, com sabor refrescante e leve, ótima para levar na bolsa ou lancheira.', '/TCC_FWS/IMG_Produtos/5.png', 6.90, 3.20, 15, 'ativo', '2025-10-20 17:54:49'),
+	(6, 'ÁGUA MINERAL CRYSTAL COM GÁS PET 500ML', 2, 4, 'Água mineral com gás Crystal, puro frescor e efervescência suave que revitalizam seu paladar a qualquer hora do dia.', '/TCC_FWS/IMG_Produtos/6.png', 6.50, 2.24, 1, 'ativo', '2025-10-20 17:54:49'),
+	(7, 'ÁGUA MINERAL MINALBA COM GÁS PET 1,5L', 2, 5, 'Água mineral com gás Minalba em embalagem econômica, leve e refrescante, perfeita para acompanhar suas refeições ou momentos de lazer.', '/TCC_FWS/IMG_Produtos/7.png', 8.99, 3.17, 13, 'ativo', '2025-10-20 17:54:49'),
+	(8, 'ÁGUA MINERAL PRATA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Prata, naturalmente equilibrada em minerais essenciais para uma hidratação pura e saudável.', '/TCC_FWS/IMG_Produtos/8.png', 7.00, 2.85, 54, 'ativo', '2025-10-20 17:54:49'),
+	(9, 'ÁGUA MINERAL MINALBA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Minalba, de sabor leve e refrescante, ideal para manter seu corpo hidratado com qualidade e naturalidade.', '/TCC_FWS/IMG_Produtos/9.png', 6.50, 2.75, 67, 'ativo', '2025-10-20 17:54:49'),
+	(10, 'ÁGUA TONICA ANTARCTICA DIET LT 350ML', 2, 7, 'Água tônica dietética Antarctica, com sabor marcante e refrescante, adoçada artificialmente para quem busca sabor sem calorias.', '/TCC_FWS/IMG_Produtos/10.png', 8.00, 2.60, 7, 'ativo', '2025-10-20 17:54:49'),
+	(11, 'ÁGUA TONICA ANTARCTICA LT 350ML', 2, 7, 'Água tônica Antarctica clássica, com mistura perfeita de quinino e gás que proporciona um sabor único e refrescante para seus drinks ou momentos de relaxamento.', '/TCC_FWS/IMG_Produtos/11.png', 8.00, 2.52, 10, 'ativo', '2025-10-20 17:54:49'),
+	(12, 'AP BARBEAR BIC CONF3 NORMAL', 11, 2, 'Kit de aparelhos de barbear BIC com 3 lâminas, oferecendo precisão e conforto para um barbear eficiente e seguro, ideal para o cuidado diário da pele.', '/TCC_FWS/IMG_Produtos/12.png', 8.50, 4.11, 8, 'ativo', '2025-10-20 17:54:49'),
+	(13, 'BALA DROPS HALLS MENTA PCT 28G', 4, 8, 'Bala Drops Halls sabor menta, proporciona frescor imediato para a garganta, ajudando a aliviar desconfortos e refrescar o hálito.', '/TCC_FWS/IMG_Produtos/13.png', 3.50, 1.19, 22, 'ativo', '2025-10-20 17:54:49'),
+	(14, 'BALA DROPS HALLS MENTA PRATA PCT 28G', 4, 8, 'Bala Drops Halls Menta Prata com sabor intenso e refrescante, formulada para aliviar irritações na garganta e manter o hálito puro.', '/TCC_FWS/IMG_Produtos/14.png', 3.50, 1.14, 47, 'ativo', '2025-10-20 17:54:49'),
+	(15, 'BALA DROPS HALLS MENTOL PCT 28G', 4, 8, 'Bala Drops Halls Mentol, combinando frescor e alívio imediato para a garganta, ideal para dias frios ou ambientes secos.', '/TCC_FWS/IMG_Produtos/15.png', 3.50, 1.19, 27, 'ativo', '2025-10-20 17:54:49'),
+	(16, 'BALA DROPS HALLS MORANGO PCT 28G', 4, 8, 'Bala Drops Halls sabor morango, doce e refrescante, que suaviza a garganta enquanto oferece um gostinho frutado irresistível.', '/TCC_FWS/IMG_Produtos/16.png', 3.50, 1.19, 34, 'ativo', '2025-10-20 17:54:49'),
+	(17, 'BALA DROPS HALLS UVA VERDE PCT 28G', 4, 8, 'Bala Drops Halls sabor uva verde, mistura um sabor frutado com efeito refrescante, perfeita para quem busca alívio e sabor juntos.', '/TCC_FWS/IMG_Produtos/17.png', 3.50, 1.19, 28, 'ativo', '2025-10-20 17:54:49'),
+	(18, 'BALA FINI BEIJOS MORANGO DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini formato beijo sabor morango, macia e saborosa, perfeita para adoçar o dia com uma explosão de sabor frutado.', '/TCC_FWS/IMG_Produtos/18.png', 9.99, 4.99, 2, 'ativo', '2025-10-20 17:54:49'),
+	(19, 'BALA FINI DENTADURA DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini dentadura sabor doce, divertida e saborosa, ideal para crianças e adultos que gostam de doces macios e divertidos.', '/TCC_FWS/IMG_Produtos/19.png', 10.99, 4.99, 5, 'ativo', '2025-10-20 17:54:49'),
+	(20, 'BALA FINI TUBES MORANGO DE GOMA PCT 80G', 4, 9, 'Bala de goma Fini sabor morango, em formato de tubo, macia e saborosa, proporciona uma experiência divertida e deliciosa para qualquer hora.', '/TCC_FWS/IMG_Produtos/20.png', 9.99, 4.99, 13, 'ativo', '2025-10-20 17:54:49');
 
 -- Copiando estrutura para tabela fws.retiradas
 CREATE TABLE IF NOT EXISTS `retiradas` (
@@ -311,11 +312,14 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf` (`cpf`),
   UNIQUE KEY `telefone` (`telefone`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.usuarios: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela fws.usuarios: ~4 rows (aproximadamente)
 INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `telefone`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
-	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '11968544146', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-10-20 22:02:50', 1, NULL);
+	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '11968544146', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-10-22 21:25:43', 1, NULL),
+	(6, 'Sabrina', '2007-02-14', '11930265543', '54449709888', 'sabrina@gmail.com', '$2y$10$xVCz9nu7WWZVB25HuJQAJuVeIWKOMuqMtlEP68.sorCERfJ7LVO9.', '2025-10-22 11:30:07', '2025-10-22 08:32:23', 1, NULL),
+	(7, 'Nicolly Clement de Freitas', '2007-07-25', '11928926150', '50674089871', 'clementnicolly@gmail.com', '$2y$10$0Igs1yOGF5dtBMYbX/vlme9BcBJ3gu/VfRlwxSsOjCwq6ytGu3dJi', '2025-10-22 14:07:05', '2025-10-22 11:08:02', 1, NULL),
+	(8, 'nathally ferreira', '2007-08-13', '11999284328', '49681441800', 'nathally@gmail.com', '$2y$10$M45ldEWNbN1mc.pYonwGu.rJg9leM2BjTe3kynY6lN9K8KmVu.BPi', '2025-10-22 14:59:52', '2025-10-22 12:01:16', 1, NULL);
 
 -- Copiando estrutura para tabela fws.vendas
 CREATE TABLE IF NOT EXISTS `vendas` (
