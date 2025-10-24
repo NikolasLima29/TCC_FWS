@@ -318,7 +318,7 @@ $(function() {
 
                 <!-- Google -->
                 <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button"
-                    data-mdb-ripple-color="dark"><i class="fab fa-google"></i></a>
+                    data-mdb-ripple-color="dark"><i class="fa-solid fa-phone"></i></a>
 
                 <!-- Instagram -->
                 <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
