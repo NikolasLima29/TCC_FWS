@@ -363,9 +363,9 @@ $resultado = mysqli_query($conn, $sql);
                         href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button"
                         data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
 
-                    <!-- Google -->
-                    <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!"
-                        role="button" data-mdb-ripple-color="dark"><i class="fab fa-google"></i></a>
+                <!-- Google -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fa-solid fa-phone"></i></a>
 
                     <!-- Instagram -->
                     <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
