@@ -2,20 +2,33 @@
 session_start();
 include "../../conn.php";
 
-
 if (isset($_GET['id'])) {
-    $_SESSION['produto_id'] = $_GET['id'];
-    echo "Produto ID armazenado na sessão: " . $_SESSION['produto_id'];
+    $_SESSION['produto_id'] = (int)$_GET['id'];
 }
+$produto_id = $_SESSION['produto_id'] ?? 0;
 
 
+$produto_id = $_SESSION['produto_id'] ?? 0;
+
+// Consulta produto, categoria e fornecedor
+$result = $conn->query("
+  SELECT p.*, c.nome AS categoria_nome, c.cor AS categoria_cor, f.nome AS fornecedor_nome
+  FROM produtos p
+  JOIN categorias c ON p.categoria_id = c.id
+  JOIN fornecedores f ON p.fornecedor_id = f.id
+  WHERE p.id = $produto_id
+");
+if ($result->num_rows === 0) {
+    die('Produto não encontrado');
+}
+$produto = $result->fetch_assoc();
 ?>
 
 <!doctype html>
 <html lang="pt-BR">
 
 <head>
-    <title>Produtos</title>
+    <title> <?php echo htmlspecialchars($produto['nome']); ?></title>
     <link rel="icon" type="image/x-icon" href="../../cadastro/IMG/Shell.png">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -27,85 +40,181 @@ if (isset($_GET['id'])) {
     <link rel="stylesheet" href="../CSS/produto_especifico.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+            <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- JQuery UI -->
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<!-- JQuery UI css -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+
 </head>
 
 <body>
     <!-- Header with same nav, style, and behavior -->
-    <header id="header">
-        <div class="logo">
-            <a href="../../index.php">
-                <img src="../../index/IMG/shell_select.png" alt="logo" />
-            </a>
-        </div>
+  <header id="header">
+<style>
+#header {
+  position: sticky;
+  top: 0;
+  background-color: rgba(255, 255, 255, 0.2); /* transparência correta */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-        <button class="menu-toggle" aria-label="Abrir menu">
-            <i class="fas fa-bars"></i>
-        </button>
 
-        <nav>
-            <ul class="ul align-items-center">
-                <li>
-                    <a href="../../produto/HTML/produto.php">Produtos</a>
-                </li>
-                <li>
-                    <form class="d-flex" role="search" action="busca.php" method="get" style="margin: 0 10px;">
-                        <input class="form-control form-control-sm me-2" type="search" name="q"
-                            placeholder="Pesquisar..." aria-label="Pesquisar">
-                        <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
-                </li>
-                <li>
-                    <a href="../../tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a>
-                </li>
-            </ul>
-        </nav>
+</style>
+    <div class="logo">
+        <a href="../../index.php">
+            <img src="../../index/IMG/shell_select.png" alt="logo" />
+        </a>
+    </div>
 
-        <div class="carrinho">
-            <a href="#">
-                <img src="../../index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
-            </a>
-        </div>
+    <button class="menu-toggle" aria-label="Abrir menu">
+        <i class="fas fa-bars"></i>
+    </button>
 
-        <div id="bem-vindo">
+    <nav>
+        <ul class="ul align-items-center">
+            <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+            <li>
+                <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php" method="get" style="margin: 0 10px;">
+                    <input id="search" class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..." aria-label="Pesquisar">
+                    <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </li>
+            <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+        </ul>
+    </nav>
+
+    <div class="carrinho">
+        <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
+            <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+        </a>
+    </div>
+
+    <div id="bem-vindo" style="position: relative; display: inline-block;">
+        <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
             <?php
-            if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
                 $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
                 $primeiroNome = explode(' ', $nomeCompleto)[0];
-                echo "Bem-vindo(a), " . $primeiroNome;
-            } else {
-                echo "Bem-vindo(a).";
-            }
             ?>
-        </div>
+            Bem-vindo(a), <?= $primeiroNome ?>
+            <div style="display: inline-block; margin-left: 8px; cursor: pointer;" id="user-menu-toggle">
+                <i class="fas fa-user-circle fa-2x" style="max width: 90px;"></i>
+            </div>
 
+            <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
+                <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
+                <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
+            </div>
 
-    </header>
+            <script>
+                document.getElementById('user-menu-toggle').addEventListener('click', function() {
+                    var menu = document.getElementById('user-menu');
+                    if (menu.style.display === 'none') {
+                        menu.style.display = 'block';
+                    } else {
+                        menu.style.display = 'none';
+                    }
+                });
+
+                // Fecha o menu se clicar fora
+                document.addEventListener('click', function(event) {
+                    var container = document.getElementById('bem-vindo');
+                    var menu = document.getElementById('user-menu');
+                    if (!container.contains(event.target)) {
+                        menu.style.display = 'none';
+                    }
+                });
+            </script>
+        <?php else: ?>
+            Bem-vindo(a).
+        <?php endif; ?>
+    </div>
+</header>
+
     <main>
+  <!-- Produto - Topo -->
+ <div 
+  class="w-100 py-4 d-flex justify-content-center align-items-center"
+  style="background: <?php echo $produto['categoria_cor']; ?>; min-height: 330px; border-bottom: 8px solid rgba(251, 46, 46, 1);">
+  <img 
+    src="<?php echo $produto['foto_produto']; ?>" 
+    alt="Produto" 
+    class="img-fluid rounded shadow bg-white p-3"
+    style="max-width: 420px; background: white;"
+  />
+</div>
 
-<main class="my-5">
-  <div class="container">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4">
-      <!-- Card 1 -->
-      <div class="col">
-        <div class="card h-100">
-          <img src="/TCC_FWS/IMG_Produtos/19.png" class="card-img-top" alt="Produto 1">
-          <div class="card-body">
-            <h5 class="card-title">Produto 1</h5>
-            <p class="card-text" style="color green;">Preço produto</p>
-            <a href="#" class="btn btn-primary">Ver mais</a>
-          </div>
-        </div>
+  <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap:32px; margin: 40px 40px 0 40px;">
+    <!-- Lado Esquerdo (Descrição e Fornecedor) -->
+    <div style="flex: 1; min-width: 340px;">
+      <h1 style="font-size: 2.4rem; font-weight: bold; margin-bottom: 0;"> <?php echo htmlspecialchars($produto['nome']); ?> </h1>
+      <span class="badge" style="background-color: <?php echo $produto['categoria_cor']; ?>; color: #ffffffff; display:inline-block; padding: 8px 18px; border-radius: 7px; font-size: 1.4rem; font-weight: bold; margin:10px 0 28px 0;">
+        <?php echo mb_strtolower(htmlspecialchars($produto['categoria_nome']), 'UTF-8'); ?>
+      </span>
+      <div style="display: flex; align-items: center; margin-bottom:22px;">
+        <span style="color:#00BC5B; font-size:2rem; font-weight: bold;">R$ <?php echo number_format($produto['preco_venda'], 2, ',', '.'); ?></span>
       </div>
-      <!-- Copie mais cards conforme necessário -->
+
+      <div style="margin-bottom: 15px; background:#F2F2F2; border-radius: 7px; border:2px solid #222; padding:12px 18px 10px 18px;">
+        <span style="font-weight:bold;">Descrição:</span>
+        <span style="margin-left: 7px;"><?php echo htmlspecialchars($produto['descricao']); ?></span>
+      </div>
+      <div style="margin-bottom: 30px; background:#F2F2F2; border-radius: 7px; border:2px solid #222; padding:12px 18px 10px 18px;">
+        <span style="font-weight:bold;">Fornecedor:</span>
+        <span style="margin-left: 7px;"><?php echo htmlspecialchars($produto['fornecedor_nome']); ?></span>
+      </div>
+
+      <!-- Aviso +18 para bebidas/cigarros -->
+      <?php if(in_array($produto['categoria_id'], [1,9])): ?>
+        <div style="margin-top: 8px; margin-bottom: 0px; background: #FFF; border:2px solid #111; border-radius: 8px; font-size:1rem; padding:8px 16px; font-weight:600; display:inline-block;">
+          PARA MAIORES DE 18 anos:
+          <span style="font-weight:400;"><?php echo htmlspecialchars($mensagem_etaria ?? 'Necessário RG na entrega/retirada'); ?></span>
+          <i class="fas fa-ban" style="color:#C40000; margin-left:10px; font-size:1.1em;"></i>
+        </div>
+      <?php endif ?>
+    </div>
+
+    <!-- Lado Direito (Preço, Carrinho) -->
+    <div style="flex: 1; min-width: 340px; display: flex; flex-direction: column; align-items: flex-end;">
+      <div style="width:100%; text-align:right; margin-bottom:10px;">
+        <span style="font-size:1.25rem; font-weight:500;">Preço total:</span>
+        <span style="font-size:1.4rem; color:#00BC5B; font-weight: bold; margin-left:10px;" id="precoTotal">
+          R$ <?php echo number_format($produto['preco_venda'], 2, ',', '.'); ?>
+        </span>
+      </div>
+      <div style="width:100%; text-align:right; font-size: 1.15rem; font-weight:600; margin-bottom: 12px;">
+        Quantidade: <span id="quantidadeShow">1</span>
+      </div>
+      <div style="display:flex; gap:0; margin-bottom:18px;">
+        <button id="menos"
+          style="background:#E53935; color:white; border:none; width:56px; height:56px; font-size:2.2rem; border-radius:12px 0 0 12px; outline:none; border-right:2px solid #222; font-weight:800; cursor:pointer;"
+          <?php echo ($produto['estoque'] <= 1) ? 'disabled' : ''; ?>>-</button>
+        <button id="mais"
+          style="background:#FFD100; color:#111; border:none; width:56px; height:56px; font-size:2.2rem; border-radius:0 12px 12px 0; outline:none; font-weight:800; border-left:2px solid #222; cursor:pointer;"
+          <?php echo ($produto['estoque'] <= 1) ? 'disabled' : ''; ?>>+</button>
+      </div>
+      <button id="adicionar"
+        style="background:#11C47E; color:white; border:none; border-radius:9px; font-size:1.26rem; font-weight:700; padding:12px 40px 12px 24px; box-shadow:0 2px 4px #0002; cursor:pointer; position:relative; box-sizing:border-box; display:flex; align-items:center;"
+        <?php echo ($produto['estoque'] == 0) ? 'disabled' : ''; ?>>
+        adicionar ao carrinho
+        <span style="margin-left:7px; font-size:1.3rem;"><i class="fas fa-shopping-cart"></i></span>
+      </button>
     </div>
   </div>
 </main>
 
 
 
-    </main>
+  
 
     <footer class="text-center bg-body-tertiary">
         <div class="container pt-4">
@@ -201,6 +310,113 @@ if (isset($_GET['id'])) {
         });
     </script>
 
+<script>
+const precoUnitario = <?php echo $produto['preco_venda']; ?>;
+const estoque = <?php echo $produto['estoque']; ?>;
+let quantidade = 1;
+
+function atualizaPreco() {
+  document.getElementById('precoTotal').innerText = 'R$ ' + (precoUnitario * quantidade).toFixed(2).replace('.', ',');
+  document.getElementById('quantidadeShow').innerText = quantidade;
+}
+
+document.getElementById('mais').onclick = function() {
+  if (quantidade < estoque) {
+    quantidade++;
+    atualizaPreco();
+  }
+};
+
+document.getElementById('menos').onclick = function() {
+  if (quantidade > 1) {
+    quantidade--;
+    atualizaPreco();
+  }
+};
+
+document.getElementById('adicionar').onclick = function() {
+  if (quantidade > estoque) return;
+  $.post('../../carrinho/PHP/adicionar_ao_carrinho.php', {
+      id_produto: <?php echo $produto['id']; ?>,
+      quantidade: quantidade
+    }, function(resp) {
+      if (resp.trim() === "OK") {
+        const dados = {
+          nome: "<?php echo addslashes($produto['nome']); ?>",
+          foto: "<?php echo $produto['foto_produto']; ?>",
+          qtd: quantidade,
+          preco: <?php echo $produto['preco_venda']; ?>
+        };
+        $("#modal-add-carrinho").html(`
+          <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
+            ✔️ ${dados.nome} foi adicionado ao seu carrinho!
+          </div>
+          <img src="${dados.foto}" style="max-width:110px;margin-bottom:8px;">
+          <div>Quantidade: ${dados.qtd}</div>
+          <div>Total: <b>${(dados.preco * dados.qtd).toLocaleString("pt-BR", {style:"currency", currency:"BRL"})}</b></div>
+          <div class="modal-actions" style="text-align: right; margin-top: 15px;">
+            <button class="btn btn-primary ok-close">Fechar</button>
+          </div>
+        `);
+        $("#modal-backdrop, #modal-add-carrinho").show();
+
+        $(".ok-close").on("click", function() {
+          $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
+      } else {
+        alert("Erro ao adicionar: " + resp);
+      }
+    }
+  );
+};
+
+
+</script>
+
+
+
+<script>
+$(function() {
+  var autocomplete = $("#search").autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: '../../produto/PHP/api-produtos.php',
+        dataType: 'json',
+        data: { q: request.term },
+        success: function(data) {
+          response(data);
+        }
+      });
+    },
+    minLength: 2,
+    select: function(event, ui) {
+      window.location.href = '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+    }
+  }).data('ui-autocomplete') || $("#search").data('autocomplete');
+
+  if (autocomplete) {
+    autocomplete._renderItem = function(ul, item) {
+      return $("<li>")
+        .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" + item.label + "</div>")
+        .appendTo(ul);
+    };
+  }
+});
+
+
+
+
+</script>
+
+
+<div id="modal-backdrop" class="custom-backdrop" style="display:none; position: fixed; top:0; left:0; width:100vw; height:100vh; background-color: rgba(0,0,0,0.5); z-index: 1500;"></div>
+
+
+<div id="modal-add-carrinho" class="custom-modal" style="display:none; position: fixed; z-index: 1600; background:#fff; border-radius: 12px; padding: 20px; max-width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); left: 50%; top:50%; transform: translate(-50%, -50%);">
+
+</div>
+
+
     <style>
         #header {
             display: flex;
@@ -252,7 +468,228 @@ if (isset($_GET['id'])) {
         header nav ul li a {
             font-size: 24px;
         }
+
+        /* Container principal do produto */
+.produto-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+/* Imagem do produto */
+.produto-topo img {
+  width: 1000px;
+  height: 700px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Informações do produto ao lado direito */
+.produto-info {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Título do produto */
+.produto-info h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #c40000;
+}
+
+/* Badge da categoria já tem estilo inline, pode manter */
+
+/* Preço */
+.produto-info p, .produto-info span {
+  font-size: 1.2rem;
+}
+
+/* Controles de quantidade */
+.quantidade-controle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.quantidade-controle button {
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  background-color: #c40000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.quantidade-controle button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+.quantidade-controle input[type="number"] {
+  width: 60px;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* Botão adicionar ao carrinho */
+#adicionar {
+  margin-top: 15px;
+  background-color: #c40000;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#adicionar:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+/* Preço total */
+#precoTotal {
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: #333;
+  margin-top: 15px;
+  display: inline-block;
+}
+
+/* Seção de descrição e fornecedor */
+main h3 {
+  margin-top: 40px;
+  color: #c40000;
+  font-size: 1.5rem;
+}
+
+main p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Aviso de restrição */
+#aviso-restricao {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #fee;
+  border: 1px solid #c40000;
+  border-radius: 8px;
+  color: #c40000;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+#aviso-restricao i {
+  color: #c40000;
+  font-size: 1.5rem;
+}
+
+/* Responsividade */
+@media (max-width: 1100px) {
+  .produto-topo {
+    flex-direction: column;
+    align-items: center;
+  }
+  .produto-topo img {
+    width: 100%;
+    height: auto;
+  }
+  .produto-info {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+}
+
+
+.custom-backdrop {
+  position: fixed; top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.55);
+  z-index: 2000;
+}
+.custom-modal {
+  position: fixed; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 340px;
+  max-width: 90vw;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px 22px 32px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  z-index: 2100;
+  display: flex; flex-direction: column; align-items: center;
+  font-family: inherit;
+}
+.custom-modal img {
+  max-width: 400px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+.custom-modal .produto-titulo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #c40000;
+}
+.custom-modal .produto-descricao {
+  font-size: 0.97rem;
+  color: #444;
+  text-align: center;
+  margin-bottom: 15px;
+}
+.custom-modal .modal-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 14px;
+  width: 100%;
+  justify-content: center;
+}
+.custom-modal .btn-popup {
+  border: none;
+  padding: 7px 20px;
+  border-radius: 7px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.custom-modal .btn-popup.add {
+  background: #009900;
+  color: #fff;
+}
+.custom-modal .btn-popup.add:active {
+  background: #42bb42;
+}
+.custom-modal .btn-popup.cancel {
+  background: #c40000;
+  color: #fff;
+}
+.custom-modal .btn-popup.cancel:active {
+  background: #9d0909;
+}
+
+
     </style>
+
 
 </body>
 

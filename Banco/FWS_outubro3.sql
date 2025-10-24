@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
   `produto_id` int NOT NULL,
   `quantidade` int NOT NULL,
   `preco_unitario` decimal(10,2) NOT NULL,
-  `codigo_cupom` varchar(50) DEFAULT NULL,
   `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuario_produto` (`usuario_id`,`produto_id`),

@@ -58,9 +58,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Verifica se a senha fornecida corresponde ao hash
         if (password_verify($senha, $usuario['senha'])) {
             // Login bem-sucedido — registra informações na sessão
-            $_SESSION['usuario_id'] = $usuario['id'];
-            $_SESSION['usuario_nome'] = $usuario['nome'];
-            $_SESSION['usuario_email'] = $usuario['email'];
+            $_SESSION['usuario_id_ADM'] = $usuario['id'];
+            $_SESSION['usuario_nome_ADM'] = $usuario['nome'];
+            $_SESSION['usuario_email_ADM'] = $usuario['email'];
 
             header("Location: ../../index.html?status=sucesso&msg=Login realizado com sucesso");
             exit;

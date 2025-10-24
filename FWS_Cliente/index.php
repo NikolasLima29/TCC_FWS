@@ -1,5 +1,57 @@
 <?php
 session_start();
+
+
+include "conn.php";
+
+// 1. Buscar os produtos mais vendidos ativos (quantidade total vendida)
+$sql_mais_vendidos = "
+    SELECT p.id, p.nome, p.descricao, p.foto_produto, p.preco_venda,
+           SUM(iv.quantidade) AS total_vendido
+    FROM itens_vendidos iv
+    INNER JOIN produtos p ON iv.produto_id = p.id
+    WHERE p.status = 'ativo'
+    GROUP BY p.id
+    ORDER BY total_vendido DESC
+    LIMIT 10
+";
+$result_mais_vendidos = mysqli_query($conn, $sql_mais_vendidos);
+
+// Se não houver produtos mais vendidos, buscar baseado em estoque, excluindo categorias proibidas
+if (mysqli_num_rows($result_mais_vendidos) == 0) {
+    // IDs de categorias proibidas: BEBIDAS ALCOÓLICAS=1, CIGARROS E ITENS DE FUMO=9, OUTROS=11 (confirme no seu BD)
+    // Altere IDS conforme seu banco real.
+    $ids_excluir = [1, 9, 11];
+    $ids_excluir_str = implode(',', $ids_excluir);
+
+    $sql_estoque = "
+        SELECT p.id, p.nome, p.descricao, p.foto_produto, p.preco_venda, p.estoque
+        FROM produtos p
+        WHERE p.status = 'ativo'
+          AND p.categoria_id NOT IN ($ids_excluir_str)
+        ORDER BY p.estoque DESC
+        LIMIT 10
+    ";
+    $result_estoque = mysqli_query($conn, $sql_estoque);
+} else {
+    $result_estoque = false; // sem fallback
+}
+
+// Montar lista final para o carrossel
+$produtos_carrossel = [];
+
+if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
+    while ($row = mysqli_fetch_assoc($result_mais_vendidos)) {
+        $produtos_carrossel[] = $row;
+    }
+} elseif ($result_estoque && mysqli_num_rows($result_estoque) > 0) {
+    while ($row = mysqli_fetch_assoc($result_estoque)) {
+        $produtos_carrossel[] = $row;
+    }
+}
+
+// Agora $produtos_carrossel tem até 10 produtos para exibir no carrossel
+
 ?>
 
 <!doctype html>
@@ -164,60 +216,52 @@ session_start();
   </section>
 
   <!-- Carrossel -->
-  <section class="carrossel">
-    <div id="carouselExampleCaptions" class="carousel slide">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
-          aria-current="true" aria-label="Slide 1"></button>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
-          aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
-          aria-label="Slide 3"></button>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3"
-          aria-label="Slide 4"></button>
-      </div>
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="..." class="d-block w-100" alt="...">
-          <div class="carousel-caption d-none d-md-block">
-            <h5 id="nome">First slide label</h5>
-            <p id="descricao">Some representative placeholder content for the first slide.</p>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <img src="..." class="d-block w-100" alt="...">
-          <div class="carousel-caption d-none d-md-block">
-            <h5 id="nome">Second slide label</h5>
-            <p id="descricao">Some representative placeholder content for the second slide.</p>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <img src="..." class="d-block w-100" alt="...">
-          <div class="carousel-caption d-none d-md-block">
-            <h5 id="nome">Third slide label</h5>
-            <p id="descricao">Some representative placeholder content for the third slide.</p>
-          </div>
-        </div>
-        <div class="carousel-item">
-          <img src="..." class="d-block w-100" alt="...">
-          <div class="carousel-caption d-none d-md-block">
-            <h5 id="nome">Fourth slide label</h5>
-            <p id="descricao">Some representative placeholder content for the fourth slide.</p>
-          </div>
-        </div>
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
-        data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Anterior</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next"
-        id="seta">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Próximo</span>
-      </button>
+<section class="carrossel">
+  <div id="carouselExampleCaptions" class="carousel slide">
+    <div class="carousel-inner">
+      <?php foreach($produtos_carrossel as $index => $produto): ?>
+      <div class="carousel-item <?= $index===0 ? 'active' : '' ?>">
+  <a href="/TCC_FWS/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>">
+    <img src="<?= htmlspecialchars($produto['foto_produto']) ?>" class="d-block w-100" alt="<?= htmlspecialchars($produto['nome']) ?>">
+  </a>
+  <div class="carousel-caption d-block">
+    <a href="/TCC_FWS/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>" style="color:#c40000; text-decoration:none;">
+      <h5 id="nome"><?= htmlspecialchars($produto['nome']) ?></h5>
+    </a>
+    <p id="descricao"><?= htmlspecialchars($produto['descricao']) ?></p>
+    <p><strong>R$ <?= number_format($produto['preco_venda'],2,',','.') ?></strong></p>
+    <div class="carrossel-buttons">
+      <a class="ver" href="/TCC_FWS/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>" style="margin-right:7px;">Ver Mais</a>
+      <button type="button" 
+  class="Carrinho btn btn-outline-success btn-sm"
+  data-produto='<?= htmlspecialchars(json_encode([
+      "id"=>$produto["id"],
+      "nome"=>$produto["nome"],
+      "foto"=>$produto["foto_produto"],
+      "descricao"=>$produto["descricao"],
+      "preco"=>$produto["preco_venda"]
+  ]), ENT_QUOTES, "UTF-8") ?>'>
+  Adicionar ao Carrinho <i class="bi bi-cart-plus-fill"></i>
+</button>
+
     </div>
-  </section>
+  </div>
+</div>
+
+      <?php endforeach; ?>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Próximo</span>
+    </button>
+    
+  </div>
+</section>
+
 
   <footer class="text-center bg-body-tertiary">
     <div class="container pt-4">
@@ -368,6 +412,101 @@ $(function() {
 
 
 </script>
+<script>
+$(function() {
+  var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
+
+  $(".Carrinho").on("click", function () {
+    const dados = JSON.parse($(this).attr('data-produto'));
+    if (!usuario_id) {
+      showLoginModal();
+      return;
+    }
+    let qtd = 1;
+    // Pegue o preço do produto aqui, ex: dados.preco
+    const preco = parseFloat(dados.preco); // o atributo .preco deve vir no seu data-produto
+
+    function atualizarPreco() {
+      $("#valor-unit").text(preco.toLocaleString("pt-BR", {style:"currency",currency:"BRL"}));
+      $("#valor-total").text((preco*qtd).toLocaleString("pt-BR", {style:"currency",currency:"BRL"}));
+      $(".quantidade-number").text(qtd);
+    }
+
+    $("#modal-backdrop").show();
+    $("#modal-add-carrinho").html(`
+      <div style="margin-bottom:10px">Você está adicionando ao carrinho:</div>
+      <img src="${dados.foto}" alt="${dados.nome}">
+      <div class="produto-titulo">${dados.nome}</div>
+      <div class="produto-descricao">${dados.descricao}</div>
+      <div style="margin:7px 0 3px 0"><b>Preço unitário: <span id="valor-unit"></span></b></div>
+      <div class="contador-box">
+        <button class="contador-btn menos">-</button>
+        <span class="quantidade-number">1</span>
+        <button class="contador-btn mais">+</button>
+      </div>
+      <div style="margin:6px 0;"><b>Total: <span id="valor-total"></span></b></div>
+      <div class="modal-actions">
+        <button class="btn-popup add">Adicionar</button>
+        <button class="btn-popup cancel">Cancelar</button>
+      </div>
+    `).show();
+
+    atualizarPreco();
+
+    $(".custom-modal .contador-btn.menos").on("click", function () {
+      if (qtd > 1) { qtd--; atualizarPreco(); }
+    });
+    $(".custom-modal .contador-btn.mais").on("click", function () {
+      if (qtd < 10) { qtd++; atualizarPreco(); }
+    });
+
+    $(".custom-modal .btn-popup.cancel").on("click", function () {
+      $("#modal-add-carrinho, #modal-backdrop").hide();
+    });
+
+    // Adicionar ao carrinho AJAX
+    $(".custom-modal .btn-popup.add").on("click", function () {
+      $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+        id_produto: dados.id,
+        quantidade: qtd,
+        ajax: 1
+      }, function(resp) {
+        $("#modal-add-carrinho").html(`<div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">✔️ ${dados.nome} foi adicionado ao seu carrinho!</div>
+          <img src="${dados.foto}" style="max-width:110px;margin-bottom:8px;">
+          <div>Quantidade: ${qtd}</div>
+          <div>Total: <b>${(preco*qtd).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</b></div>
+          <div class="modal-actions"><button class="btn-popup add ok-close">Fechar</button></div>
+        `);
+        $(".ok-close").on("click", function(){ $("#modal-add-carrinho, #modal-backdrop").hide(); });
+      });
+    });
+  });
+
+  function showLoginModal() {
+    $("#modal-login-alert").html(`
+      <div style="color:#c40000;font-weight:700;font-size:1.1rem;margin-bottom:14px;text-align:center">É necessário fazer login para adicionar produtos ao carrinho</div>
+      <div class="modal-actions" style="margin-bottom:16px;">
+        <a href="/TCC_FWS/FWS_Cliente/login/HTML/login.html" class="btn-login">Login</a>
+        <a id="btn_modal_cadastrar"href="/TCC_FWS/FWS_Cliente/cadastro/HTML/cadastro.html" class="btn-cadastrar">Cadastrar</a>
+ <button class="btn-popup btn-voltar">Voltar</button> 
+      
+     
+    
+    `).show();
+    $("#modal-backdrop").show();
+    $(".btn-voltar").on("click", function(){ $("#modal-login-alert, #modal-backdrop").hide(); });
+  }
+
+  $("#modal-backdrop").on("click",function(){
+    $(".custom-modal").hide(); $(this).hide();
+  });
+});
+</script>
+
+<div id="modal-backdrop" class="custom-backdrop" style="display:none"></div>
+<div id="modal-add-carrinho" class="custom-modal" style="display:none"></div>
+<div id="modal-login-alert" class="custom-modal" style="display:none"></div>
+
 
 <style>.ui-menu .ui-menu-item.ui-state-focus,
 .ui-menu .ui-menu-item:hover {
@@ -383,6 +522,284 @@ $(function() {
 .ui-menu .ui-menu-item:hover {
     box-shadow: none !important;
 }
+
+body {
+    background: #fff; /* Garantir fundo branco total */
+}
+
+/* Container do carrossel */
+section.carrossel {
+    background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 25px rgba(196, 0, 0, 0.09);
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 3rem auto;
+}
+
+/* Imagem arredondada, limpa, centralizada */
+.carousel-item img {
+    max-height: 350px;
+    object-fit: contain;
+    width: auto;
+    margin: 0 auto;
+    border-radius: 1rem;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+}
+
+.carousel-item img:hover {
+    transform: scale(1.04);
+}
+
+/* Legenda fora da imagem, bonita e centralizada */
+.carousel-caption {
+    position: static !important;
+    background: none !important;
+    margin-top: 14px;
+    padding: 0;
+    text-align: center;
+    color: #111 !important;
+}
+
+.carousel-caption h5 {
+    color: #c40000;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: .3rem;
+}
+
+.carousel-caption p#descricao {
+    font-size: 1.03rem;
+    color: #444;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+}
+
+.carousel-caption p strong {
+    color: #008000;
+    font-size: 1.18rem;
+}
+
+
+
+/* Botões de navegação elegantes e suaves */
+
+/* Responsividade simples */
+@media (max-width: 600px) {
+    section.carrossel {
+        padding: 0.5rem;
+        border-radius: .65rem;
+    }
+    .carousel-item img {
+        max-height: 180px;
+        border-radius: 8px;
+    }
+    .carousel-caption h5 {
+        font-size: 1.12rem;
+    }
+}
+
+
+.carousel-caption .carrossel-buttons {
+    margin-top: 17px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.carousel-caption .btn {
+    font-weight: 500;
+}
+
+.carousel-caption a#nome, .carousel-caption h5#nome {
+    color: #c40000;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.carousel-caption a#nome:hover, .carousel-caption h5#nome:hover {
+    color: #3a0000;
+    text-decoration: underline;
+}
+
+.ver {
+  background: white;
+  border: 3px solid #FFD100;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.ver:hover {
+   background: #FFD100;
+  color: black;
+    border-color: black;
+}
+
+
+.Carrinho {
+  background: white;
+  border: 3px solid #23d44cff;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.Carrinho:hover {
+  background: #23d44cff;
+  color: black;
+  border-color: black !important;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 50px;
+  height: 50px;
+
+  top: 25%;                       /* um pouco mais pra cima */
+  opacity: 0.9;                   /* leve transparência */
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  transform: scale(1.1);          /* efeito de leve aumento no hover */
+      /* tom mais escuro ao passar o mouse */
+}
+
+.carousel-control-prev {
+  left: -10%;                       /* um pouco mais pra dentro da esquerda */
+}
+
+.carousel-control-next {
+  right: -10%;                      /* um pouco mais pra dentro da direita */
+}
+
+/* Remove o ícone padrão e deixa o conteúdo visível se quiser personalizar depois */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(100%);           /* deixa o ícone branco pra contraste */
+}
+
+
+
+
+.custom-backdrop {
+  position: fixed; top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.55);
+  z-index: 2000;
+}
+.custom-modal {
+  position: fixed; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 340px;
+  max-width:90vw;
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 32px 22px 32px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  z-index: 2100;
+  display: flex; flex-direction:column; align-items:center;
+  font-family: inherit;
+}
+.custom-modal img {
+  max-width: 400px;
+ 
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+.custom-modal .produto-titulo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #c40000;
+}
+.custom-modal .produto-descricao {
+  font-size: 0.97rem;
+  color: #444;
+}
+.custom-modal .contador-box {
+  display: flex;
+  gap:8px;
+  align-items: center;
+  margin:18px 0;
+}
+.custom-modal .contador-btn {
+  border: none;
+  background: #f4f4f4;
+  border-radius: 5px;
+  font-size: 1.29rem;
+  width: 36px; height:36px;
+  cursor:pointer;
+  color:#c40000;
+  font-weight: bold;
+  transition: background 0.18s;
+}
+.custom-modal .contador-btn:active {
+  background: #ffe5e5;
+}
+.custom-modal .quantidade-number {
+  font-size: 1.18rem;
+  font-weight: 600;
+  width:38px; text-align:center;
+}
+.custom-modal .modal-actions {
+  margin-top:20px;
+  display: flex; gap: 14px;
+  width:100%; justify-content: center;
+}
+.custom-modal .btn-popup {
+  border: none;
+  padding: 7px 20px;
+  border-radius: 7px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+.custom-modal .btn-popup.add {
+  background: #009900;
+  color:#fff;
+}
+.custom-modal .btn-popup.cancel {
+  background: #c40000;
+  color: #fff;
+}
+.custom-modal .btn-popup.add:active {
+  background: #42bb42;
+}
+.custom-modal .btn-popup.cancel:active {
+  background: #9d0909;
+}
+/* Modal login */
+.custom-modal .modal-actions a {
+  color:#fff;
+  text-decoration:none;
+  padding: 7px 17px;
+  border-radius:6px;
+  font-weight:500;
+  display:inline-block;
+}
+.modal-actions a,
+.modal-actions button {
+  display: inline-block;
+  width: 120px;
+ 
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  margin: 0 6px;
+}
+
+/* cores específicas */
+.btn-login { background: #c40000; color: #000000ff !; }
+.btn-cadastrar { background: #FFD100; color: #000000ff; }
+.btn-voltar { background: #999; color: #000; }
 
 </style>
 
