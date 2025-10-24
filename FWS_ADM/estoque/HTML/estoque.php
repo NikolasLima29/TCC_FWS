@@ -1,15 +1,17 @@
 <?php  
 include "..\..\conn.php";
 
-if (!$conn){
-  die ("conexão falhou: " . mysqli_connect_error());
+if (!$sql){
+  die("conexão falhou: " . mysqli_connect_error());
+}
+$sqli = "SELECT id, nome, categoria_id, fornecedor_id, preco_venda, estoque, status, criado_em FROM produtos";
 
-  $sql = "SELECT * FROM produto";
-  $result = $conn->query($sql);
+  $result = $sql->query($sqli);
 
-  if(!result){
-    echo "Erro na consulta: " . $conn->error;}
-  }
+  if(!$result){
+      die ("Erro na consulta: ") . $sql->error; 
+    }
+  
 ?>
 
 <!DOCTYPE html>
@@ -22,7 +24,7 @@ if (!$conn){
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      background-color: #f9f9f9;
+      background-color: #000000ff;
     }
     h1 {
       text-align: center;
@@ -44,11 +46,12 @@ if (!$conn){
       width: 100%;
       border-collapse: collapse;
       background-color: black;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      color: white; 
+      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
     }
     thead {
       background-color: #f4a01d;
-      color: white;
+      color: black;
     }
     th, td {
       padding: 12px 15px;
@@ -56,7 +59,7 @@ if (!$conn){
       text-align: center;
     }
     tbody tr:hover {
-      background-color: #f1f1f1;
+      background-color: #f4a01d;
     }
     .status-in-stock {
       color: green;
@@ -81,16 +84,33 @@ if (!$conn){
         <th>Nome</th>
         <th>Categoria</th>
         <th>Fornecedor</th>
-        <th>Descrição</th>
-        <th>Foto</th>
         <th>Preço</th>
-        <th>QTD</th>
+        <th>qtd</th>
         <th>Status</th>
         <th>Criação</th>
       </tr>
     </thead>
     <tbody>
-      <!-- Dados do estoque vão aqui -->
+     <?php
+if ($result->num_rows > 0){
+  while ($row = $result->fetch_assoc()){
+    echo "<tr>";
+  echo "<td>" . (isset($row["id"]) ? $row["id"] : "id não disponível") . "</td>";
+  echo "<td>" . (isset($row["nome"]) ? $row["nome"] : "nome não disponível") . "</td>";
+  echo "<td>" . (isset($row["categoria_id"]) ? $row["id"] : "categoria não disponível") . "</td>";
+  echo "<td>" . (isset($row["fornecedor_id"]) ? $row["fornecedor_id"] : "fornecedor não disponível") . "</td>";
+  echo "<td>" . (isset($row["preco_venda"]) ? $row["preco_venda"] : "preço não disponível") . "</td>";
+  echo "<td>" . (isset($row["estoque"]) ? $row["estoque"] : "Quantidade não disponível") . "</td>";
+  echo "<td>" . (isset($row["status"]) ? $row["status"] : "status não disponível") . "</td>";
+  echo "<td>" . (isset($row["criado_em"]) ? $row["criado_em"] : "data não disponível") . "</td>";
+  echo "</tr>";
+
+  }
+}else{
+  echo "<tr><td colspan='9'>nenhum registro encontrado</td>";
+}
+
+?>
     </tbody>
   </table>
 
@@ -117,9 +137,3 @@ if (!$conn){
 
 </body>
 </html>
-<?php
-
-
-
-
-?>

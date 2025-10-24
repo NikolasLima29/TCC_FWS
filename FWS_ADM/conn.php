@@ -1,6 +1,6 @@
 <?php
     $sql =  new mysqli("localhost","root","","FWS");
-    $conn->set_charset("utf8");
+    $sql->set_charset("utf8");
 
     if ($sql->connect_error) {
         // Erro na conexão — logar e mostrar mensagem genérica
