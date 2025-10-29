@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 include "conn.php";
 
 // 1. Buscar os produtos mais vendidos ativos (quantidade total vendida)
@@ -66,8 +65,8 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="index/CSS/index.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
   
@@ -131,18 +130,12 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     }
   </style>
 
-
-
-
-
 </head>
 
 <body>
   <!-- Cabeçalho -->
   <header id="header">
 <style>
-
-
 
 </style>
     <div class="logo">
@@ -230,6 +223,12 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     </div>
   </section>
 
+  <section>
+    <div id="desconto">
+      <img src="index/IMG/desconto_vitor.jpeg" alt="desconto do Vitor">
+    </div>
+  </section>
+
   <!-- Segundo cabeçalho -->
   <section class="mais-vendidos">
     <h1>Mais Vendidos <img src="index/IMG/sacola.png" alt="sacola"></h1>
@@ -281,7 +280,6 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     
   </div>
 </section>
-
 
   <footer class="text-center bg-body-tertiary">
     <div class="container pt-4">
@@ -393,9 +391,6 @@ header nav ul li a {
     font-size: 24px;
 }
 
-
-
-
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -429,7 +424,6 @@ $(function() {
     };
   }
 });
-
 
 </script>
 <script>
@@ -508,9 +502,7 @@ $(function() {
       <div class="modal-actions" style="margin-bottom:16px;">
         <a href="/TCC_FWS/FWS_Cliente/login/HTML/login.html" class="btn-login">Login</a>
         <a id="btn_modal_cadastrar"href="/TCC_FWS/FWS_Cliente/cadastro/HTML/cadastro.html" class="btn-cadastrar">Cadastrar</a>
- <button class="btn-popup btn-voltar">Voltar</button> 
-      
-     
+ <button class="btn-popup btn-voltar">Voltar</button>    
     
     `).show();
     $("#modal-backdrop").show();
@@ -535,8 +527,6 @@ $(function() {
     color: #000 !important;
     cursor: pointer;
 }
-
-
 
 .ui-menu .ui-menu-item.ui-state-focus,
 .ui-menu .ui-menu-item:hover {
@@ -601,8 +591,6 @@ section.carrossel {
     font-size: 1.18rem;
 }
 
-
-
 /* Botões de navegação elegantes e suaves */
 
 /* Responsividade simples */
@@ -619,7 +607,6 @@ section.carrossel {
         font-size: 1.12rem;
     }
 }
-
 
 .carousel-caption .carrossel-buttons {
     margin-top: 17px;
@@ -701,9 +688,6 @@ section.carrossel {
 .carousel-control-next-icon {
   filter: invert(100%);           /* deixa o ícone branco pra contraste */
 }
-
-
-
 
 .custom-backdrop {
   position: fixed; top:0; left:0; right:0; bottom:0;
@@ -820,9 +804,7 @@ section.carrossel {
 .btn-login { background: #c40000; color: #000000ff !; }
 .btn-cadastrar { background: #FFD100; color: #000000ff; }
 .btn-voltar { background: #999; color: #000; }
-
 </style>
-
 
 </body>
 
