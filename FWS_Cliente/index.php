@@ -67,6 +67,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="index/CSS/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 
   
@@ -139,63 +140,82 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 <body>
   <!-- Cabeçalho -->
   <header id="header">
-    <!-- Logo -->
+<style>
+
+
+
+</style>
     <div class="logo">
-      <a href="index.php">
-        <img src="index/IMG/shell_select.png" alt="logo" />
-      </a>
+        <a href="index.php">
+            <img src="index/IMG/shell_select.png" alt="logo" />
+        </a>
     </div>
 
-    <!-- Botão do menu hambúrguer (aparece apenas no mobile) -->
     <button class="menu-toggle" aria-label="Abrir menu">
-      <i class="fas fa-bars"></i>
+        <i class="fas fa-bars"></i>
     </button>
 
-    <!-- Menu -->
     <nav>
-      <ul class="ul align-items-center">
-        <li>
-          <a href="produto/HTML/produto.php">Produtos</a>
-        </li>
-        <li>
-           <form class="d-flex" role="search" action="produto/HTML/produto.php" method="get"
-                        style="margin: 0 10px;">
-                        <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
-                            placeholder="Pesquisar..." aria-label="Pesquisar">
-                        <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
-        </li>
-        <li>
-          <a href="tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a>
-        </li>
-      </ul>
+        <ul class="ul align-items-center">
+            <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+            <li>
+                <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php" method="get" style="margin: 0 10px;">
+                    <input id="search" class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..." aria-label="Pesquisar">
+                    <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </li>
+            <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+        </ul>
     </nav>
 
-
-    <!-- Carrinho -->
     <div class="carrinho">
-      <a href="#">
-        <img src="index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
-      </a>
+        <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
+            <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+        </a>
     </div>
 
-    <!-- Mensagem de boas-vindas -->
- <div id="bem-vindo">
-  <?php
-  if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) {
-    $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
-    $primeiroNome = explode(' ', $nomeCompleto)[0];
-    echo "Bem-vindo(a), " . $primeiroNome;
-  } else {
-    echo "Bem-vindo(a).";
-  }
-  ?>
-</div>
+    <div id="bem-vindo" style="position: relative; display: inline-block;">
+        <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
+            <?php
+                $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
+                $primeiroNome = explode(' ', $nomeCompleto)[0];
+            ?>
+            Bem-vindo(a), <?= $primeiroNome ?>
+            <div style="display: inline-block; margin-left: 8px; cursor: pointer;" id="user-menu-toggle">
+                <i class="fas fa-user-circle fa-2x" style="max width: 90px;"></i>
+            </div>
 
-  </header>
+            <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
+                <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
+                <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
+            </div>
 
+            <script>
+                document.getElementById('user-menu-toggle').addEventListener('click', function() {
+                    var menu = document.getElementById('user-menu');
+                    if (menu.style.display === 'none') {
+                        menu.style.display = 'block';
+                    } else {
+                        menu.style.display = 'none';
+                    }
+                });
+
+                // Fecha o menu se clicar fora
+                document.addEventListener('click', function(event) {
+                    var container = document.getElementById('bem-vindo');
+                    var menu = document.getElementById('user-menu');
+                    if (!container.contains(event.target)) {
+                        menu.style.display = 'none';
+                    }
+                });
+            </script>
+        <?php else: ?>
+            Bem-vindo(a).
+        <?php endif; ?>
+    </div>
+</header>
   <!-- Primeiro corpo -->
 
   <section class="section">
