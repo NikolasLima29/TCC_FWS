@@ -177,7 +177,7 @@ $resultado = mysqli_query($conn, $sql);
             ?>
             Bem-vindo(a), <?= $primeiroNome ?>
             <div style="display: inline-block; margin-left: 8px; cursor: pointer;" id="user-menu-toggle">
-                <i class="fas fa-user-circle fa-2x" style="max width: 90px;"></i>
+                <i class="fas fa-user-circle fa-2x" style="max-width: 90px;"></i>
             </div>
 
             <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
@@ -299,7 +299,7 @@ $resultado = mysqli_query($conn, $sql);
                     </h6>
                     <p class="card-text mb-2" style="font-weight: bold; color: green;">R$ ' . $preco . '</p>
                     <span class="badge" style="background-color: ' . $cor . '; color: white; padding: 6px 10px; border-radius: 12px;">' . $categoria . '</span>
-                    <div class="mt-3 carrossel-buttons">
+                    <div class="mt-2 carrossel-buttons  d-flex flex-column gap-2">
                       <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
                         class="btn btn-primary btn-sm" style="margin-right:7px;">Ver mais</a>
                       <button type="button"

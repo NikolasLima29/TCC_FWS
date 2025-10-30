@@ -177,7 +177,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
             ?>
             Bem-vindo(a), <?= $primeiroNome ?>
             <div style="display: inline-block; margin-left: 8px; cursor: pointer;" id="user-menu-toggle">
-                <i class="fas fa-user-circle fa-2x" style="max width: 90px;"></i>
+                <i class="fas fa-user-circle fa-2x" style="max-width: 90px;"></i>
             </div>
 
             <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
