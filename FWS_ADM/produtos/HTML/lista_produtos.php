@@ -6,7 +6,7 @@ $query = "SELECT p.id, p.nome, c.nome AS categoria, f.nome AS fornecedor, p.prec
           FROM produtos p
           LEFT JOIN categorias c ON p.categoria_id = c.id
           LEFT JOIN fornecedores f ON p.fornecedor_id = f.id
-          ORDER BY p.nome";
+          ORDER BY p.id ASC";
 $result = $sql->query($query);
 ?>
 <!DOCTYPE html>
