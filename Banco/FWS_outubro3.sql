@@ -26,15 +26,26 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
   `produto_id` int NOT NULL,
   `quantidade` int NOT NULL,
   `preco_unitario` decimal(10,2) NOT NULL,
+  `codigo_cupom` varchar(50) DEFAULT NULL,
   `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuario_produto` (`usuario_id`,`produto_id`),
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `carrinho_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `carrinho_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.carrinho: ~0 rows (aproximadamente)
+-- Copiando dados para a tabela fws.carrinho: ~9 rows (aproximadamente)
+INSERT INTO `carrinho` (`id`, `usuario_id`, `produto_id`, `quantidade`, `preco_unitario`, `codigo_cupom`, `data_criacao`) VALUES
+	(4, 4, 8, 4, 7.00, NULL, '2025-10-23 20:28:37'),
+	(5, 4, 14, 5, 3.50, NULL, '2025-10-23 20:46:16'),
+	(6, 4, 4, 10, 14.50, NULL, '2025-10-23 20:55:43'),
+	(7, 4, 15, 3, 3.50, NULL, '2025-10-23 21:57:00'),
+	(8, 9, 9, 3, 6.50, NULL, '2025-10-23 22:27:10'),
+	(10, 4, 12, 7, 8.50, NULL, '2025-10-24 01:19:16'),
+	(11, 4, 11, 9, 8.00, NULL, '2025-10-24 04:06:43'),
+	(17, 4, 3, 10, 31.99, NULL, '2025-10-24 04:15:51'),
+	(32, 4, 10, 5, 8.00, NULL, '2025-10-24 04:37:07');
 
 -- Copiando estrutura para tabela fws.categorias
 CREATE TABLE IF NOT EXISTS `categorias` (
@@ -46,18 +57,28 @@ CREATE TABLE IF NOT EXISTS `categorias` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.categorias: ~11 rows (aproximadamente)
-INSERT INTO `categorias` (`id`, `nome`, `cor`) VALUES
-	(1, 'BEBIDAS ALCOÓLICAS', '#8B0000'),
-	(2, 'BEBIDAS NÃO ALCOÓLICAS', '#1E90FF'),
-	(3, 'SORVETES', '#FF69B4'),
-	(4, 'DOCES', '#FF69B4'),
-	(5, 'PROTEICOS', '#228B22'),
-	(6, 'SNACKS', '#FFA500'),
-	(7, 'LATICÍNIOS', '#FFFFE0'),
-	(8, 'BISCOITOS', '#D2B48C'),
-	(9, 'CIGARROS E ITENS DE FUMO', '#696969'),
-	(10, 'SALGADOS', '#FFD700'),
-	(11, 'OUTROS', '#A9A9A9');
+INSERT INTO categorias (id, nome, cor) VALUES
+(1, 'BEBIDAS ALCOÓLICAS', '#8B0000'),
+(2, 'BEBIDAS NÃO ALCOÓLICAS', '#1E90FF'),
+(3, 'SORVETES', '#a200ffff'),
+(4, 'DOCES', '#ff0783ff'),
+(5, 'PROTEICOS', '#228B22'),
+(6, 'SNACKS', '#ff9500ff'),
+(7, 'LATICÍNIOS', '#00fbffff'),
+(8, 'BISCOITOS', '#D2B48C'),
+(9, 'CIGARROS E ITENS DE FUMO', '#696969'),
+(10, 'SALGADOS', '#ceaf00ff'),
+(11, 'OUTROS', '#A9A9A9');
+
+-- Copiando estrutura para tabela fws.cupom
+CREATE TABLE IF NOT EXISTS `cupom` (
+  `id` int NOT NULL,
+  `nome` varchar(50) DEFAULT NULL,
+  `desconto` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Copiando dados para a tabela fws.cupom: ~0 rows (aproximadamente)
 
 -- Copiando estrutura para tabela fws.despesas
 CREATE TABLE IF NOT EXISTS `despesas` (
@@ -145,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `fornecedores` (
   UNIQUE KEY `cnpj` (`cnpj`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.fornecedores: ~23 rows (aproximadamente)
+-- Copiando dados para a tabela fws.fornecedores: ~22 rows (aproximadamente)
 INSERT INTO `fornecedores` (`id`, `nome`, `cnpj`, `telefone`, `email`) VALUES
 	(1, 'SR VINHO COMÉRCIO DE VINHOS E BEBIDAS LTDA', '24330541000146', '11947927692', 'contato@srvinhos.com.br'),
 	(2, 'MULT E DIGITAL COMERCIO DE PRODUTOS ALIMENTICIOS LTDA', '37885698000180', '1141310409', 'jocalbuquerque@bol.com.br'),
@@ -168,8 +189,7 @@ INSERT INTO `fornecedores` (`id`, `nome`, `cnpj`, `telefone`, `email`) VALUES
 	(19, 'RZS NICOLA FABRICACAO E COMERCIO DE GELO - ME', '07733106000143', '1132582632', 'luiz@fastgelo.com.br'),
 	(20, 'DMA INDUSTRIA E COMERCIO DE PRODUTOS ALIMENTICIOS LTDA', '05212531000161', '1132289925', 'yscontabil@gmail.com'),
 	(21, 'UNILEVER BRASIL LTDA', '61068276000104', '1135688000', 'sac@ades.com.br'),
-	(22, 'LP COMERCIO DE SALGADOS LTDA', '24836224000104', '1138715778', 'legal@mwa.com.br'),
-	(23, 'Fornecedor Teste', '99999999000199', NULL, NULL);
+	(22, 'LP COMERCIO DE SALGADOS LTDA', '24836224000104', '1138715778', 'legal@mwa.com.br');
 
 -- Copiando estrutura para tabela fws.funcionarios
 CREATE TABLE IF NOT EXISTS `funcionarios` (
@@ -188,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
   CONSTRAINT `funcionarios_chk_1` CHECK ((`nivel_permissao` between 1 and 3))
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.funcionarios: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela fws.funcionarios: ~0 rows (aproximadamente)
 INSERT INTO `funcionarios` (`id`, `nome`, `cpf`, `email`, `senha`, `nivel_permissao`, `criado_em`, `ultimo_login`, `ativo`) VALUES
 	(1, 'Mônica', '123.456.789-10', 'Monica@redecampeao.com.br', '$2y$10$6hajNuGfFlg6txtji4XJ..HQCDtd.bonljgRVxPfqEE30GIOXNxIu', 3, '2025-08-13 13:43:01', NULL, 1);
 
@@ -311,14 +331,15 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf` (`cpf`),
   UNIQUE KEY `telefone` (`telefone`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.usuarios: ~4 rows (aproximadamente)
+-- Copiando dados para a tabela fws.usuarios: ~5 rows (aproximadamente)
 INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `telefone`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
-	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '11968544146', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-10-22 21:25:43', 1, NULL),
+	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '11968544146', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-10-24 01:59:21', 1, NULL),
 	(6, 'Sabrina', '2007-02-14', '11930265543', '54449709888', 'sabrina@gmail.com', '$2y$10$xVCz9nu7WWZVB25HuJQAJuVeIWKOMuqMtlEP68.sorCERfJ7LVO9.', '2025-10-22 11:30:07', '2025-10-22 08:32:23', 1, NULL),
 	(7, 'Nicolly Clement de Freitas', '2007-07-25', '11928926150', '50674089871', 'clementnicolly@gmail.com', '$2y$10$0Igs1yOGF5dtBMYbX/vlme9BcBJ3gu/VfRlwxSsOjCwq6ytGu3dJi', '2025-10-22 14:07:05', '2025-10-22 11:08:02', 1, NULL),
-	(8, 'nathally ferreira', '2007-08-13', '11999284328', '49681441800', 'nathally@gmail.com', '$2y$10$M45ldEWNbN1mc.pYonwGu.rJg9leM2BjTe3kynY6lN9K8KmVu.BPi', '2025-10-22 14:59:52', '2025-10-22 12:01:16', 1, NULL);
+	(8, 'nathally ferreira', '2007-08-13', '11999284328', '49681441800', 'nathally@gmail.com', '$2y$10$M45ldEWNbN1mc.pYonwGu.rJg9leM2BjTe3kynY6lN9K8KmVu.BPi', '2025-10-22 14:59:52', '2025-10-22 12:01:16', 1, NULL),
+	(9, 'Maria Da Silva', '2005-04-29', '11967222222', '85577959047', 'Maria@gmail.com', '$2y$10$oUmViqIQVL8Ys.jdemrrSOuSFaoECwDtUIR.bxzDzVKW63npUZMK2', '2025-10-24 01:22:47', '2025-10-23 22:23:34', 1, NULL);
 
 -- Copiando estrutura para tabela fws.vendas
 CREATE TABLE IF NOT EXISTS `vendas` (
