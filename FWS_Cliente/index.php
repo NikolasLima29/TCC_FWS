@@ -223,11 +223,144 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     </div>
   </section>
 
-  <section>
-    <div id="desconto">
-      <img src="index/IMG/desconto_vitor.jpeg" alt="desconto do Vitor">
+<section>
+  <div id="carrossel-custom" style="max-width:480px; margin:0 auto; padding:24px 0;">
+    <div class="carrossel-slide" style="position: relative; height: 220px; min-height: 140px;">
+      <button id="btnPrev" style="position:absolute; left:0; top:50%; transform: translateY(-50%); z-index:10; font-size: 1.5rem; background: transparent; border: none; cursor: pointer;">&#9664;</button>
+      <div style="overflow:hidden; width: 100%;">
+        <img class="carrossel-img left" src="index/IMG/desconto_vitor.jpeg" alt="Promo 1" />
+        <img class="carrossel-img center" src="index/IMG/promo_carrinho.png" alt="Promo 2" />
+        <img class="carrossel-img right" src="index/IMG/F1.png" alt="Promo 3" />
+      </div>
+      <button id="btnNext" style="position:absolute; right:0; top:50%; transform: translateY(-50%); z-index:10; font-size: 1.5rem; background: transparent; border: none; cursor: pointer;">&#9654;</button>
     </div>
-  </section>
+  </div>
+</section>
+
+<style>
+#carrossel-custom {
+  width: 90vw; max-width: 480px;
+}
+.carrossel-slide {
+  width: 100%;
+  position: relative;
+  height: 220px;
+  min-height: 140px;
+  margin: 0 auto;
+  user-select: none;
+}
+.carrossel-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  max-height: 170px; /* 10px menor */
+  border-radius: 14px;
+  object-fit: contain;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.10);
+  opacity: 0;
+  z-index: 1;
+  filter: blur(1.5px) grayscale(0.3) brightness(0.9); /* menos borrado */
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 1s ease, filter 0.7s ease, transform 0.7s ease, box-shadow 0.7s ease;
+}
+.carrossel-img.center {
+  opacity: 1;
+  z-index: 3;
+  filter: none;
+  pointer-events: auto;
+  box-shadow: 0 10px 42px rgba(255,220,30,0.22);
+  transform: translate(-50%, -50%) scale(1.08);
+  cursor: pointer;
+}
+.carrossel-img.center:hover {
+  transform: translate(-50%, -50%) scale(1.18);
+  box-shadow: 0 12px 52px rgba(255,220,30,0.35);
+}
+.carrossel-img.left {
+  opacity: 1;
+  z-index: 2;
+  transform: translate(calc(-50% - 120%), -50%) scale(0.95) rotate(-8deg);
+}
+.carrossel-img.right {
+  opacity: 1;
+  z-index: 2;
+  transform: translate(calc(-50% + 120%), -50%) scale(0.95) rotate(8deg);
+}
+</style>
+
+<script>
+const imgs = [
+  "index/IMG/desconto_vitor.jpeg",
+  "index/IMG/promo_carrinho.png",
+  "index/IMG/F1.png",
+  "index/IMG/Promo_coxinha.png"
+];
+let idx = 0;
+const imgTags = document.querySelectorAll('.carrossel-img');
+let timeout;
+
+function showCarrossel() {
+  const total = imgs.length;
+  let pos = [
+    (idx + total -1) % total, // esquerda
+    idx,                      // central
+    (idx + 1) % total         // direita
+  ];
+
+  imgTags.forEach(img => img.className = "carrossel-img");
+
+  imgTags[0].src = imgs[pos[0]];
+  imgTags[0].classList.add("left");
+
+  imgTags[1].src = imgs[pos[1]];
+  imgTags[1].classList.add("center");
+
+  imgTags[2].src = imgs[pos[2]];
+  imgTags[2].classList.add("right");
+}
+
+function proximo() {
+  idx = (idx + 1) % imgs.length;
+  showCarrossel();
+}
+
+function anterior() {
+  idx = (idx + imgs.length - 1) % imgs.length;
+  showCarrossel();
+}
+
+function startAuto() {
+  timeout = setInterval(proximo, 5000);
+}
+
+function pauseAuto() {
+  clearInterval(timeout);
+}
+
+showCarrossel();
+startAuto();
+
+const carrossel = document.querySelector('.carrossel-slide');
+carrossel.addEventListener('mouseenter', pauseAuto);
+carrossel.addEventListener('mouseleave', startAuto);
+
+
+// Botões next e prev
+document.getElementById('btnNext').addEventListener('click', () => {
+  proximo();
+  pauseAuto();
+  startAuto();
+});
+document.getElementById('btnPrev').addEventListener('click', () => {
+  anterior();
+  pauseAuto();
+  startAuto();
+});
+</script>
+
+
 
   <!-- Segundo cabeçalho -->
   <section class="mais-vendidos">
