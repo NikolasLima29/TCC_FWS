@@ -16,19 +16,20 @@ $sql_mais_vendidos = "
 ";
 $result_mais_vendidos = mysqli_query($conn, $sql_mais_vendidos);
 
-// Se não houver produtos mais vendidos, buscar baseado em estoque, excluindo categorias proibidas
+// 2. Se não houver produtos mais vendidos, buscar produtos com MENOR estoque
 if (mysqli_num_rows($result_mais_vendidos) == 0) {
-    // IDs de categorias proibidas: BEBIDAS ALCOÓLICAS=1, CIGARROS E ITENS DE FUMO=9, OUTROS=11 (confirme no seu BD)
-    // Altere IDS conforme seu banco real.
+    // IDs de categorias proibidas: BEBIDAS ALCOÓLICAS=1, CIGARROS E ITENS DE FUMO=9, OUTROS=11 (ajuste conforme seu BD)
     $ids_excluir = [1, 9, 11];
     $ids_excluir_str = implode(',', $ids_excluir);
 
+    // Agora o ORDER BY é ASC, para pegar os produtos com menos estoque
     $sql_estoque = "
         SELECT p.id, p.nome, p.descricao, p.foto_produto, p.preco_venda, p.estoque
         FROM produtos p
         WHERE p.status = 'ativo'
           AND p.categoria_id NOT IN ($ids_excluir_str)
-        ORDER BY p.estoque DESC
+          AND p.estoque > 0
+        ORDER BY p.estoque ASC
         LIMIT 10
     ";
     $result_estoque = mysqli_query($conn, $sql_estoque);
@@ -36,7 +37,7 @@ if (mysqli_num_rows($result_mais_vendidos) == 0) {
     $result_estoque = false; // sem fallback
 }
 
-// Montar lista final para o carrossel
+// 3. Montar lista final para o carrossel
 $produtos_carrossel = [];
 
 if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
@@ -50,8 +51,8 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 }
 
 // Agora $produtos_carrossel tem até 10 produtos para exibir no carrossel
-
 ?>
+
 
 <!doctype html>
 <html lang="pt-BR">
