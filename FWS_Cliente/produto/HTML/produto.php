@@ -127,8 +127,6 @@ $resultado = mysqli_query($conn, $sql);
      <header id="header">
 <style>
 #header {
-  position: sticky;
-  top: 0;
   background-color: rgba(255, 255, 255, 0.2); /* transparência correta */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
