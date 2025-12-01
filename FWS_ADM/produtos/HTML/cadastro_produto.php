@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dir_img = $_SERVER['DOCUMENT_ROOT'] . "/TCC_FWS/IMG_Produtos/";
         $foto_tmp = $_FILES['foto']['tmp_name'];
 
-
+        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
         $nome_arquivo = $id_produto . "." . $extensao;
         $foto_path = $dir_img . $nome_arquivo;
 
