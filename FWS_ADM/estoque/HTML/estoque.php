@@ -185,6 +185,12 @@ if(!$result){
                         </li>
                         <li>
                             <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/fornecedor.png">
+                                <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a>
