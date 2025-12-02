@@ -207,7 +207,7 @@ $resultado = mysqli_query($conn, $sql);
         </a>
     </div>
 
-    <div id="bem-vindo" style="position: relative; display: inline-block;">
+<div id="bem-vindo" style="position: relative; display: inline-block;">
         <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
             <?php
                 $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
@@ -778,7 +778,50 @@ $(function() {
 .btn-cadastrar { background: #FFD100; color: #000000ff; }
 .btn-voltar { background: #999; color: #000; }
 
-        </style>
+/* ======== MOBILE ======== */
+@media (max-width: 768px) {
+
+    #header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    /* Logo à esquerda */
+    .logo {
+        order: 1;
+    }
+
+    /* Carrinho no centro da direita */
+    .carrinho {
+        order: 2;
+        margin-left: auto; /* empurra o carrinho para a direita */
+        margin-right: 10px;
+    }
+
+    /* Menu ≡ totalmente à direita */
+    .menu-toggle {
+        order: 3;
+    }
+
+    /* Menu dropdown ocupa linha inteira quando aberto */
+    nav.nav-links {
+        order: 4;
+        width: 100%;
+    }
+
+    /* "Bem-vindo" vai para baixo do menu */
+    #bem-vindo {
+        order: 5;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+
+
+</style>
 
 </body>
 

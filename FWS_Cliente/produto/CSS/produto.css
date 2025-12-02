@@ -20,7 +20,7 @@ body {
 }
 
 header .logo img {
-    height: 60px;
+    height: 40px;
 }
 
 .logo {
@@ -93,8 +93,6 @@ nav ul li a:hover::after {
     padding-top: 20px;
 }
 
-
-
 .container {
     align-content: left;
 
@@ -144,15 +142,43 @@ nav ul li a:hover::after {
     }
 }
 
-/* Estilo para celular */
 @media (max-width: 768px) {
+
+    /* Linha principal do header */
     #header {
-        flex-wrap: wrap;
+        display: flex;
+        align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap !important; /* impede quebrar linha */
+        width: 100%;
+    }
+
+    /* Ordem dos elementos */
+    .logo {
+        order: 1;
+    }
+
+    .carrinho {
+        order: 2 !important;
+        margin: 0 10px;
+        width: auto !important;  /* impede ocupar linha inteira */
+        display: flex;
         align-items: center;
     }
 
-    .nav-links {
+    .menu-toggle {
+        order: 3;
+        display: block !important;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 30px;
+        cursor: pointer;
+    }
+
+    /* Menu dropdown */
+    nav.nav-links {
+        order: 4;
         display: none;
         width: 100%;
         background-color: #c40000;
@@ -162,18 +188,27 @@ nav ul li a:hover::after {
         gap: 15px;
     }
 
-    .menu-toggle {
-        display: block;
-    }
-    
-    .nav-links ul {
-        flex-direction: column;
-        gap: 15px;
-    }
-
     .nav-links.active {
         display: flex;
         animation: slideDown 0.3s ease;
+    }
+
+    .nav-links ul {
+        flex-direction: column;
+        gap: 15px;
+        list-style: none;
+    }
+
+    .nav-links ul li a {
+        font-size: 20px;
+        color: white;
+    }
+
+    #bem-vindo {
+        order: 5;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
     }
 
     @keyframes slideDown {
@@ -181,29 +216,10 @@ nav ul li a:hover::after {
             opacity: 0;
             transform: translateY(-10px);
         }
-
         to {
             opacity: 1;
             transform: translateY(0);
         }
-    }
-
-    nav ul {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    nav ul li a {
-        font-size: 20px;
-        color: white;
-    }
-
-    .carrinho {
-        order: 3;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin: 10px 0;
     }
 
     .pagination {
