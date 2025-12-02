@@ -59,12 +59,13 @@ if (!$usuario) die("Usuário não encontrado.");
     </div>
     <nav>
         <ul class="ul">
-            <li><a href="../../produto/HTML/produto.html">Produtos</a></li>
-            <li><a href="../../tela_sobre_nos/HTML/sobre_nos.html">Sobre nós</a></li>
+            <li><a href="../../produto/HTML/produto.php">Produtos</a></li>
+            <li><a href="../../meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+            <li><a href="../../tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>
     <div class="carrinho">
-        <a href="#"><img src="../../index/IMG/carrinho.png" alt="carrinho" id="carrinho" /></a>
+        <a href="../../carrinho/HTML/carrinho.php"><img src="../../index/IMG/carrinho.png" alt="carrinho" id="carrinho" /></a>
     </div>
 </header>
 

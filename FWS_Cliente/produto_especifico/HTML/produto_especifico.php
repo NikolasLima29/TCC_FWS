@@ -89,6 +89,7 @@ $produto = $result->fetch_assoc();
                     </button>
                 </form>
             </li>
+            <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
             <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>

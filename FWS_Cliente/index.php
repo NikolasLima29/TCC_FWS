@@ -6,7 +6,7 @@ include "conn.php";
 // 1. Buscar os produtos mais vendidos ativos (quantidade total vendida)
 $sql_mais_vendidos = "
     SELECT p.id, p.nome, p.descricao, p.foto_produto, p.preco_venda,
-           SUM(iv.quantidade) AS total_vendido
+            SUM(iv.quantidade) AS total_vendido
     FROM itens_vendidos iv
     INNER JOIN produtos p ON iv.produto_id = p.id
     WHERE p.status = 'ativo'
@@ -160,6 +160,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
                     </button>
                 </form>
             </li>
+            <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
             <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>
