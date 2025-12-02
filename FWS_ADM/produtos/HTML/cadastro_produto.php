@@ -54,25 +54,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Upload da foto
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+
+        
         $dir_img = $_SERVER['DOCUMENT_ROOT'] . "/TCC_FWS/IMG_Produtos/";
         $foto_tmp = $_FILES['foto']['tmp_name'];
-        $nome_arquivo = uniqid() . '_' . basename($_FILES['foto']['name']);
+
+        $extensao = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
+        $nome_arquivo = $id_produto . "." . $extensao;
         $foto_path = $dir_img . $nome_arquivo;
 
-        list($width, $height) = getimagesize($foto_tmp);
-        $max_width = 1000;
-        $max_height = 700;
-        if ($width > $max_width || $height > $max_height) {
-            header("Location: cadastro_produto.php?status=erro&msg=Imagem muito grande. Máximo permitido: 1000x700 pixels.");
-            exit;
+        $new_width = 1000;
+        $new_height = 700;
+
+        list($width, $height, $type) = getimagesize($foto_tmp);
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                $src_image = imagecreatefromjpeg($foto_tmp);
+                break;
+            case IMAGETYPE_PNG:
+                $src_image = imagecreatefrompng($foto_tmp);
+                break;
+            case IMAGETYPE_WEBP:
+                $src_image = imagecreatefromwebp($foto_tmp);
+                break;
+            default:
+                header("Location: cadastro_produto.php?status=erro&msg=Tipo de imagem não suportado.");
+                exit;
         }
 
-        if (move_uploaded_file($foto_tmp, $foto_path)) {
-            $foto = '/TCC_FWS/IMG_Produtos/' . $nome_arquivo;
-        } else {
-            header("Location: cadastro_produto.php?status=erro&msg=Falha ao salvar a imagem.");
-            exit;
+
+        $new_img = imagecreatetruecolor($new_width, $new_height);
+
+        if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_WEBP) {
+            imagealphablending($new_img, false);
+            imagesavealpha($new_img, true);
         }
+        imagecopyresampled($new_img, $src_image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+
+        switch ($type) {
+            case IMAGETYPE_JPEG:
+                imagejpeg($new_img, $foto_path, 90);
+                break;
+            case IMAGETYPE_PNG:
+                imagepng($new_img, $foto_path);
+                break;
+            case IMAGETYPE_WEBP:
+                imagewebp($new_img, $foto_path, 90);
+                break;
+        }
+        imagedestroy($src_image);
+        imagedestroy($new_img);
+
+        $foto = '/TCC_FWS/IMG_Produtos/' . $nome_arquivo;
+
+        
+
     } else {
         $foto = null;
     }
@@ -251,6 +288,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte"><img src="../../menu_principal/IMG/vendaspai.png"> <span class="ms-1 d-none d-sm-inline">Vendas</span></a></li>
                         <li><a href="/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0" id="cor-fonte"><img src="../../menu_principal/IMG/estoque.png"> <span class="ms-1 d-none d-sm-inline">Estoque</span></a></li>
                         <li><a href="/TCC_FWS/FWS_ADM/produtos/HTML/cadastro_produto.php" class="nav-link align-middle px-0" id="cor-fonte"><img src="../../menu_principal/IMG/produtos.png"> <span class="ms-1 d-none d-sm-inline">Produtos</span></a></li>
+                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte"><img src="../../menu_principal/IMG/fornecedor.png"> <span class="ms-1 d-none d-sm-inline">Fornecedores</span></a></li>
                         <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte"><img src="../../menu_principal/IMG/funcionarios.png"> <span class="ms-1 d-none d-sm-inline">Funcionários</span></a></li>
                     </ul>
                     <hr>

@@ -22,37 +22,50 @@
               <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                   <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                       <li class="nav-item">
-                          <a href="menu_principal.html" class="nav-link align-middle px-0">
-                              <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
+                          <a href="menu_principal.html" class="nav-link align-middle px-0" id="cor-fonte">
+                            <img src="../../menu_principal/IMG/painelgeral.png">
+                            <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
                           </a>
                       </li>
                       <li>
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                          <img src="../../menu_principal/IMG/fastservice.png">
                           <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                         </a>
                       </li>
                       <li>
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                          <img src="../../menu_principal/IMG/financeiro.png">
                           <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                         </a>
                       </li>
                       <li>
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                          <img src="../../menu_principal/IMG/vendaspai.png">
                           <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Vendas</span>
                         </a>
                       </li>
                       <li>
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                          <img src="../../menu_principal/IMG/estoque.png"> 
                           <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Estoque</span>
                         </a>
                       </li>
                       <li>
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                          <img src="../../menu_principal/IMG/produtos.png"> 
                           <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Produtos</span>
                         </a>
                       </li>
                       <li>
-                        <a href="#" class="nav-link align-middle px-0">
+                        <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                          <img src="../../menu_principal/IMG/fornecedor.png">
+                          <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                          <img src="../../menu_principal/IMG/funcionarios.png">
                           <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                         </a>
                     </li>
