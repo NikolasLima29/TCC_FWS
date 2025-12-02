@@ -1,41 +1,129 @@
 <?php
-session_start();                        
-include "../../conn.php";                
-// Se não existir usuário logado, retorna código 403 (proibido) e encerra o script
+session_start();
+include "../../conn.php";
+
+// 1 — Verifica login
 if (!isset($_SESSION['usuario_id'])) {
-  http_response_code(403); exit;
+    http_response_code(403);
+    exit;
 }
 
-// Garante que o ID do usuário é um inteiro (evita injeção e erros de tipo)
 $userId = (int)$_SESSION['usuario_id'];
-
-// Pega o id do produto enviado via POST, convertendo para inteiro; se não vier, assume 0
 $id_produto = isset($_POST['id_produto']) ? (int)$_POST['id_produto'] : 0;
 
-// Pega a quantidade enviada via POST, converte para inteiro, default = 1, 
-// depois limita o valor mínimo em 1 e máximo em 10
-$qtd = max(1, min(10, (int)($_POST['quantidade'] ?? 1)));
+// -----------------------------------------------------------------------------------
+// 2 — MODO DE VERIFICAÇÃO (antes de qualquer coisa)
+// -----------------------------------------------------------------------------------
+if (isset($_POST['verificar_limite'])) {
 
-// Busca o preço de venda do produto no banco pelo ID informado
-$qry = mysqli_query($conn,"SELECT preco_venda FROM produtos WHERE id=$id_produto");
+    // Busca estoque
+    $q = mysqli_query($conn, "SELECT estoque FROM produtos WHERE id=$id_produto");
+    if (!($row = mysqli_fetch_assoc($q))) {
+        echo json_encode(["erro" => "produto_nao_existe"]);
+        exit;
+    }
 
-// Se não encontrar o produto (consulta sem resultado), devolve 400 (requisição inválida) e encerra
-if (!($row = mysqli_fetch_assoc($qry))) { http_response_code(400); exit; }
+    $estoque = (int)$row['estoque'];
 
-// Armazena o preço de venda do produto retornado do banco
+    // Aplica regra de limite
+    if ($estoque <= 1) {
+        $limite = 0;
+    } elseif ($estoque <= 9) {
+        $limite = floor($estoque / 2);
+    } elseif ($estoque == 10) {
+        $limite = 5;
+    } else {
+        $limite = 10;
+    }
+
+    // Busca quantidade atual no carrinho
+    $q2 = mysqli_query($conn, "
+        SELECT quantidade 
+        FROM carrinho 
+        WHERE usuario_id=$userId AND produto_id=$id_produto
+    ");
+
+    $no_carrinho = 0;
+    if ($r2 = mysqli_fetch_assoc($q2)) {
+        $no_carrinho = (int)$r2['quantidade'];
+    }
+
+    $restante = max(0, $limite - $no_carrinho);
+
+    echo json_encode([
+        "limite" => $limite,
+        "no_carrinho" => $no_carrinho,
+        "restante" => $restante
+    ]);
+    exit;
+}
+
+// -----------------------------------------------------------------------------------
+// 3 — Fluxo normal: ADICIONAR AO CARRINHO
+// -----------------------------------------------------------------------------------
+
+$qtd = isset($_POST['quantidade']) ? (int)$_POST['quantidade'] : 1;
+$qtd = max(1, min(10, $qtd));
+
+// Busca preço e estoque real
+$qry = mysqli_query($conn, "SELECT preco_venda, estoque FROM produtos WHERE id = $id_produto");
+if (!($row = mysqli_fetch_assoc($qry))) {
+    http_response_code(400);
+    echo "erro: produto_inexistente";
+    exit;
+}
+
 $preco = $row['preco_venda'];
+$estoque = (int)$row['estoque'];
 
-// Monta o SQL para inserir o item no carrinho.
-// Se já existir um registro com a mesma chave (ex.: UNIQUE em usuario_id + produto_id),
-// o ON DUPLICATE KEY UPDATE soma a quantidade atual com a nova quantidade,
-// mas nunca deixando passar de 10 (LEAST(quantidade+$qtd,10)).
-$sql = "INSERT INTO carrinho (usuario_id, produto_id, quantidade, preco_unitario)
-  VALUES ($userId, $id_produto, $qtd, $preco)
-  ON DUPLICATE KEY UPDATE quantidade = LEAST(quantidade+$qtd,10)";
+// Estoque mínimo
+if ($estoque <= 1) {
+    http_response_code(409);
+    echo "erro: estoque_insuficiente";
+    exit;
+}
 
-// Executa o comando SQL; em caso de erro, interrompe e mostra a mensagem
-mysqli_query($conn, $sql) or die("Erro ao inserir no carrinho");
+// Regra de limite
+if ($estoque <= 9) {
+    $limite = floor($estoque / 2);
+} elseif ($estoque == 10) {
+    $limite = 5;
+} else {
+    $limite = 10;
+}
 
-// Se deu tudo certo, imprime "OK" para o AJAX/front saber que funcionou
+if ($limite < 1) {
+    http_response_code(409);
+    echo "erro: estoque_insuficiente";
+    exit;
+}
+
+$qtd = min($qtd, $limite);
+
+// Já existe no carrinho?
+$qAtual = mysqli_query($conn, "
+    SELECT quantidade 
+    FROM carrinho 
+    WHERE usuario_id = $userId AND produto_id = $id_produto
+");
+
+if ($rowCarrinho = mysqli_fetch_assoc($qAtual)) {
+    $quantidade_atual = (int)$rowCarrinho['quantidade'];
+    $nova_quantidade = min($quantidade_atual + $qtd, $limite);
+
+    $sql = "
+        UPDATE carrinho 
+        SET quantidade = $nova_quantidade 
+        WHERE usuario_id = $userId AND produto_id = $id_produto
+    ";
+} else {
+    $sql = "
+        INSERT INTO carrinho (usuario_id, produto_id, quantidade, preco_unitario)
+        VALUES ($userId, $id_produto, $qtd, $preco)
+    ";
+}
+
+mysqli_query($conn, $sql) or die("erro_sql");
+
 echo "OK";
 ?>
