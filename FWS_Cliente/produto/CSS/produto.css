@@ -115,10 +115,6 @@ nav ul li a:hover::after {
     padding-bottom: 30px;
 }
 
-.row {
-  justify-content: flex-start !important;
-}
-
 
 /* Menu hambúrguer */
 .menu-toggle {
@@ -156,20 +152,26 @@ nav ul li a:hover::after {
         align-items: center;
     }
 
-    .menu-toggle {
-        display: block;
-    }
-
-    nav.nav-links {
+    .nav-links {
         display: none;
         width: 100%;
         background-color: #c40000;
+        padding: 10px 0;
         flex-direction: column;
         align-items: center;
-        padding: 10px 0;
+        gap: 15px;
     }
 
-    nav.nav-links.active {
+    .menu-toggle {
+        display: block;
+    }
+    
+    .nav-links ul {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .nav-links.active {
         display: flex;
         animation: slideDown 0.3s ease;
     }
@@ -202,5 +204,43 @@ nav ul li a:hover::after {
         display: flex;
         justify-content: center;
         margin: 10px 0;
+    }
+
+    .pagination {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: nowrap;
+        width: 100%;
+        gap: 6px;
+    }
+
+    .pagination .page-item {
+        display: inline-flex !important;
+        flex: 0 0 auto !important;
+    }
+
+    .pagination .page-link {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 38px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        white-space: nowrap;
+        border-radius: 8px;
+    }
+
+    .pagination .page-item:first-child .page-link,
+    .pagination .page-item:last-child .page-link {
+        width: auto !important;
+        padding: 0 10px !important;
+    }
+
+    nav .pagination {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        justify-content: center !important;
     }
 }

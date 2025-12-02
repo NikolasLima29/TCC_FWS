@@ -33,18 +33,17 @@ session_start();
 
 <body>
     <!-- Header with same nav, style, and behavior -->
-      <header id="header">
+        <header id="header">
 <style>
 #header {
-  position: sticky;
-  top: 0;
-  background-color: rgba(255, 255, 255, 0.2); /* transparência correta */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.2); /* transparência correta */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 
 </style>
     <div class="logo">
@@ -57,7 +56,7 @@ session_start();
         <i class="fas fa-bars"></i>
     </button>
 
-    <nav>
+    <nav class="nav-links">
         <ul class="ul align-items-center">
             <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
             <li>
@@ -72,6 +71,47 @@ session_start();
             <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('nav.nav-links');
+
+    if (!toggleButton || !navLinks) return;
+
+    toggleButton.setAttribute('aria-expanded', 'false');
+
+    function setMenu(open) {
+        if (open) {
+            navLinks.classList.add('active');
+            toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+            toggleButton.setAttribute('aria-expanded', 'true');
+        } else {
+            navLinks.classList.remove('active');
+            toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleButton.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    toggleButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMenu(!navLinks.classList.contains('active'));
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!navLinks.classList.contains('active')) return;
+        if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
+            setMenu(false);
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            navLinks.classList.remove('active');
+        }
+    });
+});
+</script>
 
     <div class="carrinho">
         <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">

@@ -19,9 +19,9 @@ if (isset($_GET['q'])) {
 $busca = isset($_SESSION['busca']) ? $_SESSION['busca'] : '';
 
 // Monta a parte fixa da query SQL
-$sql_base = "FROM produtos p 
-             INNER JOIN categorias c ON p.categoria_id = c.id 
-             WHERE p.status = 'ativo'";
+$sql_base = "FROM produtos p
+              INNER JOIN categorias c ON p.categoria_id = c.id
+              WHERE p.status = 'ativo'";
 
 // Adiciona condição LIKE se tiver busca
 if ($busca !== '') {
@@ -42,8 +42,6 @@ $sql = "SELECT p.id, p.nome, p.preco_venda, p.descricao, p.foto_produto, c.nome 
 $resultado = mysqli_query($conn, $sql);
 
 ?>
-
-
 
 <!doctype html>
 <html lang="pt-BR">
@@ -146,7 +144,7 @@ $resultado = mysqli_query($conn, $sql);
         <i class="fas fa-bars"></i>
     </button>
 
-    <nav>
+    <nav class="nav-links">
         <ul class="ul align-items-center">
             <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
             <li>
@@ -161,6 +159,47 @@ $resultado = mysqli_query($conn, $sql);
             <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleButton = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('nav.nav-links');
+
+    if (!toggleButton || !navLinks) return;
+
+    toggleButton.setAttribute('aria-expanded', 'false');
+
+    function setMenu(open) {
+        if (open) {
+            navLinks.classList.add('active');
+            toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+            toggleButton.setAttribute('aria-expanded', 'true');
+        } else {
+            navLinks.classList.remove('active');
+            toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleButton.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    toggleButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMenu(!navLinks.classList.contains('active'));
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!navLinks.classList.contains('active')) return;
+        if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
+            setMenu(false);
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            navLinks.classList.remove('active');
+        }
+    });
+});
+</script>
 
     <div class="carrinho">
         <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
@@ -218,16 +257,16 @@ $resultado = mysqli_query($conn, $sql);
                     <button class="btn btn-warning" type="submit">Buscar</button>
                 </form>
 
-                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4 justify-content-start">
+                <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4 justify-content-start">
                     <?php
                     if ($total_produtos == 0 && $busca !== '') {
                         echo '<p class="text-center w-100" style="margin-top: 40px;">Nenhum produto encontrado para "' . htmlspecialchars($busca) . '". Mas veja nossos outros produtos:</p>';
 
                         $sql_sem_filtro = "SELECT p.id, p.nome, p.preco_venda, p.foto_produto, p.descricao, c.nome AS categoria, c.cor 
-                           FROM produtos p 
-                           INNER JOIN categorias c ON p.categoria_id = c.id 
-                           WHERE p.status = 'ativo' 
-                           LIMIT $produtos_por_pagina OFFSET $offset";
+                            FROM produtos p
+                            INNER JOIN categorias c ON p.categoria_id = c.id
+                            WHERE p.status = 'ativo'
+                            LIMIT $produtos_por_pagina OFFSET $offset";
 
                         $resultado_sem_filtro = mysqli_query($conn, $sql_sem_filtro);
 
@@ -251,13 +290,13 @@ $resultado = mysqli_query($conn, $sql);
                 <img src="' . $foto . '" class="card-img-top" alt="' . $nome . '">
                 <div class="card-body">
                   <h6 class="card-title mb-2 fs-7" style="font-weight: normal !important;">
-                    <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                    <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
                       style="text-decoration: none; color: inherit;">' . $nome . '</a>
                   </h6>
                   <p class="card-text mb-2" style="font-weight: bold; color: green;">R$ ' . $preco . '</p>
                   <span class="badge" style="background-color: ' . $cor . '; color: white; padding: 6px 10px; border-radius: 12px;">' . $categoria . '</span>
                   <div class="mt-3 carrossel-buttons">
-                    <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                    <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
                       class="btn btn-primary btn-sm" style="margin-right:7px;">Ver mais</a>
                     <button type="button"
                       class="Carrinho btn btn-outline-success btn-sm"
@@ -293,13 +332,13 @@ $resultado = mysqli_query($conn, $sql);
                   <img src="' . $foto . '" class="card-img-top" alt="' . $nome . '">
                   <div class="card-body">
                     <h6 class="card-title mb-2 fs-7" style="font-weight: normal !important;">
-                      <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                      <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
                         style="text-decoration: none; color: inherit;">' . $nome . '</a>
                     </h6>
                     <p class="card-text mb-2" style="font-weight: bold; color: green;">R$ ' . $preco . '</p>
                     <span class="badge" style="background-color: ' . $cor . '; color: white; padding: 6px 10px; border-radius: 12px;">' . $categoria . '</span>
                     <div class="mt-2 carrossel-buttons  d-flex flex-column gap-2">
-                      <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '" 
+                      <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
                         class="btn btn-primary btn-sm" style="margin-right:7px;">Ver mais</a>
                       <button type="button"
                         class="Carrinho btn btn-outline-success btn-sm"
@@ -529,9 +568,9 @@ $(function() {
       <div class="modal-actions" style="margin-bottom:16px;">
         <a href="/TCC_FWS/FWS_Cliente/login/HTML/login.html" class="btn-login">Login</a>
         <a id="btn_modal_cadastrar"href="/TCC_FWS/FWS_Cliente/cadastro/HTML/cadastro.html" class="btn-cadastrar">Cadastrar</a>
- <button class="btn-popup btn-voltar">Voltar</button> 
+  <button class="btn-popup btn-voltar">Voltar</button>
       
-     </div>
+      </div>
     
     `).show();
     $("#modal-backdrop").show();
@@ -543,10 +582,6 @@ $(function() {
   });
 });
 </script>
-
-
-
-   
 
         <div id="modal-backdrop" class="custom-backdrop" style="display:none"></div>
         <div id="modal-add-carrinho" class="custom-modal" style="display:none"></div>
@@ -649,7 +684,6 @@ $(function() {
 }
 .custom-modal img {
   max-width: 400px;
- 
   margin-bottom: 10px;
   border-radius: 8px;
 }
@@ -729,7 +763,6 @@ $(function() {
 .modal-actions button {
   display: inline-block;
   width: 120px;
- 
   text-align: center;
   border: none;
   border-radius: 8px;
@@ -746,9 +779,6 @@ $(function() {
 .btn-voltar { background: #999; color: #000; }
 
         </style>
-
-
-
 
 </body>
 

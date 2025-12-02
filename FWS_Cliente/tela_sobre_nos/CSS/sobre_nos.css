@@ -97,9 +97,7 @@ main p {
     color: black;
     text-align: justify;
     font-size: 20px;
-    padding-bottom: 10px;
-    padding-left: 140px;
-    padding-right: 140px;
+    padding: 10px 140px;
 }
 
 main {
@@ -107,9 +105,9 @@ main {
 }
 
 #imagem {
-    height: 440px;
-    width: 680px;
-    padding-bottom: 20px;
+    width: 100%;
+    max-width: 680px;
+    height: auto;
     display: block;
     margin: auto;
 
@@ -121,7 +119,6 @@ main {
     padding-bottom: 30px;
 }
 
-/* Menu hambúrguer */
 .menu-toggle {
     display: none;
     background: none;
@@ -131,7 +128,6 @@ main {
     cursor: pointer;
 }
 
-/* Estilo padrão (desktop) */
 @media (min-width: 769px) {
     .menu-toggle {
         display: none;
@@ -149,7 +145,7 @@ main {
     }
 }
 
-/* Estilo para celular */
+
 @media (max-width: 768px) {
     #header {
         flex-wrap: wrap;
@@ -203,5 +199,48 @@ main {
         display: flex;
         justify-content: center;
         margin: 10px 0;
+    }
+
+    main p {
+        padding: 10px 20px;
+        font-size: 18px;
+    }
+
+    #imagem {
+        max-width: 100%;
+    }
+
+    .carousel {
+        width: 90%;
+    }
+}
+
+/* ----- Correção definitiva para mobile ----- */
+@media (max-width: 768px) {
+
+    main {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    main p {
+        padding: 0 20px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 18px !important;
+        text-align: justify;
+    }
+
+    #imagem {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    .carousel {
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }
