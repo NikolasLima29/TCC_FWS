@@ -209,6 +209,40 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
             Bem-vindo(a).
         <?php endif; ?>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<script>
+$(function() {
+  var autocomplete = $("#search").autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: 'produto/PHP/api-produtos.php',
+        dataType: 'json',
+        data: { q: request.term },
+        success: function(data) {
+          response(data);
+        }
+      });
+    },
+    minLength: 2,
+    select: function(event, ui) {
+      window.location.href = 'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+    }
+  }).data('ui-autocomplete') || $("#search").data('autocomplete');
+
+  if (autocomplete) {
+    autocomplete._renderItem = function(ul, item) {
+      return $("<li>")
+        .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" + item.label + "</div>")
+        .appendTo(ul);
+    };
+  }
+});
+
+</script>
 </header>
   <!-- Primeiro corpo -->
 
@@ -527,39 +561,7 @@ header nav ul li a {
 
 </style>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
-<script>
-$(function() {
-  var autocomplete = $("#search").autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: 'produto/PHP/api-produtos.php',
-        dataType: 'json',
-        data: { q: request.term },
-        success: function(data) {
-          response(data);
-        }
-      });
-    },
-    minLength: 2,
-    select: function(event, ui) {
-      window.location.href = 'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
-    }
-  }).data('ui-autocomplete') || $("#search").data('autocomplete');
-
-  if (autocomplete) {
-    autocomplete._renderItem = function(ul, item) {
-      return $("<li>")
-        .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" + item.label + "</div>")
-        .appendTo(ul);
-    };
-  }
-});
-
-</script>
 <script>
 $(function() {
   var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;

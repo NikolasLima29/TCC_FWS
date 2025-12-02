@@ -111,11 +111,7 @@ if (isset($_POST['reservar'])) {
 <body>
 
 <header id="header">
-<style>
 
-
-
-</style>
     <div class="logo">
         <a href="../../index.php">
             <img src="../../index/IMG/shell_select.png" alt="logo" />
@@ -155,7 +151,7 @@ if (isset($_POST['reservar'])) {
             ?>
             Bem-vindo(a), <?= $primeiroNome ?>
             <div style="display: inline-block; margin-left: 8px; cursor: pointer;" id="user-menu-toggle">
-                <i class="fas fa-user-circle fa-2x" style="max width: 90px;"></i>
+                <i class="fas fa-user-circle fa-2x" style="max-width: 90px;"></i>
             </div>
 
             <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
@@ -186,8 +182,42 @@ if (isset($_POST['reservar'])) {
             Bem-vindo(a).
         <?php endif; ?>
     </div>
-</header>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<script>
+$(function() {
+  var autocomplete = $("#search").autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: '/TCC_FWS/FWS_Cliente/produto/PHP/api-produtos.php',
+        dataType: 'json',
+        data: { q: request.term },
+        success: function(data) {
+          response(data);
+        }
+      });
+    },
+    minLength: 2,
+    select: function(event, ui) {
+      window.location.href = 'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+    }
+  }).data('ui-autocomplete') || $("#search").data('autocomplete');
+
+  if (autocomplete) {
+    autocomplete._renderItem = function(ul, item) {
+      return $("<li>")
+        .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" + item.label + "</div>")
+        .appendTo(ul);
+    };
+  }
+});
+
+</script>
+</header>
+    
 <div class="container py-5">
     <h1 class="mb-5">Seu carrinho</h1>
     <div class="row">
