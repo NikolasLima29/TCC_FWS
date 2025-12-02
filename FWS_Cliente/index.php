@@ -141,7 +141,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 </style>
     <div class="logo">
         <a href="index.php">
-            <img src="index/IMG/shell_select.png" alt="logo" />
+            <img src="/TCC_FWS/FWS_Cliente/index/IMG/shell_select.png" alt="logo" />
         </a>
     </div>
 
@@ -219,7 +219,7 @@ $(function() {
   var autocomplete = $("#search").autocomplete({
     source: function(request, response) {
       $.ajax({
-        url: 'produto/PHP/api-produtos.php',
+        url: '/TCC_FWS/FWS_Cliente/produto/PHP/api-produtos.php',
         dataType: 'json',
         data: { q: request.term },
         success: function(data) {

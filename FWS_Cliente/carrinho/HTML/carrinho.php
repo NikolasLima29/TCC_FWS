@@ -3,7 +3,7 @@ session_start();
 include "../../conn.php"; // conexão com o banco
 
 if (!isset($_SESSION['usuario_id'])) {
-    header("Location: ../../login/login.php");
+    header("Location: /TCC_FWS/FWS_Cliente/login/HTML/login.html");
     exit;
 }
 
