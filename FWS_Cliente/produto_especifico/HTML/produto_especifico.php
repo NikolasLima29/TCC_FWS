@@ -353,67 +353,199 @@ $produto = $result->fetch_assoc();
     </script>
 
 <script>
-const precoUnitario = <?php echo $produto['preco_venda']; ?>;
-const estoque = <?php echo $produto['estoque']; ?>;
-let quantidade = 1;
+$(function () {
+    const precoUnitario = <?php echo $produto['preco_venda']; ?>;
+    const produtoId = <?php echo $produto['id']; ?>;
+    const dadosProduto = {
+        id: <?php echo $produto['id']; ?>,
+        nome: "<?php echo addslashes($produto['nome']); ?>",
+        foto: "<?php echo $produto['foto_produto']; ?>",
+        preco: <?php echo $produto['preco_venda']; ?>,
+        descricao: "<?php echo addslashes($produto['descricao']); ?>"
+    };
+    let quantidade = 1;
+    let limiteMaximo = 10; // ← PADRÃO
 
-function atualizaPreco() {
-  document.getElementById('precoTotal').innerText = 'R$ ' + (precoUnitario * quantidade).toFixed(2).replace('.', ',');
-  document.getElementById('quantidadeShow').innerText = quantidade;
-}
-
-document.getElementById('mais').onclick = function() {
-  if (quantidade < estoque) {
-    quantidade++;
-    atualizaPreco();
-  }
-};
-
-document.getElementById('menos').onclick = function() {
-  if (quantidade > 1) {
-    quantidade--;
-    atualizaPreco();
-  }
-};
-
-document.getElementById('adicionar').onclick = function() {
-  if (quantidade > estoque) return;
-  $.post('../../carrinho/PHP/adicionar_ao_carrinho.php', {
-      id_produto: <?php echo $produto['id']; ?>,
-      quantidade: quantidade
-    }, function(resp) {
-      if (resp.trim() === "OK") {
-        const dados = {
-          nome: "<?php echo addslashes($produto['nome']); ?>",
-          foto: "<?php echo $produto['foto_produto']; ?>",
-          qtd: quantidade,
-          preco: <?php echo $produto['preco_venda']; ?>
-        };
-        $("#modal-add-carrinho").html(`
-          <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
-            ✔️ ${dados.nome} foi adicionado ao seu carrinho!
-          </div>
-          <img src="${dados.foto}" style="max-width:110px;margin-bottom:8px;">
-          <div>Quantidade: ${dados.qtd}</div>
-          <div>Total: <b>${(dados.preco * dados.qtd).toLocaleString("pt-BR", {style:"currency", currency:"BRL"})}</b></div>
-          <div class="modal-actions" style="text-align: right; margin-top: 15px;">
-            <button class="btn btn-primary ok-close">Fechar</button>
-          </div>
-        `);
-        $("#modal-backdrop, #modal-add-carrinho").show();
-
-        $(".ok-close").on("click", function() {
-          $("#modal-add-carrinho, #modal-backdrop").hide();
-        });
-      } else {
-        alert("Erro ao adicionar: " + resp);
-      }
+    // Controles +/-
+    function atualizaPreco() {
+        document.getElementById('precoTotal').innerText = 'R$ ' + (precoUnitario * quantidade).toFixed(2).replace('.', ',');
+        document.getElementById('quantidadeShow').innerText = quantidade;
     }
-  );
-};
+
+    // 🔥 BUSCA LIMITE REAL DO BACKEND NA CARGA DA PÁGINA
+    $.ajax({
+        url: '../../carrinho/PHP/adicionar_ao_carrinho.php',
+        method: 'POST',
+        data: {
+            verificar_limite: 1,
+            id_produto: dadosProduto.id
+        },
+        xhrFields: { withCredentials: true },
+        success: function(raw) {
+            let resp;
+            try {
+                resp = JSON.parse(raw);
+                limiteMaximo = resp.limite; // ← PEGA LIMITE REAL DO PHP
+            } catch (e) {
+                console.error("Erro ao buscar limite:", raw);
+                limiteMaximo = 10;
+            }
+        },
+        error: function() {
+            limiteMaximo = 10; // Fallback
+        }
+    });
+
+    // ✅ BOTÃO + INATIVO COM TOAST 4 SEGUNDOS
+ $('#mais').click(function() {
+    if (quantidade < limiteMaximo) {
+        quantidade++;
+        atualizaPreco();
+    } else {
+        // BOTÃO FICA INATIVO + TOAST CENTRALIZADO
+        $(this).prop('disabled', true).css('opacity', '0.6');
+        
+        // ✅ TOAST NO CENTRO DA TELA
+        const toast = $('<div id="toast-limite" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#E53935;color:white;padding:15px 25px;border-radius:12px;font-weight:600;z-index:9999;box-shadow:0 8px 25px rgba(0,0,0,0.4);display:flex;align-items:center;gap:12px;max-width:320px;text-align:center;">🚫 Impossível adicionar mais, limite do estoque atingido</div>').appendTo('body');
+        
+        setTimeout(() => {
+            toast.fadeOut(300, function() { $(this).remove(); });
+            $(this).prop('disabled', false).css('opacity', '1');
+        }, 4000);
+    }
+});
 
 
+    $('#menos').click(function() {
+        if (quantidade > 1) {
+            quantidade--;
+            atualizaPreco();
+        }
+    });
+
+    // 🔥 CLIQUE PRINCIPAL - VERIFICA LIMITE FINAL + ADICIONA
+    $('#adicionar').click(function() {
+        // 1. Verifica limite FINAL no backend
+        $.ajax({
+            url: '../../carrinho/PHP/adicionar_ao_carrinho.php',
+            method: 'POST',
+            data: {
+                verificar_limite: 1,
+                id_produto: dadosProduto.id
+            },
+            xhrFields: { withCredentials: true },
+            success: function(raw) {
+                let resp;
+                try {
+                    resp = JSON.parse(raw);
+                } catch (e) {
+                    console.error("Erro ao ler resposta:", raw);
+                    return;
+                }
+
+                // 2. Se já atingiu limite TOTAL
+                if (resp.restante <= 0) {
+                    mostrarAvisoLimite(dadosProduto.nome);
+                    return;
+                }
+
+                // 3. Se quantidade > restante disponível
+                if (quantidade > resp.restante) {
+                    mostrarAvisoLimite(dadosProduto.nome);
+                    return;
+                }
+
+                // 4. ADICIONA AO CARRINHO
+                $.ajax({
+                    url: '../../carrinho/PHP/adicionar_ao_carrinho.php',
+                    method: 'POST',
+                    data: {
+                        id_produto: dadosProduto.id,
+                        quantidade: quantidade
+                    },
+                    xhrFields: { withCredentials: true },
+                    success: function(finalResp) {
+                        if (finalResp.trim() === "OK") {
+                            $("#modal-backdrop").show();
+                            $("#modal-add-carrinho").html(`
+                                <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
+                                    ✔️ ${dadosProduto.nome} foi adicionado ao seu carrinho!
+                                </div>
+                                <img src="${dadosProduto.foto}" style="max-width:110px;margin-bottom:8px;border-radius:8px;">
+                                <div>Quantidade: <b>${quantidade}</b></div>
+                                <div>Total: <b>${(precoUnitario * quantidade).toLocaleString("pt-BR", {style:"currency", currency:"BRL"})}</b></div>
+                                <div class="modal-actions" style="text-align: right; margin-top: 15px;">
+                                    <button class="btn btn-primary ok-close" style="background:#11C47E;color:white;border:none;padding:8px 20px;border-radius:6px;">Fechar</button>
+                                </div>
+                            `).show();
+
+                            $(".ok-close").off('click').on("click", function() {
+                                $("#modal-add-carrinho, #modal-backdrop").hide();
+                            });
+                        } else {
+                            alert("Erro ao adicionar: " + finalResp);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Erro ao adicionar: ' + xhr.status);
+                    }
+                });
+            },
+            error: function(xhr) {
+                if (xhr.status === 403) {
+                    showLoginModal();
+                } else {
+                    alert('Erro de conexão: ' + xhr.status);
+                }
+            }
+        });
+    });
+
+    // AVISO DE LIMITE ATINGIDO
+    function mostrarAvisoLimite(nomeProd) {
+        $("#modal-backdrop").show();
+        $("#modal-add-carrinho").html(`
+            <div style="color:#b30000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
+                Limite atingido
+            </div>
+            <p style="text-align:center;margin-bottom:10px">
+                Você já adicionou o máximo permitido pelo estoque para <b>${nomeProd}</b>.
+            </p>
+            <div class="modal-actions" style="text-align: center; margin-top: 15px;">
+                <button class="btn-popup cancel ok-close" style="background:#E53935;color:white;border:none;padding:8px 20px;border-radius:6px;">Fechar</button>
+            </div>
+        `).show();
+
+        $(".ok-close").off('click').on("click", function() {
+            $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
+    }
+
+    // MODAL DE LOGIN (420px)
+    function showLoginModal() {
+        $("#modal-backdrop").show();
+        $("#modal-add-carrinho").html(`
+            <div style="color:#c40000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
+                É necessário fazer login para adicionar produtos
+            </div>
+            <div class="modal-actions" style="justify-content:center;gap:15px;margin-top:20px;display:flex;flex-wrap:wrap;">
+                <a href="../../login/HTML/login.html" class="btn-login" style="background:#11C47E;color:white;border:none;padding:10px 25px;border-radius:6px;text-decoration:none;font-weight:600;">Login</a>
+                <a href="../../cadastro/HTML/cadastro.html" class="btn-cadastrar" style="background:#FFD100;color:#111;border:none;padding:10px 25px;border-radius:6px;text-decoration:none;font-weight:600;">Cadastrar</a>
+                <button class="btn-popup cancel btn-voltar" style="background:#E53935;color:white;border:none;padding:10px 25px;border-radius:6px;">Voltar</button>
+            </div>
+        `).show();
+
+        $(".btn-voltar").off('click').click(function() {
+            $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
+    }
+
+    // Inicializa
+    atualizaPreco();
+});
 </script>
+
+
 
 
 
@@ -728,6 +860,63 @@ main p {
 .custom-modal .btn-popup.cancel:active {
   background: #9d0909;
 }
+
+<style>
+    /* ... todo o CSS atual ... */
+    
+    /* ✅ BOTÕES + e - ULTRA BONITOS - COLE AQUI 👇 */
+    #mais, #menos {
+        transition: all 0.2s ease !important;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    }
+
+    #mais {
+        background: linear-gradient(145deg, #FFD100, #FFEB3B) !important;
+        color: #111 !important;
+        border: 2px solid #FFC107 !important;
+        font-weight: 900 !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+    }
+
+    #menos {
+        background: linear-gradient(145deg, #E53935, #D32F2F) !important;
+        color: white !important;
+        border: 2px solid #D32F2F !important;
+        font-weight: 900 !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+    }
+
+    /* HOVER ANIMAÇÃO */
+    #mais:hover:not(:disabled), #menos:hover:not(:disabled) {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25) !important;
+    }
+
+    #mais:active:not(:disabled), #menos:active:not(:disabled) {
+        transform: translateY(0) !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    }
+
+    /* DISABLED */
+    #mais:disabled, #menos:disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+        transform: none !important;
+    }
+
+    /* FOCUS */
+    #mais:focus, #menos:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(255,193,7,0.3) !important;
+    }
+    /* 👆 FIM DOS BOTÕES BONITOS */
+    
+    .custom-backdrop {
+        /* ... resto do CSS ... */
+    }
+</style>
 
 
     </style>

@@ -771,24 +771,22 @@ $(function () {
   // FUNÇÃO: Exibir modal de login
   // ------------------------------------------------------------
   function showLoginModal() {
-    $("#modal-login-alert").html(`
-      <div style="color:#c40000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
-          É necessário fazer login para adicionar produtos
-      </div>
-
-      <div class="modal-actions">
-        <a href="/TCC_FWS/FWS_Cliente/login/HTML/login.html" class="btn-login">Login</a>
-        <a href="/TCC_FWS/FWS_Cliente/cadastro/HTML/cadastro.html" class="btn-cadastrar">Cadastrar</a>
-        <button class="btn-popup cancel btn-voltar">Voltar</button>
-      </div>
+    $("#modal-backdrop").show();
+    $("#modal-add-carrinho").html(`
+        <div style="color:#c40000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
+            É necessário fazer login para adicionar produtos
+        </div>
+        <div class="modal-actions" style="justify-content:center;gap:15px;margin-top:20px;display:flex;flex-wrap:wrap;">
+            <a href="../../login/HTML/login.html" class="btn-login" style="background:#11C47E;color:white;border:none;padding:10px 25px;border-radius:6px;text-decoration:none;font-weight:600;">Login</a>
+            <a href="../../cadastro/HTML/cadastro.html" class="btn-cadastrar" style="background:#FFD100;color:#111;border:none;padding:10px 25px;border-radius:6px;text-decoration:none;font-weight:600;">Cadastrar</a>
+            <button class="btn-popup cancel btn-voltar" style="background:#E53935;color:white;border:none;padding:10px 25px;border-radius:6px;">Voltar</button>
+        </div>
     `).show();
 
-    $("#modal-backdrop").show();
-
-    $(".btn-voltar").on("click", function () {
-      $("#modal-login-alert, #modal-backdrop").hide();
+    $(".btn-voltar").off('click').click(function() {
+        $("#modal-add-carrinho, #modal-backdrop").hide();
     });
-  }
+}
 
 });
 </script>
