@@ -8,50 +8,54 @@ $offset = ($pagina_atual - 1) * $produtos_por_pagina;
 
 // Se não houve termo de busca vindo pelo GET, limpar a sessão
 if (!isset($_GET['q'])) {
-  unset($_SESSION['busca']);
+    unset($_SESSION['busca']);
 }
 // Se houve termo via GET, atualiza a variável de sessão
 if (isset($_GET['q'])) {
-  $_SESSION['busca'] = trim($_GET['q']);
+    $_SESSION['busca'] = trim($_GET['q']);
 }
 
 // Recupera o termo salvo na sessão ou vazio
 $busca = isset($_SESSION['busca']) ? $_SESSION['busca'] : '';
 
+// Recupera filtros de preço e categorias do GET
+$min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : 1;
+$max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : 1000;
+$categorias = isset($_GET['categorias']) && is_array($_GET['categorias']) ? array_map('intval', $_GET['categorias']) : [];
+
+// Pega todas categorias para marcar por padrão
+$res_cats = mysqli_query($conn, "SELECT id FROM categorias");
+$all_cat_ids = [];
+while ($cat = mysqli_fetch_assoc($res_cats)) {
+    $all_cat_ids[] = $cat['id'];
+}
+// Se nada foi selecionado, marcar todas
+if (empty($categorias)) {
+    $categorias = $all_cat_ids;
+}
+
 // Monta a parte fixa da query SQL
 $sql_base = "FROM produtos p
-              INNER JOIN categorias c ON p.categoria_id = c.id
-              WHERE p.status = 'ativo'
-              AND p.estoque >= 2";   // <--- mínimo 2 p/ aparecer
-
+             INNER JOIN categorias c ON p.categoria_id = c.id
+             WHERE p.status = 'ativo'
+             AND p.estoque >= 2"; // mínimo 2 para aparecer
 
 // Adiciona condição LIKE se tiver busca
 if ($busca !== '') {
-  $busca_esc = mysqli_real_escape_string($conn, $busca);
-  $sql_base .= " AND p.nome LIKE '%$busca_esc%'";
+    $busca_esc = mysqli_real_escape_string($conn, $busca);
+    $sql_base .= " AND p.nome LIKE '%$busca_esc%'";
 }
-
-// Recupera filtros de preço e categorias do GET
-$min_price = isset($_GET['min_price']) ? floatval($_GET['min_price']) : null;
-$max_price = isset($_GET['max_price']) ? floatval($_GET['max_price']) : null;
-$categorias = isset($_GET['categorias']) ? $_GET['categorias'] : [];
 
 // Filtra preço mínimo
-if ($min_price !== null) {
-    $sql_base .= " AND p.preco_venda >= $min_price";
-}
+$sql_base .= " AND p.preco_venda >= $min_price";
 
 // Filtra preço máximo
-if ($max_price !== null) {
-    $sql_base .= " AND p.preco_venda <= $max_price";
-}
+$sql_base .= " AND p.preco_venda <= $max_price";
 
 // Filtra categorias
-if (!empty($categorias) && is_array($categorias)) {
-    $cat_ids = array_map('intval', $categorias);
-    $sql_base .= " AND p.categoria_id IN (" . implode(',', $cat_ids) . ")";
+if (!empty($categorias)) {
+    $sql_base .= " AND p.categoria_id IN (" . implode(',', $categorias) . ")";
 }
-
 
 // Consulta total de produtos conforme filtro
 $sql_total = "SELECT COUNT(*) as total $sql_base";
@@ -64,12 +68,7 @@ $sql = "SELECT p.id, p.nome, p.preco_venda, p.descricao, p.foto_produto, p.estoq
                c.nome AS categoria, c.cor
         $sql_base LIMIT $produtos_por_pagina OFFSET $offset";
 
-
-
 $resultado = mysqli_query($conn, $sql);
-
-
-
 ?>
 
 <!doctype html>
@@ -284,7 +283,7 @@ $resultado = mysqli_query($conn, $sql);
   <main class="my-5">
     <div class="container">
       <!-- Barra de pesquisa -->
-     <form class="d-flex mb-4" role="search" method="get" action="">
+   <form class="d-flex mb-4" role="search" method="get" action="">
   <style>
     /* Espaçamento de 1px entre Buscar e Filtro */
     #search + .btn.btn-warning {
@@ -294,7 +293,7 @@ $resultado = mysqli_query($conn, $sql);
 
   <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
     aria-label="Pesquisar" value="<?php echo htmlspecialchars($busca); ?>" />
-    
+
   <button class="btn btn-warning" type="submit">Buscar</button>
   <button type="button" id="btn-filtro" class="btn btn-outline-secondary">
     <i class="fas fa-filter"></i>
@@ -304,11 +303,13 @@ $resultado = mysqli_query($conn, $sql);
     <h5>Filtrar produtos</h5>
     <div>
       <label>Preço mínimo:</label>
-      <input type="number" id="min_price" name="min_price" class="form-control" placeholder="R$">
+      <input type="number" id="min_price" name="min_price" class="form-control" placeholder="R$"
+        value="<?php echo isset($_GET['min_price']) ? floatval($_GET['min_price']) : 1; ?>" />
     </div>
     <div>
       <label>Preço máximo:</label>
-      <input type="number" id="max_price" name="max_price" class="form-control" placeholder="R$">
+      <input type="number" id="max_price" name="max_price" class="form-control" placeholder="R$"
+        value="<?php echo isset($_GET['max_price']) ? floatval($_GET['max_price']) : 1000; ?>" />
     </div>
     <div style="margin-top:10px;">
       <label>Categorias:</label>
@@ -322,25 +323,40 @@ $resultado = mysqli_query($conn, $sql);
         <?php
         $sql_cats = "SELECT id, nome, cor FROM categorias";
         $res_cats = mysqli_query($conn, $sql_cats);
+        // Pega categorias selecionadas do GET, se houver
+        $categorias_selecionadas = isset($_GET['categorias']) ? array_map('intval', $_GET['categorias']) : [];
+        // Se nenhuma selecionada, seleciona todas
+        $all_cat_ids = [];
         while ($cat = mysqli_fetch_assoc($res_cats)) {
-            echo '<label style="
-                    flex: 1 1 calc(50% - 1px);
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-start;
-                    padding: 2px;
-                    box-sizing: border-box;
-                    cursor:pointer;">
-                    <input type="checkbox" name="categorias[]" value="' . $cat['id'] . '" style="margin-right:5px; transform: scale(1.3);">
-                    <span class="badge" style="background-color: ' . $cat['cor'] . '; color:white; border-radius:12px; padding:2px 6px;">' . $cat['nome'] . '</span>
-                  </label>';
+            $all_cat_ids[] = $cat['id'];
         }
+        if (empty($categorias_selecionadas)) {
+            $categorias_selecionadas = $all_cat_ids;
+        }
+
+        // Reset do ponteiro para gerar os inputs
+        mysqli_data_seek($res_cats, 0);
+        while ($cat = mysqli_fetch_assoc($res_cats)) {
+    echo '<label style="
+            flex: 1 1 calc(50% - 1px);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2px;
+            box-sizing: border-box;
+            cursor:pointer;">
+            <input type="checkbox" name="categorias[]" value="' . $cat['id'] . '" style="margin-right:5px; transform: scale(1.3);">
+            <span class="badge" style="background-color: ' . $cat['cor'] . '; color:white; border-radius:12px; padding:2px 6px;">' . $cat['nome'] . '</span>
+          </label>';
+}
+
+
         ?>
       </div>
     </div>
     <div class="modal-actions" style="margin-top:15px;">
       <button type="button" class="btn-popup cancel" id="cancel-filtro">Cancelar</button>
-      <button type="button" class="btn-popup add" id="aplicar-filtro">Buscar</button>
+      <button type="submit" class="btn-popup add" id="aplicar-filtro">Buscar</button>
     </div>
   </div>
 </form>
@@ -588,88 +604,97 @@ $resultado = mysqli_query($conn, $sql);
 
 
   <script>
-    $(function () {
+$(function () {
 
-      var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
+  var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
 
-      // ------------------------------------------------------------
-      // AO CLICAR NO BOTÃO DE CARRINHO
-      // ------------------------------------------------------------
-      $(".Carrinho").on("click", function () {
-        const dados = JSON.parse($(this).attr('data-produto'));
+  // ------------------------------------------------------------
+  // AO CLICAR NO BOTÃO DE CARRINHO
+  // ------------------------------------------------------------
+  $(".Carrinho").on("click", function () {
+    const dados = JSON.parse($(this).attr('data-produto'));
 
-        // PRIMEIRO: verifica limite no backend
-        $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
-          verificar_limite: 1,
-          id_produto: dados.id
-        }, function (raw) {
-
-          let resp;
-          try {
-            resp = JSON.parse(raw);
-          } catch (e) {
-            console.error("Erro ao ler resposta:", raw);
-            return;
-          }
-
-          if (resp.restante <= 0) {
-            mostrarAvisoLimite(dados.nome);
-            return;
-          }
-
-          // Pode abrir o popup
-          abrirPopupAdicionar(dados, resp.restante);
-
-        });
-
-        return;
-      });
-
-      // ------------------------------------------------------------
-      // FUNÇÃO: Aviso quando bate limite
-      // ------------------------------------------------------------
-      function mostrarAvisoLimite(nomeProd) {
-
-        $("#modal-add-carrinho").html(`
-          <div style="color:#b30000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
-              Limite atingido
-          </div>
-          <p style="text-align:center;margin-bottom:10px">
-              Você já adicionou o máximo permitido pelo estoque para <b>${nomeProd}</b>.
-          </p>
-          <div class="modal-actions">
-              <button class="btn-popup cancel ok-close">Fechar</button>
-          </div>
-      `).show();
-
-        $("#modal-backdrop").show();
-
-        $(".ok-close").on("click", function () {
-          $("#modal-add-carrinho, #modal-backdrop").hide();
-        });
-      }
-
-      // ------------------------------------------------------------
-      // FUNÇÃO: Abrir popup de adicionar ao carrinho
-      // ------------------------------------------------------------
-      function abrirPopupAdicionar(dados, maxPermitido) {
-
-        if (!usuario_id) {
-          showLoginModal();
+    // PRIMEIRO: verifica limite no backend com tratamento de 403
+    $.ajax({
+      url: '/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
+      method: 'POST',
+      data: {
+        verificar_limite: 1,
+        id_produto: dados.id
+      },
+      success: function(raw) {
+        let resp;
+        try {
+          resp = JSON.parse(raw);
+        } catch (e) {
+          console.error("Erro ao ler resposta:", raw);
           return;
         }
 
-        let qtd = 1;
-        const preco = parseFloat(dados.preco);
-
-        function atualizarPreco() {
-          $("#valor-unit").text(preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
-          $("#valor-total").text((preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
-          $(".quantidade-number").text(qtd);
+        if (resp.restante <= 0) {
+          mostrarAvisoLimite(dados.nome);
+          return;
         }
 
-        $("#modal-backdrop").show();
-        $("#modal-add-carrinho").html(`
+        abrirPopupAdicionar(dados, resp.restante);
+      },
+      error: function(xhr) {
+        if (xhr.status === 403) {
+          showLoginModal();
+        } else {
+          console.error("Erro inesperado:", xhr.status, xhr.responseText);
+        }
+      }
+    });
+
+    return;
+  });
+
+  // ------------------------------------------------------------
+  // FUNÇÃO: Aviso quando bate limite
+  // ------------------------------------------------------------
+  function mostrarAvisoLimite(nomeProd) {
+
+    $("#modal-add-carrinho").html(`
+      <div style="color:#b30000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
+          Limite atingido
+      </div>
+      <p style="text-align:center;margin-bottom:10px">
+          Você já adicionou o máximo permitido pelo estoque para <b>${nomeProd}</b>.
+      </p>
+      <div class="modal-actions">
+          <button class="btn-popup cancel ok-close">Fechar</button>
+      </div>
+    `).show();
+
+    $("#modal-backdrop").show();
+
+    $(".ok-close").on("click", function () {
+      $("#modal-add-carrinho, #modal-backdrop").hide();
+    });
+  }
+
+  // ------------------------------------------------------------
+  // FUNÇÃO: Abrir popup de adicionar ao carrinho
+  // ------------------------------------------------------------
+  function abrirPopupAdicionar(dados, maxPermitido) {
+
+    if (!usuario_id) {
+      showLoginModal();
+      return;
+    }
+
+    let qtd = 1;
+    const preco = parseFloat(dados.preco);
+
+    function atualizarPreco() {
+      $("#valor-unit").text(preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      $("#valor-total").text((preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      $(".quantidade-number").text(qtd);
+    }
+
+    $("#modal-backdrop").show();
+    $("#modal-add-carrinho").html(`
       <div style="margin-bottom:10px">Você está adicionando ao carrinho:</div>
       <img src="${dados.foto}" alt="${dados.nome}">
       <div class="produto-titulo">${dados.nome}</div>
@@ -690,63 +715,63 @@ $resultado = mysqli_query($conn, $sql);
       </div>
     `).show();
 
+    atualizarPreco();
+
+    // Botão diminuir
+    $(".contador-btn.menos").on("click", function () {
+      if (qtd > 1) {
+        qtd--;
         atualizarPreco();
+      }
+    });
 
-        // Botão diminuir
-        $(".contador-btn.menos").on("click", function () {
-          if (qtd > 1) {
-            qtd--;
-            atualizarPreco();
-          }
-        });
+    // Botão aumentar com limite real
+    $(".contador-btn.mais").on("click", function () {
+      if (qtd < maxPermitido) {
+        qtd++;
+        atualizarPreco();
+      }
+    });
 
-        // Botão aumentar com limite real
-        $(".contador-btn.mais").on("click", function () {
-          if (qtd < maxPermitido) {
-            qtd++;
-            atualizarPreco();
-          }
-        });
+    $(".btn-popup.cancel").on("click", function () {
+      $("#modal-add-carrinho, #modal-backdrop").hide();
+    });
 
-        $(".btn-popup.cancel").on("click", function () {
+    // CONFIRMAR ADIÇÃO
+    $(".btn-popup.add").on("click", function () {
+
+      $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+        id_produto: dados.id,
+        quantidade: qtd,
+        ajax: 1
+      }, function (resp) {
+
+        $("#modal-add-carrinho").html(`
+            <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
+                ✔️ ${dados.nome} foi adicionado ao seu carrinho!
+            </div>
+            <img src="${dados.foto}" style="max-width:110px;margin-bottom:8px;">
+            <div>Quantidade: ${qtd}</div>
+            <div>Total: <b>${(preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</b></div>
+
+            <div class="modal-actions">
+                <button class="btn-popup add ok-close">Fechar</button>
+            </div>
+        `);
+
+        $(".ok-close").on("click", function () {
           $("#modal-add-carrinho, #modal-backdrop").hide();
         });
+      });
+    });
 
-        // CONFIRMAR ADIÇÃO
-        $(".btn-popup.add").on("click", function () {
+  }
 
-          $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
-            id_produto: dados.id,
-            quantidade: qtd,
-            ajax: 1
-          }, function (resp) {
-
-            $("#modal-add-carrinho").html(`
-                <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
-                    ✔️ ${dados.nome} foi adicionado ao seu carrinho!
-                </div>
-                <img src="${dados.foto}" style="max-width:110px;margin-bottom:8px;">
-                <div>Quantidade: ${qtd}</div>
-                <div>Total: <b>${(preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</b></div>
-
-                <div class="modal-actions">
-                    <button class="btn-popup add ok-close">Fechar</button>
-                </div>
-            `);
-
-            $(".ok-close").on("click", function () {
-              $("#modal-add-carrinho, #modal-backdrop").hide();
-            });
-          });
-        });
-
-      }
-
-      // ------------------------------------------------------------
-      // FUNÇÃO: Exibir modal de login
-      // ------------------------------------------------------------
-      function showLoginModal() {
-        $("#modal-login-alert").html(`
+  // ------------------------------------------------------------
+  // FUNÇÃO: Exibir modal de login
+  // ------------------------------------------------------------
+  function showLoginModal() {
+    $("#modal-login-alert").html(`
       <div style="color:#c40000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
           É necessário fazer login para adicionar produtos
       </div>
@@ -758,15 +783,16 @@ $resultado = mysqli_query($conn, $sql);
       </div>
     `).show();
 
-        $("#modal-backdrop").show();
+    $("#modal-backdrop").show();
 
-        $(".btn-voltar").on("click", function () {
-          $("#modal-login-alert, #modal-backdrop").hide();
-        });
-      }
-
+    $(".btn-voltar").on("click", function () {
+      $("#modal-login-alert, #modal-backdrop").hide();
     });
-  </script>
+  }
+
+});
+</script>
+
 
 
   <script>$(function () {
