@@ -7,8 +7,11 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $produto_id = intval($_GET['id']);
 
-// Buscar dados do produto
-$stmt = $sql->prepare("SELECT nome, categoria_id, fornecedor_id, descricao, foto_produto, preco_venda, estoque, status FROM produtos WHERE id = ?");
+/* ------------------------------------------------------------
+   Buscar dados do produto
+-------------------------------------------------------------*/
+$stmt = $sql->prepare("SELECT nome, categoria_id, fornecedor_id, descricao, foto_produto, preco_venda, estoque, status 
+                       FROM produtos WHERE id = ?");
 $stmt->bind_param("i", $produto_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -19,45 +22,116 @@ if (!$produto) {
     die("Produto não encontrado.");
 }
 
-// Atualizar produto
+/* ------------------------------------------------------------
+   Atualizar produto
+-------------------------------------------------------------*/
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Entrada
     $nome = trim($_POST['nome'] ?? '');
     $categoria_id = intval($_POST['categoria_id'] ?? 0);
     $fornecedor_id = intval($_POST['fornecedor_id'] ?? 0);
     $descricao = trim($_POST['descricao'] ?? '');
     $preco_venda = trim($_POST['preco_venda'] ?? '');
     $estoque = trim($_POST['estoque'] ?? '');
-    $status = trim($_POST['status'] ?? '');
+    $status = trim($_POST['status'] ?? ''); // ENUM('ativo','inativo')
     $foto = $produto['foto_produto'];
 
-    if (empty($nome) || empty($categoria_id) || empty($fornecedor_id) || empty($preco_venda) || empty($estoque) || empty($status)) {
+    /* ------------------------------------------------------------
+       Converter preço "12,99" → 12.99
+    -------------------------------------------------------------*/
+    if ($preco_venda !== "") {
+        $preco_venda = str_replace(".", "", $preco_venda);
+        $preco_venda = str_replace(",", ".", $preco_venda);
+        $preco_venda = floatval($preco_venda);
+    }
+
+    /* ------------------------------------------------------------
+       Validação
+    -------------------------------------------------------------*/
+    if (
+        $nome === "" ||
+        $categoria_id == 0 ||
+        $fornecedor_id == 0 ||
+        $preco_venda === "" ||
+        $estoque === "" ||
+        $status === ""
+    ) {
         header("Location: editar_produto.php?id=$produto_id&status=erro&msg=Preencha todos os campos");
         exit;
     }
 
+    /* ------------------------------------------------------------
+       Upload da nova foto (opcional)
+    -------------------------------------------------------------*/
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+
         $dir_img = $_SERVER['DOCUMENT_ROOT'] . "/TCC_FWS/IMG_Produtos/";
         $foto_tmp = $_FILES['foto']['tmp_name'];
-        $nome_arquivo = uniqid() . '_' . basename($_FILES['foto']['name']);
+        $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+
+        $nome_arquivo = $produto_id . "." . $extensao;
         $foto_path = $dir_img . $nome_arquivo;
 
-        list($width, $height) = getimagesize($foto_tmp);
-        if ($width > 1000 || $height > 700) {
-            header("Location: editar_produto.php?id=$produto_id&status=erro&msg=Imagem muito grande. Máx: 1000x700");
-            exit;
+        list($width, $height, $type) = getimagesize($foto_tmp);
+
+        switch ($type) {
+            case IMAGETYPE_JPEG: $src_image = imagecreatefromjpeg($foto_tmp); break;
+            case IMAGETYPE_PNG:  $src_image = imagecreatefrompng($foto_tmp); break;
+            case IMAGETYPE_WEBP: $src_image = imagecreatefromwebp($foto_tmp); break;
+            default:
+                header("Location: editar_produto.php?id=$produto_id&status=erro&msg=Tipo de imagem não suportado");
+                exit;
         }
 
-        if (move_uploaded_file($foto_tmp, $foto_path)) {
-            $foto = '/TCC_FWS/IMG_Produtos/' . $nome_arquivo;
-        } else {
-            header("Location: editar_produto.php?id=$produto_id&status=erro&msg=Falha ao salvar a imagem");
-            exit;
+        $new_width = 1000;
+        $new_height = 700;
+
+        $new_img = imagecreatetruecolor($new_width, $new_height);
+
+        if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_WEBP) {
+            imagealphablending($new_img, false);
+            imagesavealpha($new_img, true);
         }
+
+        imagecopyresampled(
+            $new_img, $src_image,
+            0, 0, 0, 0,
+            $new_width, $new_height,
+            $width, $height
+        );
+
+        switch ($type) {
+            case IMAGETYPE_JPEG: imagejpeg($new_img, $foto_path, 90); break;
+            case IMAGETYPE_PNG:  imagepng($new_img, $foto_path); break;
+            case IMAGETYPE_WEBP: imagewebp($new_img, $foto_path, 90); break;
+        }
+
+        imagedestroy($src_image);
+        imagedestroy($new_img);
+
+        $foto = "/TCC_FWS/IMG_Produtos/" . $nome_arquivo;
     }
 
-    $query = "UPDATE produtos SET nome=?, categoria_id=?, fornecedor_id=?, descricao=?, foto_produto=?, preco_venda=?, estoque=?, status=? WHERE id=?";
+    /* ------------------------------------------------------------
+       Atualizar no banco
+    -------------------------------------------------------------*/
+    $query = "UPDATE produtos 
+              SET nome=?, categoria_id=?, fornecedor_id=?, descricao=?, foto_produto=?, preco_venda=?, estoque=?, status=?
+              WHERE id=?";
+
     $stmt = $sql->prepare($query);
-    $stmt->bind_param("siissdisi", $nome, $categoria_id, $fornecedor_id, $descricao, $foto, $preco_venda, $estoque, $status, $produto_id);
+    $stmt->bind_param("siissdisi",
+        $nome,
+        $categoria_id,
+        $fornecedor_id,
+        $descricao,
+        $foto,
+        $preco_venda,
+        $estoque,
+        $status,
+        $produto_id
+    );
     $stmt->execute();
     $stmt->close();
 
@@ -65,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -288,8 +363,8 @@ textarea { resize: none; }
 
                     <label for="status">Status</label>
                     <select name="status" id="status" required>
-                        <option value="1" <?php if($produto['status']==1) echo "selected"; ?>>Ativo</option>
-                        <option value="0" <?php if($produto['status']==0) echo "selected"; ?>>Inativo</option>
+<option value="ativo" <?php if($produto['status']=='ativo') echo "selected"; ?>>Ativo</option>
+<option value="inativo" <?php if($produto['status']=='inativo') echo "selected"; ?>>Inativo</option>
                     </select>
 
                     <button type="submit" class="btn btn-primary mb-2">Atualizar</button>
