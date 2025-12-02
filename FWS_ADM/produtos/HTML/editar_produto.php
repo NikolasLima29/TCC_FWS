@@ -10,7 +10,7 @@ $produto_id = intval($_GET['id']);
 /* ------------------------------------------------------------
    Buscar dados do produto
 -------------------------------------------------------------*/
-$stmt = $sql->prepare("SELECT nome, categoria_id, fornecedor_id, descricao, foto_produto, preco_venda, estoque, status 
+$stmt = $sql->prepare("SELECT nome, categoria_id, fornecedor_id, descricao, foto_produto, preco_venda, estoque, status, validade_padrao_meses 
                        FROM produtos WHERE id = ?");
 $stmt->bind_param("i", $produto_id);
 $stmt->execute();
@@ -36,6 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $estoque = trim($_POST['estoque'] ?? '');
     $status = trim($_POST['status'] ?? ''); // ENUM('ativo','inativo')
     $foto = $produto['foto_produto'];
+    $validade = isset($_POST['validade_padrao_meses']) ? intval($_POST['validade_padrao_meses']) : 0;
+
+    // Se o produto for não perecível, desabilita o campo de validade e define como 0
+    if (isset($_POST['nao_perecivel']) && $_POST['nao_perecivel'] == 'on') {
+        $validade = 0;
+    }
 
     /* ------------------------------------------------------------
        Converter preço "12,99" → 12.99
@@ -117,11 +123,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        Atualizar no banco
     -------------------------------------------------------------*/
     $query = "UPDATE produtos 
-              SET nome=?, categoria_id=?, fornecedor_id=?, descricao=?, foto_produto=?, preco_venda=?, estoque=?, status=?
+              SET nome=?, categoria_id=?, fornecedor_id=?, descricao=?, foto_produto=?, preco_venda=?, estoque=?, status=?, validade_padrao_meses=?
               WHERE id=?";
 
     $stmt = $sql->prepare($query);
-    $stmt->bind_param("siissdisi",
+    $stmt->bind_param("siissdisii",
         $nome,
         $categoria_id,
         $fornecedor_id,
@@ -130,6 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $preco_venda,
         $estoque,
         $status,
+        $validade,
         $produto_id
     );
     $stmt->execute();
@@ -308,6 +315,7 @@ textarea { resize: none; }
             <div class="container">
                 <h2>Editar Produto</h2>
 
+                <!-- ALERTA -->
                 <?php if(isset($_GET['status']) && isset($_GET['msg'])): ?>
                   <div class="alert <?php echo $_GET['status'] == 'erro' ? 'alert-danger' : 'alert-success'; ?>">
                     <?php echo htmlspecialchars($_GET['msg']); ?>
@@ -363,12 +371,25 @@ textarea { resize: none; }
 
                     <label for="status">Status</label>
                     <select name="status" id="status" required>
-<option value="ativo" <?php if($produto['status']=='ativo') echo "selected"; ?>>Ativo</option>
-<option value="inativo" <?php if($produto['status']=='inativo') echo "selected"; ?>>Inativo</option>
+                        <option value="ativo" <?php if($produto['status']=='ativo') echo "selected"; ?>>Ativo</option>
+                        <option value="inativo" <?php if($produto['status']=='inativo') echo "selected"; ?>>Inativo</option>
                     </select>
 
-                    <button type="submit" class="btn btn-primary mb-2">Atualizar</button>
-                    <a href="lista_produtos.php" class="btn btn-secondary mb-2">Voltar</a>
+                    <hr>
+
+                    <label>
+                        <input type="checkbox" id="nao_perecivel" name="nao_perecivel" <?php if($produto['validade_padrao_meses'] == 0) echo 'checked'; ?>>
+                        Produto Não Perecível
+                    </label>
+
+                    <div id="validade-container" class="campo-validade">
+                        <label for="validade">Validade</label>
+                        <input type="number" name="validade_padrao_meses" id="validade" min="1" value="<?php echo $produto['validade_padrao_meses'] ? $produto['validade_padrao_meses'] : 1; ?>" placeholder="Ex: 12">
+                        <span id="texto-meses">mês</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-3">Atualizar</button>
+                    <a href="lista_produtos.php" class="btn btn-secondary mt-2">Voltar</a>
                 </form>
             </div>
         </div>
@@ -376,20 +397,66 @@ textarea { resize: none; }
 </div>
 
 <script>
-$(document).ready(function(){
-    $('#preco_venda').mask('000.000.000,00', {reverse: true});
-    $('#foto').change(function(){
+$(document).ready(function() {
+
+    $('#preco_venda').mask('#.##0,00', {
+        reverse: true
+    });
+
+    $('#foto').change(function() {
         const file = this.files[0];
-        if(file){
+        if (file) {
             const reader = new FileReader();
-            reader.onload = function(e){
+            reader.onload = function(e) {
                 $('#preview').attr('src', e.target.result).show();
             }
             reader.readAsDataURL(file);
+        } else {
+            $('#preview').hide();
         }
     });
+
+    // Atualizar texto de validade (mês ou meses)
+    function atualizarTextoMeses() {
+        let valor = parseInt($("#validade").val());
+        if (!valor || valor <= 1) {
+            $("#texto-meses").text("mês");
+        } else {
+            $("#texto-meses").text("meses");
+        }
+    }
+
+    // Chama imediatamente para iniciar como "1 mês"
+    atualizarTextoMeses();
+
+    $("#validade").on("input", atualizarTextoMeses);
+
+    // Controle de "Produto Não Perecível"
+    $("#nao_perecivel").change(function() {
+        if ($(this).is(":checked")) {
+            // Oculta o campo validade e zera o valor
+            $("#validade-container").hide();
+            $("#validade").val(0);
+        } else {
+            // Mostra o campo validade e coloca valor padrão 1 se estava 0
+            $("#validade-container").show();
+            if ($("#validade").val() == 0) {
+                $("#validade").val(1);
+            }
+            atualizarTextoMeses();
+        }
+    });
+
+    // Inicializa a visibilidade do campo validade de acordo com o checkbox no carregamento da página
+    if ($("#nao_perecivel").is(":checked")) {
+        $("#validade-container").hide();
+        $("#validade").val(0);
+    } else {
+        $("#validade-container").show();
+    }
 });
 </script>
+
 </body>
 </html>
 <?php $sql->close(); ?>

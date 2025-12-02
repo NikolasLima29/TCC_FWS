@@ -190,39 +190,40 @@ table th, table td {
                 <h2>Produtos Cadastrados</h2>
 
                 <table class="table table-bordered table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Categoria</th>
-                            <th>Fornecedor</th>
-                            <th>Preço</th>
-                            <th>Estoque</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php if($result->num_rows > 0): ?>
-                        <?php while($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nome']); ?></td>
-                                <td><?php echo htmlspecialchars($row['categoria']); ?></td>
-                                <td><?php echo htmlspecialchars($row['fornecedor']); ?></td>
-                                <td>R$ <?php echo number_format($row['preco_venda'],2,',','.'); ?></td>
-                                <td><?php echo $row['estoque']; ?></td>
-                                <td><?php echo $row['status'] ? 'Ativo' : 'Inativo'; ?></td>
-                                <td>
-                                    <a href="editar_produto.php?id=<?php echo $row['id']; ?>" class="btn btn-edit btn-sm">Editar</a>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr><td colspan="8">Nenhum produto cadastrado.</td></tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Fornecedor</th>
+            <th>Preço</th>
+            <th>Estoque</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php if($result->num_rows > 0): ?>
+        <?php while($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td><?php echo $row['id']; ?></td>
+                <td><?php echo htmlspecialchars($row['nome']); ?></td>
+                <td><?php echo htmlspecialchars($row['categoria']); ?></td>
+                <td><?php echo htmlspecialchars($row['fornecedor']); ?></td>
+                <td>R$ <?php echo number_format($row['preco_venda'],2,',','.'); ?></td>
+                <td><?php echo $row['estoque']; ?></td>
+                <td><?php echo $row['status'] === 'ativo' ? 'ativo' : 'inativo'; ?></td>
+                <td>
+                    <a href="editar_produto.php?id=<?php echo $row['id']; ?>" class="btn btn-edit btn-sm">Editar</a>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <tr><td colspan="8">Nenhum produto cadastrado.</td></tr>
+    <?php endif; ?>
+    </tbody>
+</table>
+
 
                 <a href="cadastro_produto.php" class="btn btn-dark mt-3">Cadastrar Novo Produto</a>
             </div>
