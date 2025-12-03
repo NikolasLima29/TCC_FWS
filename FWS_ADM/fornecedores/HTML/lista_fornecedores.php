@@ -21,14 +21,12 @@ function formatarTelefone($tel) {
     $tel = preg_replace('/\D/', '', $tel);
 
     if (strlen($tel) == 11) { 
-        // Celular (11 dígitos)
         return preg_replace("/(\d{2})(\d{5})(\d{4})/", "($1) $2-$3", $tel);
     } elseif (strlen($tel) == 10) {
-        // Fixo (10 dígitos)
         return preg_replace("/(\d{2})(\d{4})(\d{4})/", "($1) $2-$3", $tel);
     }
 
-    return $tel; // Se não bater, mostra sem máscara
+    return $tel;
 }
 ?>
 <!DOCTYPE html>
@@ -47,7 +45,6 @@ function formatarTelefone($tel) {
         margin: 0;
     }
 
-    /* 🔹 Barra lateral fixa */
     #fund {
         position: fixed;
         top: 0;
@@ -81,7 +78,6 @@ function formatarTelefone($tel) {
         width: 170px;
     }
 
-    /* 🔹 Área principal */
     #conteudo-principal {
         margin-left: 250px;
         padding: 40px;
@@ -120,6 +116,19 @@ function formatarTelefone($tel) {
         color: white;
     }
 
+    /* 🔹 impede quebra de linha no CNPJ e telefone */
+    .sem-quebra {
+        white-space: nowrap;
+    }
+
+    /* 🔹 encurta o email */
+    .email-curto {
+        max-width: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     @import url('../../Fonte_Config/fonte_geral.css');
     </style>
 </head>
@@ -129,7 +138,7 @@ function formatarTelefone($tel) {
     <div class="container-fluid">
         <div class="row flex-nowrap">
 
-            <!-- 🔹 Barra lateral -->
+            <!-- Barra lateral -->
             <div class="col-auto px-sm-2 px-0 bg-dark" id="fund">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
                     id="menu">
@@ -217,7 +226,7 @@ function formatarTelefone($tel) {
                 </div>
             </div>
 
-            <!-- 🔹 Conteúdo principal -->
+            <!-- Conteúdo principal -->
             <div class="col py-3" id="conteudo-principal">
                 <div class="container">
                     <h2>Fornecedores Cadastrados</h2>
@@ -241,13 +250,14 @@ function formatarTelefone($tel) {
                                 <td><?php echo $row['id']; ?></td>
                                 <td><?php echo htmlspecialchars($row['nome']); ?></td>
 
-                                <!-- CNPJ com máscara -->
-                                <td><?php echo htmlspecialchars(formatarCNPJ($row['cnpj'])); ?></td>
+                                <!-- CNPJ sem quebra -->
+                                <td class="sem-quebra"><?php echo htmlspecialchars(formatarCNPJ($row['cnpj'])); ?></td>
 
-                                <!-- Telefone com máscara -->
-                                <td><?php echo htmlspecialchars(formatarTelefone($row['telefone'])); ?></td>
+                                <!-- Telefone sem quebra -->
+                                <td class="sem-quebra"><?php echo htmlspecialchars(formatarTelefone($row['telefone'])); ?></td>
 
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <!-- Email curto -->
+                                <td class="email-curto"><?php echo htmlspecialchars($row['email']); ?></td>
 
                                 <td>
                                     <a href="produtos_por_fornecedor.php?id=<?php echo $row['id']; ?>"
@@ -269,7 +279,7 @@ function formatarTelefone($tel) {
 
                     </table>
 
-                    <a href="cadastro_fornecedor.php" class="btn btn-dark mt-3">Cadastrar Novo Fornecedor</a>
+                    <a href="cadastrar_fornecedor.php" class="btn btn-dark mt-3">Cadastrar Novo Fornecedor</a>
                 </div>
             </div>
         </div>
