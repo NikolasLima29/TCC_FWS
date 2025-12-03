@@ -22,8 +22,81 @@ if ($result->num_rows === 0) {
     die('Produto não encontrado');
 }
 $produto = $result->fetch_assoc();
+
+$sinergias = [
+    "bebidas não alcoólicas" => ["snacks", "salgados", "doces"],
+    "sorvetes"               => ["doces", "biscoitos"],
+    "doces"                  => ["biscoitos", "laticínios", "sorvetes"],
+    "snacks"                 => ["bebidas não alcoólicas", "salgados"],
+    "laticínios"             => ["doces", "biscoitos"],
+    "biscoitos"              => ["doces", "laticínios", "bebidas não alcoólicas", "sorvetes"],
+    "salgados"               => ["bebidas não alcoólicas", "snacks"]
+];
+
+$categorias_sem_sinergia = [
+    "bebidas alcoólicas",
+    "proteicos",
+    "cigarros e itens de fumo",
+    "outros"
+];
+
+
 ?>
 
+<?php
+// Lógica de recomendações
+$categoria_atual = strtolower($produto['categoria_nome']);
+
+if (in_array($categoria_atual, $categorias_sem_sinergia)) {
+
+    $titulo_recomendacoes = "Outros produtos que você pode gostar:";
+    $sql_recomendados = "
+        SELECT id, nome, preco_venda, foto_produto
+        FROM produtos
+        WHERE id != $produto_id
+        AND estoque >= 2
+        ORDER BY RAND()
+        LIMIT 5
+    ";
+
+} elseif (isset($sinergias[$categoria_atual])) {
+
+    $titulo_recomendacoes = "Este produto combina com:";
+
+    // escolhe uma categoria sinérgica aleatória
+    $categoria_alvo = $sinergias[$categoria_atual][array_rand($sinergias[$categoria_atual])];
+
+    $sql_recomendados = "
+        SELECT p.id, p.nome, p.preco_venda, p.foto_produto
+        FROM produtos p
+        JOIN categorias c ON p.categoria_id = c.id
+        WHERE LOWER(c.nome) = '$categoria_alvo'
+        AND p.id != $produto_id
+        AND p.estoque >= 2
+        LIMIT 5
+    ";
+
+} else {
+
+    // fallback (não deve acontecer)
+    $titulo_recomendacoes = "Outros produtos que você pode gostar:";
+    $sql_recomendados = "
+        SELECT id, nome, preco_venda, foto_produto
+        FROM produtos
+        WHERE id != $produto_id
+        AND estoque >= 2
+        ORDER BY RAND()
+        LIMIT 5
+    ";
+}
+
+$result_recomendados = $conn->query($sql_recomendados);
+
+if (!$result_recomendados) {
+    die("Erro ao buscar recomendações: " . $conn->error);
+}
+
+?>
 <!doctype html>
 <html lang="pt-BR">
 
@@ -56,15 +129,6 @@ $produto = $result->fetch_assoc();
     <!-- Header with same nav, style, and behavior -->
   <header id="header">
 <style>
-#header {
-  position: sticky;
-  top: 0;
-  background-color: rgba(255, 255, 255, 0.2); /* transparência correta */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
 
 
 </style>
@@ -252,11 +316,71 @@ $produto = $result->fetch_assoc();
       </button>
     </div>
   </div>
+ <?php
+echo "<div class='container px-3'>";
+
+echo "<h4 class='mt-4 mb-3'>$titulo_recomendacoes</h4>";
+
+// grid com spacing perfeitinho
+echo '<div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">';
+
+while ($rec = $result_recomendados->fetch_assoc()) {
+
+    $foto = !empty($rec["foto_produto"]) ? htmlspecialchars($rec["foto_produto"]) : "/TCC_FWS/IMG_Produtos/sem_imagem.png";
+    $nome = ucwords(strtolower(htmlspecialchars($rec["nome"])));
+    $preco = number_format($rec["preco_venda"], 2, ',', '.');
+    $id = $rec["id"];
+
+    echo '
+    <div class="col">
+        <div class="card h-100 p-2">
+            <img src="' . $foto . '" 
+                 class="card-img-top" 
+                 style="object-fit:cover; height:140px; border-radius:6px;">
+
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <h6 class="card-title" style="font-size:0.95rem; min-height:38px;">
+                        <a href="produto_especifico.php?id=' . $id . '" 
+                           style="text-decoration:none; color:inherit;">'
+                           . $nome .
+                        '</a>
+                    </h6>
+                    <p class="card-text" style="color:green; font-weight:bold;">R$ ' . $preco . '</p>
+                </div>
+
+                <div class="mt-2 d-flex flex-column gap-2">
+
+                    <a href="produto_especifico.php?id=' . $id . '" 
+                       class="btn btn-primary btn-sm">Ver mais</a>
+
+                    <button type="button"
+                        class="Carrinho btn btn-outline-success btn-sm"
+                        data-produto=\'' . htmlspecialchars(json_encode([
+                            "id" => $id,
+                            "nome" => $nome,
+                            "foto" => $foto,
+                            "descricao" => "",
+                            "preco" => $rec["preco_venda"],
+                            "estoque" => $rec["estoque"] ?? 0,
+                            "no_carrinho" => $rec["no_carrinho"] ?? 0
+                        ]), ENT_QUOTES, "UTF-8") . '\'>
+                        Adicionar ao Carrinho <i class="bi bi-cart-plus-fill"></i>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>';
+}
+
+echo '</div>'; // row
+echo '</div>'; // container
+?>
+
 </main>
 
 
-
-  
 
     <footer class="text-center bg-body-tertiary">
         <div class="container pt-4">
@@ -509,7 +633,7 @@ $(function () {
                 Limite atingido
             </div>
             <p style="text-align:center;margin-bottom:10px">
-                Você já adicionou o máximo permitido pelo estoque para <b>${nomeProd}</b>.
+                Você já adicionou o máximo permitido pelo estoque para <b>${nomeProd} ou está indisponível</b>.
             </p>
             <div class="modal-actions" style="text-align: center; margin-top: 15px;">
                 <button class="btn-popup cancel ok-close" style="background:#E53935;color:white;border:none;padding:8px 20px;border-radius:6px;">Fechar</button>
@@ -577,9 +701,195 @@ $(function() {
   }
 });
 
+</script>
 
 
+ <script>
+$(function () {
 
+  var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
+
+  // ------------------------------------------------------------
+  // AO CLICAR NO BOTÃO DE CARRINHO
+  // ------------------------------------------------------------
+  $(".Carrinho").on("click", function () {
+    const dados = JSON.parse($(this).attr('data-produto'));
+
+    // PRIMEIRO: verifica limite no backend com tratamento de 403
+    $.ajax({
+      url: '/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
+      method: 'POST',
+      data: {
+        verificar_limite: 1,
+        id_produto: dados.id
+      },
+      success: function(raw) {
+        let resp;
+        try {
+          resp = JSON.parse(raw);
+        } catch (e) {
+          console.error("Erro ao ler resposta:", raw);
+          return;
+        }
+
+        if (resp.restante <= 0) {
+          mostrarAvisoLimite(dados.nome);
+          return;
+        }
+
+        abrirPopupAdicionar(dados, resp.restante);
+      },
+      error: function(xhr) {
+        if (xhr.status === 403) {
+          showLoginModal();
+        } else {
+          console.error("Erro inesperado:", xhr.status, xhr.responseText);
+        }
+      }
+    });
+
+    return;
+  });
+
+  // ------------------------------------------------------------
+  // FUNÇÃO: Aviso quando bate limite
+  // ------------------------------------------------------------
+  function mostrarAvisoLimite(nomeProd) {
+
+    $("#modal-add-carrinho").html(`
+      <div style="color:#b30000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
+          Limite atingido
+      </div>
+      <p style="text-align:center;margin-bottom:10px">
+          Você já adicionou o máximo permitido pelo estoque para <b>${nomeProd}</b>.
+      </p>
+      <div class="modal-actions">
+          <button class="btn-popup cancel ok-close">Fechar</button>
+      </div>
+    `).show();
+
+    $("#modal-backdrop").show();
+
+    $(".ok-close").on("click", function () {
+      $("#modal-add-carrinho, #modal-backdrop").hide();
+    });
+  }
+
+  // ------------------------------------------------------------
+  // FUNÇÃO: Abrir popup de adicionar ao carrinho
+  // ------------------------------------------------------------
+  function abrirPopupAdicionar(dados, maxPermitido) {
+
+    if (!usuario_id) {
+      showLoginModal();
+      return;
+    }
+
+    let qtd = 1;
+    const preco = parseFloat(dados.preco);
+
+    function atualizarPreco() {
+      $("#valor-unit").text(preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      $("#valor-total").text((preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+      $(".quantidade-number").text(qtd);
+    }
+
+    $("#modal-backdrop").show();
+    $("#modal-add-carrinho").html(`
+      <div style="margin-bottom:10px">Você está adicionando ao carrinho:</div>
+      <img src="${dados.foto}" style="max-width:300px; alt="${dados.nome}">
+      <div class="produto-titulo">${dados.nome}</div>
+      <div class="produto-descricao">${dados.descricao}</div>
+      <div style="margin:7px 0 3px 0"><b>Preço unitário: <span id="valor-unit"></span></b></div>
+
+      <div class="contador-box">
+        <button class="contador-btn menos">-</button>
+        <span class="quantidade-number">1</span>
+        <button class="contador-btn mais">+</button>
+      </div>
+
+      <div style="margin:6px 0;"><b>Total: <span id="valor-total"></span></b></div>
+
+      <div class="modal-actions">
+        <button class="btn-popup add">Adicionar</button>
+        <button class="btn-popup cancel">Cancelar</button>
+      </div>
+    `).show();
+
+    atualizarPreco();
+
+    // Botão diminuir
+    $(".contador-btn.menos").on("click", function () {
+      if (qtd > 1) {
+        qtd--;
+        atualizarPreco();
+      }
+    });
+
+    // Botão aumentar com limite real
+    $(".contador-btn.mais").on("click", function () {
+      if (qtd < maxPermitido) {
+        qtd++;
+        atualizarPreco();
+      }
+    });
+
+    $(".btn-popup.cancel").on("click", function () {
+      $("#modal-add-carrinho, #modal-backdrop").hide();
+    });
+
+    // CONFIRMAR ADIÇÃO
+    $(".btn-popup.add").on("click", function () {
+
+      $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+        id_produto: dados.id,
+        quantidade: qtd,
+        ajax: 1
+      }, function (resp) {
+
+        $("#modal-add-carrinho").html(`
+            <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
+                ✔️ ${dados.nome} foi adicionado ao seu carrinho!
+            </div>
+            <img src="${dados.foto}" style="max-width:300px;margin-bottom:8px;">
+            <div>Quantidade: ${qtd}</div>
+            <div>Total: <b>${(preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</b></div>
+
+            <div class="modal-actions">
+                <button class="btn-popup add ok-close">Fechar</button>
+            </div>
+        `);
+
+        $(".ok-close").on("click", function () {
+          $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
+      });
+    });
+
+  }
+
+  // ------------------------------------------------------------
+  // FUNÇÃO: Exibir modal de login
+  // ------------------------------------------------------------
+  function showLoginModal() {
+    $("#modal-backdrop").show();
+    $("#modal-add-carrinho").html(`
+        <div style="color:#c40000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
+            É necessário fazer login para adicionar produtos
+        </div>
+        <div class="modal-actions" style="justify-content:center;gap:15px;margin-top:20px;display:flex;flex-wrap:wrap;">
+            <a href="../../login/HTML/login.html" class="btn-login" style="background:#11C47E;color:white;border:none;padding:10px 25px;border-radius:6px;text-decoration:none;font-weight:600;">Login</a>
+            <a href="../../cadastro/HTML/cadastro.html" class="btn-cadastrar" style="background:#FFD100;color:#111;border:none;padding:10px 25px;border-radius:6px;text-decoration:none;font-weight:600;">Cadastrar</a>
+            <button class="btn-popup cancel btn-voltar" style="background:#E53935;color:white;border:none;padding:10px 25px;border-radius:6px;">Voltar</button>
+        </div>
+    `).show();
+
+    $(".btn-voltar").off('click').click(function() {
+        $("#modal-add-carrinho, #modal-backdrop").hide();
+    });
+}
+
+});
 </script>
 
 
@@ -915,6 +1225,159 @@ main p {
     
     .custom-backdrop {
         /* ... resto do CSS ... */
+    }
+
+    .btn-primary.btn-sm {
+      background: white;
+      border: 3px solid #FFD100;
+
+      color: black;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+
+    .btn-primary.btn-sm:hover {
+      background: #FFD100;
+      color: black;
+      border-color: black;
+    }
+
+    .custom-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 2000;
+    }
+
+    .custom-modal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 340px;
+      max-width: 90vw;
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 32px 22px 32px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+      z-index: 2100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: inherit;
+    }
+
+    .custom-modal img {
+      max-width: 400px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+
+    .custom-modal .produto-titulo {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #c40000;
+    }
+
+    .custom-modal .produto-descricao {
+      font-size: 0.97rem;
+      color: #444;
+    }
+
+    .custom-modal .contador-box {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin: 18px 0;
+    }
+
+    .custom-modal .contador-btn {
+      border: none;
+      background: #f4f4f4;
+      border-radius: 5px;
+      font-size: 1.29rem;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      color: #c40000;
+      font-weight: bold;
+      transition: background 0.18s;
+    }
+
+    .custom-modal .contador-btn:active {
+      background: #ffe5e5;
+    }
+
+    .custom-modal .quantidade-number {
+      font-size: 1.18rem;
+      font-weight: 600;
+      width: 38px;
+      text-align: center;
+    }
+
+    .custom-modal .modal-actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 14px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .custom-modal .btn-popup {
+      border: none;
+      padding: 7px 20px;
+      border-radius: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+
+    .custom-modal .btn-popup.add {
+      background: #009900;
+      color: #fff;
+    }
+
+    .custom-modal .btn-popup.cancel {
+      background: #c40000;
+      color: #fff;
+    }
+
+    .custom-modal .btn-popup.add:active {
+      background: #42bb42;
+    }
+
+    .custom-modal .btn-popup.cancel:active {
+      background: #9d0909;
+    }
+
+    /* Modal login */
+    .custom-modal .modal-actions a {
+      color: #fff;
+      text-decoration: none;
+      padding: 7px 17px;
+      border-radius: 6px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .modal-actions a,
+    .modal-actions button {
+      display: inline-block;
+      width: 120px;
+      text-align: center;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+      margin: 0 6px;
     }
 </style>
 

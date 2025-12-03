@@ -58,7 +58,7 @@ INSERT INTO `categorias` (`id`, `nome`, `cor`) VALUES
 	(4, 'DOCES', '#ff0783ff'),
 	(5, 'PROTEICOS', '#228B22'),
 	(6, 'SNACKS', '#ff9500ff'),
-	(7, 'LATICÍNIOS', '#00fbffff'),
+	(7, 'LATICÍNIOS', '#00afb1ff'),
 	(8, 'BISCOITOS', '#D2B48C'),
 	(9, 'CIGARROS E ITENS DE FUMO', '#696969'),
 	(10, 'SALGADOS', '#ceaf00ff'),
