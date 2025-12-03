@@ -79,25 +79,107 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_produto = $stmt->insert_id;
     $stmt->close();
 
-    // Upload de imagem
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+   // Upload de imagem
+if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
 
-        $dir_img = $_SERVER['DOCUMENT_ROOT'] . "/TCC_FWS/IMG_Produtos/";
-        $foto_tmp = $_FILES['foto']['tmp_name'];
-        $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+    $dir_img = $_SERVER['DOCUMENT_ROOT'] . "/TCC_FWS/IMG_Produtos/";
+    $foto_tmp = $_FILES['foto']['tmp_name'];
 
-        $nome_arquivo = $id_produto . "." . $extensao;
-        $foto_path = $dir_img . $nome_arquivo;
-
-        move_uploaded_file($foto_tmp, $foto_path);
-
-        $foto = "/TCC_FWS/IMG_Produtos/" . $nome_arquivo;
-
-        $stmt = $sql->prepare("UPDATE produtos SET foto_produto=? WHERE id=?");
-        $stmt->bind_param("si", $foto, $id_produto);
-        $stmt->execute();
-        $stmt->close();
+    // Verifica se realmente é uma imagem
+    $info_imagem = getimagesize($foto_tmp);
+    if ($info_imagem === false) {
+        die("O arquivo enviado não é uma imagem válida.");
     }
+
+    // Pegando a extensão real do arquivo
+    $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+    $tipo_mime = $info_imagem['mime'];
+
+    // Corrige extensão conforme tipo MIME real
+    switch ($tipo_mime) {
+        case 'image/jpeg':
+            $extensao = 'jpg';
+            break;
+        case 'image/png':
+            $extensao = 'png';
+            break;
+        case 'image/webp':
+            $extensao = 'webp';
+            break;
+        default:
+            die("Formato de imagem não suportado.");
+    }
+
+    // Nome final do arquivo
+    $nome_arquivo = $id_produto . "." . $extensao;
+    $foto_path = $dir_img . $nome_arquivo;
+
+    // ----- Redimensionar a imagem -----
+    list($largura_original, $altura_original) = $info_imagem;
+
+    $nova_largura  = 1000;
+    $nova_altura   = 700;
+
+    // Criar nova imagem
+    $imagem_redimensionada = imagecreatetruecolor($nova_largura, $nova_altura);
+
+    // Abrir imagem original
+    switch ($extensao) {
+        case 'jpg':
+        case 'jpeg':
+            $imagem_original = @imagecreatefromjpeg($foto_tmp);
+            break;
+        case 'png':
+            $imagem_original = @imagecreatefrompng($foto_tmp);
+            imagealphablending($imagem_redimensionada, false);
+            imagesavealpha($imagem_redimensionada, true);
+            break;
+        case 'webp':
+            $imagem_original = @imagecreatefromwebp($foto_tmp);
+            break;
+    }
+
+    if (!$imagem_original) {
+        die("Falha ao abrir a imagem. Verifique se o arquivo é válido.");
+    }
+
+    // Redimensionar
+    imagecopyresampled(
+        $imagem_redimensionada, $imagem_original,
+        0, 0, 0, 0,
+        $nova_largura, $nova_altura,
+        $largura_original, $altura_original
+    );
+
+    // Salvar imagem final no servidor
+    switch ($extensao) {
+        case 'jpg':
+        case 'jpeg':
+            imagejpeg($imagem_redimensionada, $foto_path, 90);
+            break;
+        case 'png':
+            imagepng($imagem_redimensionada, $foto_path);
+            break;
+        case 'webp':
+            imagewebp($imagem_redimensionada, $foto_path, 90);
+            break;
+    }
+
+    // Limpar memória
+    imagedestroy($imagem_original);
+    imagedestroy($imagem_redimensionada);
+
+    // Caminho para salvar no banco
+    $foto = "/TCC_FWS/IMG_Produtos/" . $nome_arquivo;
+
+    // Atualizar no banco
+    $stmt = $sql->prepare("UPDATE produtos SET foto_produto=? WHERE id=?");
+    $stmt->bind_param("si", $foto, $id_produto);
+    $stmt->execute();
+    $stmt->close();
+}
+
+
 
     header("Location: cadastro_produto.php?status=sucesso&msg=Produto cadastrado!");
     exit;

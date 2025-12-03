@@ -83,56 +83,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     /* ------------------------------------------------------------
-       Upload da nova foto (opcional)
-    -------------------------------------------------------------*/
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+   Upload da nova foto (opcional)
+-------------------------------------------------------------*/
+if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
 
-        $dir_img = $_SERVER['DOCUMENT_ROOT'] . "/TCC_FWS/IMG_Produtos/";
-        $foto_tmp = $_FILES['foto']['tmp_name'];
-        $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+    $dir_img = $_SERVER['DOCUMENT_ROOT'] . "/TCC_FWS/IMG_Produtos/";
+    $foto_tmp = $_FILES['foto']['tmp_name'];
+    $extensao = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
 
-        $nome_arquivo = $produto_id . "." . $extensao;
-        $foto_path = $dir_img . $nome_arquivo;
+    $nome_arquivo = $produto_id . "." . $extensao;
+    $foto_path = $dir_img . $nome_arquivo;
 
-        list($width, $height, $type) = getimagesize($foto_tmp);
-
-        switch ($type) {
-            case IMAGETYPE_JPEG: $src_image = imagecreatefromjpeg($foto_tmp); break;
-            case IMAGETYPE_PNG:  $src_image = imagecreatefrompng($foto_tmp); break;
-            case IMAGETYPE_WEBP: $src_image = imagecreatefromwebp($foto_tmp); break;
-            default:
-                header("Location: editar_produto.php?id=$produto_id&status=erro&msg=Tipo de imagem não suportado");
-                exit;
+    // Deletar imagem antiga, se existir e for diferente
+    if (!empty($produto['foto_produto'])) {
+        $imagem_antiga = $_SERVER['DOCUMENT_ROOT'] . $produto['foto_produto'];
+        if (file_exists($imagem_antiga) && realpath($imagem_antiga) !== realpath($foto_path)) {
+            unlink($imagem_antiga);
         }
-
-        $new_width = 1000;
-        $new_height = 700;
-
-        $new_img = imagecreatetruecolor($new_width, $new_height);
-
-        if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_WEBP) {
-            imagealphablending($new_img, false);
-            imagesavealpha($new_img, true);
-        }
-
-        imagecopyresampled(
-            $new_img, $src_image,
-            0, 0, 0, 0,
-            $new_width, $new_height,
-            $width, $height
-        );
-
-        switch ($type) {
-            case IMAGETYPE_JPEG: imagejpeg($new_img, $foto_path, 90); break;
-            case IMAGETYPE_PNG:  imagepng($new_img, $foto_path); break;
-            case IMAGETYPE_WEBP: imagewebp($new_img, $foto_path, 90); break;
-        }
-
-        imagedestroy($src_image);
-        imagedestroy($new_img);
-
-        $foto = "/TCC_FWS/IMG_Produtos/" . $nome_arquivo;
     }
+
+    list($width, $height, $type) = getimagesize($foto_tmp);
+
+    switch ($type) {
+        case IMAGETYPE_JPEG: $src_image = imagecreatefromjpeg($foto_tmp); break;
+        case IMAGETYPE_PNG:  $src_image = imagecreatefrompng($foto_tmp); break;
+        case IMAGETYPE_WEBP: $src_image = imagecreatefromwebp($foto_tmp); break;
+        default:
+            header("Location: editar_produto.php?id=$produto_id&status=erro&msg=Tipo de imagem não suportado");
+            exit;
+    }
+
+    $new_width = 1000;
+    $new_height = 700;
+
+    $new_img = imagecreatetruecolor($new_width, $new_height);
+
+    if ($type == IMAGETYPE_PNG || $type == IMAGETYPE_WEBP) {
+        imagealphablending($new_img, false);
+        imagesavealpha($new_img, true);
+    }
+
+    imagecopyresampled(
+        $new_img, $src_image,
+        0, 0, 0, 0,
+        $new_width, $new_height,
+        $width, $height
+    );
+
+    switch ($type) {
+        case IMAGETYPE_JPEG: imagejpeg($new_img, $foto_path, 90); break;
+        case IMAGETYPE_PNG:  imagepng($new_img, $foto_path); break;
+        case IMAGETYPE_WEBP: imagewebp($new_img, $foto_path, 90); break;
+    }
+
+    imagedestroy($src_image);
+    imagedestroy($new_img);
+
+    $foto = "/TCC_FWS/IMG_Produtos/" . $nome_arquivo;
+}
+
+
+
 
     /* ------------------------------------------------------------
        Atualizar no banco
@@ -500,6 +511,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             atualizarTextoMeses();
         }
     });
+    document.getElementById('foto').addEventListener('change', function(event) {
+    const input = event.target;
+    const preview = document.getElementById('preview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';  // Garante que a imagem apareça
+        }
+        reader.readAsDataURL(input.files[0]);
+    } else {
+        preview.src = '#';
+        preview.style.display = 'none';
+    }
+});
+
     </script>
 
 </body>
