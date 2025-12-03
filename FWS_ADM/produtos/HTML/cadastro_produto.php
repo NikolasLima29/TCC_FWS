@@ -301,7 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     src="../../menu_principal/IMG/vendaspai.png"> <span
                                     class="ms-1 d-none d-sm-inline">Vendas</span></a></li>
 
-                        <li><a href="/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                        <li><a href="/TCC_FWS/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
                                 id="cor-fonte"><img src="../../menu_principal/IMG/estoque.png"> <span
                                     class="ms-1 d-none d-sm-inline">Estoque</span></a></li>
 

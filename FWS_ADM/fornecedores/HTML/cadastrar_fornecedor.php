@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validação básica
     if ($nome === '' || $cnpj === '') {
-        header("Location: cadastro_fornecedor.php?status=erro&msg=Preencha todos os campos obrigatórios");
+        header("Location: cadastrar_fornecedor.php?status=erro&msg=Preencha todos os campos obrigatórios");
         exit;
     }
 
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->close();
 
     if ($count > 0) {
-        header("Location: cadastro_fornecedor.php?status=erro&msg=Fornecedor com este CNPJ já cadastrado");
+        header("Location: cadastrar_fornecedor.php?status=erro&msg=Fornecedor com este CNPJ já cadastrado");
         exit;
     }
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt->close();
 
-    header("Location: cadastro_fornecedor.php?status=sucesso&msg=Fornecedor cadastrado com sucesso!");
+    header("Location: cadastrar_fornecedor.php?status=sucesso&msg=Fornecedor cadastrado com sucesso!");
     exit;
 }
 ?>
@@ -243,7 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="email" name="email" placeholder="exemplo@dominio.com">
 
                         <button type="submit" class="btn btn-primary mt-3">Cadastrar</button>
-                        <a href="listar_fornecedores.php" class="btn btn-secondary mt-2">Voltar</a>
+                        <a href="lista_fornecedores.php" class="btn btn-secondary mt-2">Voltar</a>
                     </form>
 
                 </div>

@@ -323,14 +323,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte"><img
                                     src="../../menu_principal/IMG/vendaspai.png"> <span
                                     class="ms-1 d-none d-sm-inline">Vendas</span></a></li>
-                        <li><a href="/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                        <li><a href="/TCC_FWS/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
                                 id="cor-fonte"><img src="../../menu_principal/IMG/estoque.png"> <span
                                     class="ms-1 d-none d-sm-inline">Estoque</span></a></li>
                         <li><a href="/TCC_FWS/FWS_ADM/produtos/HTML/cadastro_produto.php"
                                 class="nav-link align-middle px-0" id="cor-fonte"><img
                                     src="../../menu_principal/IMG/produtos.png"> <span
                                     class="ms-1 d-none d-sm-inline">Produtos</span></a></li>
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte"><img
+                        <li><a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
+                                class="nav-link align-middle px-0" id="cor-fonte"><img
                                     src="../../menu_principal/IMG/fornecedor.png"> <span
                                     class="ms-1 d-none d-sm-inline">Fornecedores</span></a></li>
                         <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte"><img
