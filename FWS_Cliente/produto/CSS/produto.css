@@ -130,6 +130,10 @@ nav ul li a:hover::after {
         display: none;
     }
 
+    header .logo img {
+    height: 60px;
+}
+
     nav.nav-links {
         display: flex !important;
         align-items: center;
@@ -144,13 +148,12 @@ nav ul li a:hover::after {
 
 @media (max-width: 768px) {
 
-    /* Linha principal do header */
     #header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap !important; /* impede quebrar linha */
-        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     /* Ordem dos elementos */
@@ -160,24 +163,33 @@ nav ul li a:hover::after {
 
     .carrinho {
         order: 2 !important;
-        margin: 0 10px;
-        width: auto !important;  /* impede ocupar linha inteira */
+        margin: 0;
+        width: auto !important;
         display: flex;
         align-items: center;
     }
 
+    #icone-usuario {
+    order: 3;
+    margin-left: 8px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+}
+
     .menu-toggle {
-        order: 3;
+        order: 4 !important;
         display: block !important;
         background: none;
         border: none;
         color: white;
         font-size: 30px;
         cursor: pointer;
+        margin-left: 5px;
     }
 
     /* Menu dropdown */
-    nav.nav-links {
+    .nav-links {
         order: 4;
         display: none;
         width: 100%;
@@ -208,7 +220,7 @@ nav ul li a:hover::after {
         order: 5;
         width: 100%;
         text-align: center;
-        margin-top: 10px;
+        margin-top: 8px;
     }
 
     @keyframes slideDown {

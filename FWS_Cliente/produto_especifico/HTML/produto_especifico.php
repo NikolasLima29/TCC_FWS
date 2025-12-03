@@ -184,12 +184,12 @@ $produto = $result->fetch_assoc();
 
     <main>
   <!-- Produto - Topo -->
- <div 
+  <div
   class="w-100 py-4 d-flex justify-content-center align-items-center"
   style="background: <?php echo $produto['categoria_cor']; ?>; min-height: 330px; border-bottom: 8px solid rgba(251, 46, 46, 1);">
-  <img 
-    src="<?php echo $produto['foto_produto']; ?>" 
-    alt="Produto" 
+  <img
+    src="<?php echo $produto['foto_produto']; ?>"
+    alt="Produto"
     class="img-fluid rounded shadow bg-white p-3"
     style="max-width: 420px; background: white;"
   />
