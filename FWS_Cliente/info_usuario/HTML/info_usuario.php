@@ -57,13 +57,60 @@ if (!$usuario) die("Usuário não encontrado.");
     <div class="logo">
         <a href="../../index.php"><img src="../../index/IMG/shell_select.png" alt="logo" /></a>
     </div>
-    <nav>
-        <ul class="ul">
+
+    <button class="menu-toggle" aria-label="Abrir menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <nav class="nav-links">
+        <ul class="ul align-items-center">
             <li><a href="../../produto/HTML/produto.php">Produtos</a></li>
             <li><a href="../../meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
             <li><a href="../../tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('nav.nav-links');
+
+    if (!toggleButton || !navLinks) return;
+
+    toggleButton.setAttribute('aria-expanded', 'false');
+
+    function setMenu(open) {
+        if (open) {
+            navLinks.classList.add('active');
+            toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+            toggleButton.setAttribute('aria-expanded', 'true');
+        } else {
+            navLinks.classList.remove('active');
+            toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleButton.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    toggleButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMenu(!navLinks.classList.contains('active'));
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!navLinks.classList.contains('active')) return;
+        if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
+            setMenu(false);
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            navLinks.classList.remove('active');
+        }
+    });
+});
+</script>
+
     <div class="carrinho">
         <a href="../../carrinho/HTML/carrinho.php"><img src="../../index/IMG/carrinho.png" alt="carrinho" id="carrinho" /></a>
     </div>

@@ -16,8 +16,8 @@
 
 
 -- Copiando estrutura do banco de dados para fws
-CREATE DATABASE IF NOT EXISTS `fws` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `fws`;
+ /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `quaiat07_fws`;
 
 -- Copiando estrutura para tabela fws.carrinho
 CREATE TABLE IF NOT EXISTS `carrinho` (
@@ -33,13 +33,11 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `carrinho_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `carrinho_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela fws.carrinho: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela fws.carrinho: ~0 rows (aproximadamente)
 INSERT INTO `carrinho` (`id`, `usuario_id`, `produto_id`, `quantidade`, `preco_unitario`, `codigo_cupom`, `data_criacao`) VALUES
-	(8, 9, 9, 3, 6.50, NULL, '2025-10-23 22:27:10'),
-	(54, 4, 64, 3, 13.90, NULL, '2025-12-02 12:21:30'),
-	(55, 4, 49, 10, 6.50, NULL, '2025-12-02 12:22:19');
+	(8, 9, 9, 3, 6.50, NULL, '2025-10-23 22:27:10');
 
 -- Copiando estrutura para tabela fws.categorias
 CREATE TABLE IF NOT EXISTS `categorias` (
@@ -48,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `categorias` (
   `cor` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.categorias: ~11 rows (aproximadamente)
 INSERT INTO `categorias` (`id`, `nome`, `cor`) VALUES
@@ -70,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `cupom` (
   `nome` varchar(50) DEFAULT NULL,
   `desconto` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.cupom: ~0 rows (aproximadamente)
 INSERT INTO `cupom` (`id`, `nome`, `desconto`) VALUES
@@ -87,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `despesas` (
   PRIMARY KEY (`id`),
   KEY `categoria_id` (`categoria_id`),
   CONSTRAINT `despesas_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.despesas: ~0 rows (aproximadamente)
 
@@ -147,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `expiracoes_pre_compras` (
   KEY `fk_exp_venda` (`venda_id`),
   CONSTRAINT `fk_exp_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `fk_exp_venda` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.expiracoes_pre_compras: ~0 rows (aproximadamente)
 INSERT INTO `expiracoes_pre_compras` (`id`, `usuario_id`, `venda_id`, `data_expiracao`) VALUES
@@ -157,13 +155,13 @@ INSERT INTO `expiracoes_pre_compras` (`id`, `usuario_id`, `venda_id`, `data_expi
 -- Copiando estrutura para tabela fws.fornecedores
 CREATE TABLE IF NOT EXISTS `fornecedores` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `nome` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `cnpj` varchar(14) NOT NULL,
-  `telefone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `telefone` varchar(20) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cnpj` (`cnpj`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.fornecedores: ~22 rows (aproximadamente)
 INSERT INTO `fornecedores` (`id`, `nome`, `cnpj`, `telefone`, `email`) VALUES
@@ -205,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
   UNIQUE KEY `cpf` (`cpf`),
   UNIQUE KEY `email` (`email`),
   CONSTRAINT `funcionarios_chk_1` CHECK ((`nivel_permissao` between 1 and 3))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.funcionarios: ~0 rows (aproximadamente)
 INSERT INTO `funcionarios` (`id`, `nome`, `cpf`, `email`, `senha`, `nivel_permissao`, `criado_em`, `ultimo_login`, `ativo`) VALUES
@@ -223,15 +221,13 @@ CREATE TABLE IF NOT EXISTS `itens_vendidos` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `itens_vendidos_ibfk_1` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`),
   CONSTRAINT `itens_vendidos_ibfk_2` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela fws.itens_vendidos: ~3 rows (aproximadamente)
+-- Copiando dados para a tabela fws.itens_vendidos: ~0 rows (aproximadamente)
 INSERT INTO `itens_vendidos` (`id`, `venda_id`, `produto_id`, `quantidade`, `preco_unitario`) VALUES
 	(2, 11, 15, 3, 3.50),
 	(3, 12, 18, 2, 9.99),
-	(4, 12, 62, 3, 11.50),
-	(5, 13, 3, 1, 31.99),
-	(6, 13, 9, 21, 6.50);
+	(4, 12, 62, 3, 11.50);
 
 -- Copiando estrutura para tabela fws.lotes_produtos
 CREATE TABLE IF NOT EXISTS `lotes_produtos` (
@@ -245,7 +241,7 @@ CREATE TABLE IF NOT EXISTS `lotes_produtos` (
   KEY `fk_lote_fornecedor` (`fornecedor_id`),
   CONSTRAINT `fk_lote_fornecedor` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`),
   CONSTRAINT `fk_lote_produto` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=143 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.lotes_produtos: ~79 rows (aproximadamente)
 INSERT INTO `lotes_produtos` (`id`, `produto_id`, `validade`, `quantidade`, `fornecedor_id`) VALUES
@@ -346,7 +342,7 @@ CREATE TABLE IF NOT EXISTS `movimentacao_estoque` (
   CONSTRAINT `movimentacao_estoque_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `movimentacao_estoque_ibfk_2` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`),
   CONSTRAINT `movimentacao_estoque_ibfk_3` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.movimentacao_estoque: ~0 rows (aproximadamente)
 
@@ -370,13 +366,13 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   KEY `fornecedor_id` (`fornecedor_id`),
   CONSTRAINT `produtos_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`),
   CONSTRAINT `produtos_ibfk_2` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.produtos: ~79 rows (aproximadamente)
 INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descricao`, `foto_produto`, `preco_venda`, `preco_compra`, `estoque`, `validade_padrao_meses`, `status`, `criado_em`) VALUES
 	(1, 'VINHO BUENO AIRES MALBE 750ML', 1, 1, 'Um vinho Malbec elegante, produzido com uvas selecionadas que garantem sabor intenso, aromas frutados e taninos suaves. Ideal para acompanhar carnes vermelhas e momentos especiais.', '/TCC_FWS/IMG_Produtos/1.png', 69.90, 54.90, 1, 36, 'ativo', '2025-10-20 17:54:49'),
 	(2, 'VINHO DE LOS MAN CABERNET SAUVIGNON BRANCO 750ML', 1, 1, 'Vinho Cabernet Sauvignon, disponível nas versões branco ou tinto, feito com uvas premium que trazem equilíbrio entre acidez e corpo, perfeito para harmonizar com queijos e pratos sofisticados.', '/TCC_FWS/IMG_Produtos/2.png', 69.90, 54.90, 3, 36, 'ativo', '2025-10-20 17:54:49'),
-	(3, 'ÁGUA DE COCO KERO COCO 1L', 2, 3, 'Água de coco 100% natural, rica em eletrólitos essenciais para hidratação rápida e renovação de energia, perfeita para o dia a dia e práticas esportivas.', '/TCC_FWS/IMG_Produtos/3.png', 31.99, 15.87, 6, 12, 'ativo', '2025-10-20 17:54:49'),
+	(3, 'ÁGUA DE COCO KERO COCO 1L', 2, 3, 'Água de coco 100% natural, rica em eletrólitos essenciais para hidratação rápida e renovação de energia, perfeita para o dia a dia e práticas esportivas.', '/TCC_FWS/IMG_Produtos/3.png', 31.99, 15.87, 5, 12, 'ativo', '2025-10-20 17:54:49'),
 	(4, 'ÁGUA DE COCO KERO COCO 330ML', 2, 3, 'Em embalagem prática, essa água de coco natural é fonte de potássio e minerais, ideal para refrescar e manter a hidratação em qualquer momento.', '/TCC_FWS/IMG_Produtos/4.png', 14.50, 6.56, 16, 12, 'ativo', '2025-10-20 17:54:49'),
 	(5, 'ÁGUA DE COCO KERO COCO CX 200ML', 2, 3, 'Compacta e nutritiva, essa água de coco oferece hidratação natural e energia, com sabor refrescante e leve, ótima para levar na bolsa ou lancheira.', '/TCC_FWS/IMG_Produtos/5.png', 6.90, 3.20, 15, 12, 'ativo', '2025-10-20 17:54:49'),
 	(6, 'ÁGUA MINERAL CRYSTAL COM GÁS PET 500ML', 2, 4, 'Água mineral com gás Crystal, puro frescor e efervescência suave que revitalizam seu paladar a qualquer hora do dia.', '/TCC_FWS/IMG_Produtos/6.png', 6.50, 2.24, 1, 12, 'ativo', '2025-10-20 17:54:49'),
@@ -471,7 +467,7 @@ CREATE TABLE IF NOT EXISTS `retiradas` (
   CONSTRAINT `retiradas_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `retiradas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `retiradas_ibfk_3` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Copiando dados para a tabela fws.retiradas: ~0 rows (aproximadamente)
 
@@ -481,22 +477,22 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `nome` varchar(100) NOT NULL,
   `data_nascimento` date NOT NULL,
   `telefone` varchar(50) NOT NULL DEFAULT '',
-  `cpf` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `cpf` char(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `email` varchar(100) NOT NULL,
   `senha` varchar(255) NOT NULL,
   `criado_em` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `ultimo_login` datetime DEFAULT NULL,
   `ativo` tinyint(1) DEFAULT '1',
-  `google_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `google_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf` (`cpf`),
   UNIQUE KEY `telefone` (`telefone`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela fws.usuarios: ~5 rows (aproximadamente)
+-- Copiando dados para a tabela fws.usuarios: ~0 rows (aproximadamente)
 INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `telefone`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
-	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '(11) 96854-4147', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-12-02 12:20:26', 1, NULL),
+	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '(11) 96854-4147', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-10-30 10:24:24', 1, NULL),
 	(6, 'Sabrina', '2007-02-14', '11930265543', '54449709888', 'sabrina@gmail.com', '$2y$10$xVCz9nu7WWZVB25HuJQAJuVeIWKOMuqMtlEP68.sorCERfJ7LVO9.', '2025-10-22 11:30:07', '2025-10-22 08:32:23', 1, NULL),
 	(7, 'Nicolly Clement de Freitas', '2007-07-25', '11928926150', '50674089871', 'clementnicolly@gmail.com', '$2y$10$0Igs1yOGF5dtBMYbX/vlme9BcBJ3gu/VfRlwxSsOjCwq6ytGu3dJi', '2025-10-22 14:07:05', '2025-10-22 11:08:02', 1, NULL),
 	(8, 'nathally ferreira', '2007-08-13', '11999284328', '49681441800', 'nathally@gmail.com', '$2y$10$M45ldEWNbN1mc.pYonwGu.rJg9leM2BjTe3kynY6lN9K8KmVu.BPi', '2025-10-22 14:59:52', '2025-10-22 12:01:16', 1, NULL),
@@ -509,7 +505,7 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   `usuario_id` int DEFAULT NULL,
   `total` decimal(10,2) NOT NULL,
   `status_pagamento` enum('pago','pendente','cancelado') DEFAULT 'pendente',
-  `situacao_compra` enum('em_preparo','pronto_para_retirar','finalizada','cancelada') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'em_preparo',
+  `situacao_compra` enum('pre_compra','finalizada','cancelada') DEFAULT 'pre_compra',
   `metodo_pagamento` enum('dinheiro','cartao_credito','cartao_debito','pix','boleto','outros') DEFAULT 'dinheiro',
   `tempo_chegada` time DEFAULT NULL,
   `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -519,13 +515,12 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`),
   CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Copiando dados para a tabela fws.vendas: ~2 rows (aproximadamente)
+-- Copiando dados para a tabela fws.vendas: ~0 rows (aproximadamente)
 INSERT INTO `vendas` (`id`, `funcionario_id`, `usuario_id`, `total`, `status_pagamento`, `situacao_compra`, `metodo_pagamento`, `tempo_chegada`, `data_criacao`, `data_finalizacao`) VALUES
 	(11, 1, 4, 10.50, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-10-30 11:05:40', NULL),
-	(12, 1, 4, 54.48, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-11-26 18:39:32', NULL),
-	(13, 1, 4, 168.49, 'pendente', 'em_preparo', 'dinheiro', '00:45:00', '2025-12-02 08:04:03', NULL);
+	(12, 1, 4, 54.48, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-11-26 18:39:32', NULL);
 
 -- Copiando estrutura para trigger fws.trg_estoque_insuficiente
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
@@ -601,7 +596,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `trg_vendas_finalizadas` AFTER UPDATE ON `vendas` FOR EACH ROW BEGIN
-    IF NEW.situacao_compra = 'finalizada' AND OLD.situacao_compra = 'em_preparo' THEN
+    IF NEW.situacao_compra = 'finalizada' AND OLD.situacao_compra = 'pre_compra' THEN
         INSERT INTO movimentacao_estoque (produto_id, quantidade, tipo_movimentacao, venda_id, descricao)
         SELECT produto_id, quantidade, 'saida', NEW.id, CONCAT('Venda ID ', NEW.id)
         FROM itens_vendidos

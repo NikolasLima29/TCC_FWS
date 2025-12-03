@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fornecedor_id = intval($_POST['fornecedor_id'] ?? 0);
     $descricao = trim($_POST['descricao'] ?? '');
     $preco_venda = trim($_POST['preco_venda'] ?? '');
+    $preco_compra = trim($_POST['preco_compra'] ?? '');
     $estoque = trim($_POST['estoque'] ?? '');
     $status = trim($_POST['status'] ?? '');
     
@@ -21,6 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $preco_venda = str_replace('.', '', $preco_venda);
         $preco_venda = str_replace(',', '.', $preco_venda);
         $preco_venda = floatval($preco_venda);
+    }
+    if ($preco_compra !== "") {
+        $preco_compra = str_replace('.', '', $preco_compra);
+        $preco_compra = str_replace(',', '.', $preco_compra);
+        $preco_compra = floatval($preco_compra);
     }
 
     // Validade final
@@ -36,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validação simples
     if ($nome === "" || $categoria_id == 0 || $fornecedor_id == 0 || 
-        $preco_venda === "" || $estoque === "" || $status === "") {
+        $preco_venda === "" || $preco_compra === "" || $estoque === "" || $status === "") {
 
         header("Location: cadastro_produto.php?status=erro&msg=Preencha todos os campos");
         exit;
@@ -57,13 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Inserir produto
     $query = "INSERT INTO produtos 
-        (nome, categoria_id, fornecedor_id, descricao, preco_venda, estoque, status, criado_em, validade_padrao_meses)
-        VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
+        (nome, categoria_id, fornecedor_id, descricao, preco_venda, preco_compra, estoque, status, criado_em, validade_padrao_meses)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
     $stmt = $sql->prepare($query);
-    $stmt->bind_param("siisdisi",
+    $stmt->bind_param("siisddisi",
         $nome, $categoria_id, $fornecedor_id, $descricao,
-        $preco_venda, $estoque, $status, $validade
+        $preco_venda, $preco_compra, $estoque, $status, $validade
     );
 
     if (!$stmt->execute()) {
@@ -363,6 +369,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <label>Preço de Venda</label>
                         <input type="text" name="preco_venda" id="preco_venda" required>
 
+                        <label>Preço de Compra</label>
+                        <input type="text" name="preco_compra" id="preco_compra" required>
+
                         <label>Quantidade</label>
                         <input type="number" name="estoque" min="0" required>
 
@@ -406,6 +415,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $(document).ready(function() {
 
     $('#preco_venda').mask('#.##0,00', {
+        reverse: true
+    });
+    $('#preco_compra').mask('#.##0,00', {
         reverse: true
     });
 
