@@ -237,7 +237,7 @@ table td:nth-child(9) {
                         </li>
 
                         <li>
-                            <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                            <a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/lista_fornecedores.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a>
