@@ -65,7 +65,7 @@ $total_paginas = ceil($total_produtos / $produtos_por_pagina);
 
 // Consulta produtos paginados conforme filtro e pagina atual
 $sql = "SELECT p.id, p.nome, p.preco_venda, p.descricao, p.foto_produto, p.estoque,
-               c.nome AS categoria, c.cor
+                c.nome AS categoria, c.cor
         $sql_base LIMIT $produtos_por_pagina OFFSET $offset";
 
 $resultado = mysqli_query($conn, $sql);
@@ -236,44 +236,49 @@ $resultado = mysqli_query($conn, $sql);
       </a>
     </div>
 
+    <div id="icone-usuario">
+          <i class="fas fa-user-circle fa-2x" id="user-menu-toggle"></i>
+    </div>
+
+        
+
     <div id="bem-vindo" style="position: relative; display: inline-block;">
       <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
         <?php
         $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
         $primeiroNome = explode(' ', $nomeCompleto)[0];
         ?>
-        Bem-vindo(a), <?= $primeiroNome ?>
-        <div style="display: inline-block; margin-left: 8px; cursor: pointer;" id="user-menu-toggle">
-          <i class="fas fa-user-circle fa-2x" style="max-width: 90px;"></i>
+        <div id="bem-vindo-texto">
+          Bem-vindo(a), <?= $primeiroNome ?>
         </div>
 
-        <div id="user-menu"
-          style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-          <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php"
-            style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-          <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link"
-            style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
-        </div>
+      <div id="user-menu"
+              style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
+              <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php"
+              style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
+              <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link"
+              style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
+      </div>
 
-        <script>
-          document.getElementById('user-menu-toggle').addEventListener('click', function () {
-            var menu = document.getElementById('user-menu');
-            if (menu.style.display === 'none') {
-              menu.style.display = 'block';
-            } else {
-              menu.style.display = 'none';
-            }
-          });
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+          const toggle = document.getElementById("user-menu-toggle");
+          const menu = document.getElementById("user-menu");
+          const container = document.getElementById("bem-vindo");
 
-          // Fecha o menu se clicar fora
-          document.addEventListener('click', function (event) {
-            var container = document.getElementById('bem-vindo');
-            var menu = document.getElementById('user-menu');
-            if (!container.contains(event.target)) {
-              menu.style.display = 'none';
-            }
-          });
-        </script>
+      toggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+        });
+
+      document.addEventListener("click", (e) => {
+          if (!container.contains(e.target) && e.target !== toggle) {
+            menu.style.display = "none";
+          }
+        });
+    });
+</script>
+
       <?php else: ?>
         Bem-vindo(a).
       <?php endif; ?>
@@ -314,11 +319,11 @@ $resultado = mysqli_query($conn, $sql);
     <div style="margin-top:10px;">
       <label>Categorias:</label>
       <div id="categorias_filtro" style="
-        display: flex; 
-        flex-wrap: wrap; 
-        gap: 1px; 
-        justify-content: center; 
-        max-width: 400px; 
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1px;
+        justify-content: center;
+        max-width: 400px;
         margin: 0 auto;">
         <?php
         $sql_cats = "SELECT id, nome, cor FROM categorias";
@@ -370,7 +375,7 @@ $resultado = mysqli_query($conn, $sql);
           echo '<p class="text-center w-100" style="margin-top: 40px;">Nenhum produto encontrado para "' . htmlspecialchars($busca) . '". Mas veja nossos outros produtos:</p>';
 
           $sql_sem_filtro = "SELECT p.id, p.nome, p.preco_venda, p.descricao, p.foto_produto, p.estoque,
-       c.nome AS categoria, c.cor
+        c.nome AS categoria, c.cor
                             FROM produtos p
                             INNER JOIN categorias c ON p.categoria_id = c.id
                             WHERE p.status = 'ativo'
@@ -833,10 +838,21 @@ $(function () {
   <style>
     #header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
+      padding: 10px 25px;
       background-color: #c40000;
       color: white;
+    }
+
+    #icone-usuario {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .carrinho img {
+      height: 27px !important;
     }
 
     .logo {
