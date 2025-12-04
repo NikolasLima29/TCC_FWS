@@ -1,0 +1,60 @@
+@import url('../../Fonte_Config/fonte_geral.css');
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+body {
+    background-color: black;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #d7301f;
+    padding: 15px 60px;
+    position: relative;
+}
+
+header .logo img {
+    height: 60px;
+}
+
+header nav ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+}
+
+header nav ul li a {
+    color: white;
+    font-size: 25px;
+    text-decoration: none !important;
+}
+
+.carrinho img {
+    height: 45px;
+    cursor: pointer;
+}
+
+nav ul li a:not(.btn):after {
+    content: "";
+    background-color: #ffffff;
+    height: 3px;
+    width: 0%;
+    display: block;
+    transition: 0.3s;
+}
+
+a:hover {
+    color: white;
+}
+
+nav ul li a:hover::after {
+    width: 100%;
+}
