@@ -245,13 +245,13 @@ $foto = "../../fotodeperfiladm.png";
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
                             </a></li>
 
-                        <li><a href="/TCC_FWS/FWS_ADM/produtos/HTML/cadastro_produto.php"
+                        <li><a href="/TCC_FWS/FWS_ADM/produtos/HTML/lista_produtos.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
 
-                        <li><a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/listar_fornecedores.php"
+                        <li><a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
@@ -276,7 +276,7 @@ $foto = "../../fotodeperfiladm.png";
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="../../logout.php">Sair</a></li>
+                            <li><a class="dropdown-item" href="logout.php">Sair</a></li>
                         </ul>
                     </div>
 
@@ -315,8 +315,9 @@ $foto = "../../fotodeperfiladm.png";
                         <input type="text" class="form-control" value="<?= nivel($nivel) ?>" readonly>
 
                         <button type="button" id="btnEditar" class="btn btn-edit mt-4">Editar</button>
-                        <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html" id="btnVoltar"
-                            class="btn btn-secondary mt-2">Voltar</a>
+                        <button type="button" onclick="history.back()" class="btn btn-secondary mt-2" id="btnVoltar"> Voltar </button>
+
+
 
                         <div id="areaBotoes" style="display:none;">
                             <button type="button" id="btnCancelar" class="btn btn-cancel mt-3">Cancelar</button>
