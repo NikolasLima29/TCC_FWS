@@ -315,10 +315,7 @@ $foto = "../../fotodeperfiladm.png";
                         <input type="text" class="form-control" value="<?= nivel($nivel) ?>" readonly>
 
                         <button type="button" id="btnEditar" class="btn btn-edit mt-4">Editar</button>
-                        <a href="<?= $_SESSION['voltar_para'] ?? '/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html' ?>"
-                            class="btn btn-secondary mt-2" id="btnVoltar">
-                            Voltar
-                        </a>
+                        <button type="button" onclick="history.back()" class="btn btn-secondary mt-2" id="btnVoltar"> Voltar </button>
 
 
 
