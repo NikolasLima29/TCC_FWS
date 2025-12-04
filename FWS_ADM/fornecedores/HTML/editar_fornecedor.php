@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </a>
                         </li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/TCC_FWS/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fastservice.png">
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span></a>
                         </li>

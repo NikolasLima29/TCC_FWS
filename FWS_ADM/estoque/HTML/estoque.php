@@ -3,12 +3,70 @@ include "../../conn.php";
 if (!$sql){
     die("conexão falhou: " . mysqli_error());
 }
-$sqli = "SELECT p.id, p.nome, c.nome as categoria_nome, f.nome as fornecedor_nome, p.preco_venda, p.estoque, p.status, p.criado_em 
+
+// Processar reposição de estoque
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['repor_estoque'])) {
+    $produto_id = intval($_POST['produto_id']);
+    $quantidade = 24;
+    
+    // 1. Buscar dados do produto
+    $sql_produto = "SELECT validade_padrao_meses, fornecedor_id FROM produtos WHERE id = $produto_id";
+    $res_produto = $sql->query($sql_produto);
+    if ($res_produto && $res_produto->num_rows > 0) {
+        $produto = $res_produto->fetch_assoc();
+        $validade_padrao = $produto['validade_padrao_meses'];
+        $fornecedor_id = $produto['fornecedor_id'];
+        
+        // 2. Calcular data de validade
+        $data_validade = NULL;
+        if ($validade_padrao && $validade_padrao > 0) {
+            $data_validade = date('Y-m-d', strtotime("+$validade_padrao months"));
+        }
+        
+        // 3. Inserir novo lote em lotes_produtos
+        $sql_lote = "INSERT INTO lotes_produtos (produto_id, quantidade, validade, fornecedor_id) 
+                     VALUES ($produto_id, $quantidade, " . ($data_validade ? "'$data_validade'" : "NULL") . ", " . ($fornecedor_id ? $fornecedor_id : "NULL") . ")";
+        if (!$sql->query($sql_lote)) {
+            die("Erro ao criar lote: " . $sql->error);
+        }
+        
+        // 4. Registrar entrada na tabela movimentacao_estoque
+        $sql_insert = "INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, data_movimentacao) 
+                       VALUES ($produto_id, 'entrada', $quantidade, NOW())";
+        if (!$sql->query($sql_insert)) {
+            die("Erro ao registrar movimentação: " . $sql->error);
+        }
+    } else {
+        die("Produto não encontrado");
+    }
+    
+    // Redirecionar para atualizar a página
+    header('Location: estoque.php');
+    exit;
+}
+
+$sqli = "SELECT p.id, p.nome, c.nome as categoria_nome, f.nome as fornecedor_nome, p.preco_venda, 
+        SUM(lp.quantidade) as estoque_total, p.status, p.criado_em, lp.validade
 FROM produtos p 
 LEFT JOIN categorias c ON p.categoria_id = c.id 
-LEFT JOIN fornecedores f ON p.fornecedor_id = f.id";
+LEFT JOIN fornecedores f ON p.fornecedor_id = f.id
+LEFT JOIN lotes_produtos lp ON p.id = lp.produto_id
+GROUP BY p.id, lp.validade
+ORDER BY p.id, lp.validade ASC";
 $result = $sql->query($sqli);
 if(!$result){
+    die("Erro na consulta: " . $sql->error);
+}
+
+// Query para estoque total (sem agrupar por lote)
+$sqli_total = "SELECT p.id, p.nome, c.nome as categoria_nome, f.nome as fornecedor_nome, p.preco_venda, 
+        p.estoque, p.status, p.criado_em
+FROM produtos p 
+LEFT JOIN categorias c ON p.categoria_id = c.id 
+LEFT JOIN fornecedores f ON p.fornecedor_id = f.id
+ORDER BY p.id ASC";
+$result_total = $sql->query($sqli_total);
+if(!$result_total){
     die("Erro na consulta: " . $sql->error);
 }
 ?>
@@ -24,88 +82,26 @@ if(!$result){
         integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #fff;
+            background-color: #fff8e1;
+            font-family: "Poppins", sans-serif;
             margin: 0;
-            padding: 0;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 15px;
-            padding: 8px;
-            font-size: 16px;
-            border: 2px solid #f4a01d;
-            border-radius: 4px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: black;
-            color: white;
-            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
-        }
-
-        thead {
-            background-color: #f4a01d;
-            color: black;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-
-        tbody tr:hover {
-            background-color: #f4a01d;
-            color: black;
-        }
-
-        .status-in-stock {
-            color: green;
-            font-weight: bold;
-        }
-
-        .status-out-stock {
-            color: red;
-            font-weight: bold;
-        }
-
-        /* 🔹 Barra lateral fixa */
         #fund {
             position: fixed;
             top: 0;
             left: 0;
             height: 100vh;
-            width: 250px; /* largura fixa */
+            width: 250px;
             background-color: black !important;
             overflow-y: auto;
             z-index: 1000;
         }
 
-        /* 🔹 Área do menu */
         #menu {
             background-color: black;
         }
 
-        /* 🔹 Ajuste do conteúdo principal */
-        #conteudo-principal {
-            margin-left: 250px; /* igual à largura da barra */
-            padding: 20px;
-        }
-
-        /* 🔹 Estilo da sidebar */
         #cor-fonte {
             color: #ff9100;
             font-size: 23px;
@@ -122,6 +118,127 @@ if(!$result){
 
         #logo-linha img {
             width: 170px;
+        }
+
+        #conteudo-principal {
+            margin-left: 250px;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1000px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #d11b1b;
+            font-weight: bold;
+        }
+
+        table th,
+        table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .btn-edit {
+            background-color: #f4a01d;
+            border: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .btn-edit:hover {
+            background-color: #d68c19;
+            color: white;
+        }
+
+        .table {
+            font-size: 0.9rem;
+        }
+
+        .table th,
+        .table td {
+            padding: 8px 10px !important;
+            text-transform: lowercase;
+        }
+
+        .table th::first-letter,
+        .table td::first-letter {
+            text-transform: uppercase;
+        }
+
+        .col-nome {
+            text-transform: uppercase;
+        }
+
+        .col-preco {
+            min-width: 120px;
+        }
+
+        .alerta-quantidade {
+            background-color: #f5222d !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .alerta-validade {
+            background-color: #f5222d !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .btn-reposicao {
+            background-color: #52c41a;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .btn-reposicao:hover {
+            background-color: #389e0d;
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 2px solid #d11b1b;
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background-color: #d11b1b;
+            color: white;
+        }
+
+        .tab-btn:hover {
+            opacity: 0.8;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         @import url('../../Fonte_Config/fonte_geral.css');
@@ -154,7 +271,7 @@ if(!$result){
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                            <a href="/TCC_FWS/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fastservice.png">
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                             </a>
@@ -214,70 +331,160 @@ if(!$result){
 
             <!-- 🔹 Conteúdo principal -->
             <div class="col py-3" id="conteudo-principal">
-                <h1>Estoque de Produtos</h1>
-                <input type="text" id="filtro" placeholder="Buscar produto..." onkeyup="filtrarTabela()" />
-                <table id="tabelaEstoque">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Categoria</th>
-                            <th>Fornecedor</th>
-                            <th>Preço</th>
-                            <th>Qtd</th>
-                            <th>Status</th>
-                            <th>Criação</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        if ($result->num_rows > 0){
-                            while ($row = $result->fetch_assoc()){
-                                echo "<tr>";
-                                echo "<td>" . ($row["id"] ?? "id não disponível") . "</td>";
-                                echo "<td>" . ($row["nome"] ?? "nome não disponível") . "</td>";
-                                echo "<td>" . ($row["categoria_nome"] ?? "categoria não disponível") . "</td>";
-                                echo "<td>" . ($row["fornecedor_nome"] ?? "fornecedor não disponível") . "</td>";
-                                echo "<td>" . ($row["preco_venda"] ?? "preço não disponível") . "</td>";
-                                echo "<td>" . ($row["estoque"] ?? "Quantidade não disponível") . "</td>";
-                                echo "<td>" . ($row["status"] ?? "status não disponível") . "</td>";
-                                echo "<td>" . ($row["criado_em"] ?? "data não disponível") . "</td>";
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='8'>Nenhum registro encontrado</td></tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
-                <script>
-                function filtrarTabela() {
-                    const input = document.getElementById("filtro");
-                    const filtro = input.value.toLowerCase();
-                    const tabela = document.getElementById("tabelaEstoque");
-                    const linhas = tabela.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
-                    for (let i = 0; i < linhas.length; i++) {
-                        const colunaProduto = linhas[i].getElementsByTagName("td")[1];
-                        if (colunaProduto) {
-                            const texto = colunaProduto.textContent || colunaProduto.innerText;
-                            linhas[i].style.display = texto.toLowerCase().includes(filtro) ? "" : "none";
-                        }
-                    }
-                }
-                </script>
+                <div class="container">
+
+                    <h2>Estoque de Produtos</h2>
+
+                    <!-- Abas de seleção -->
+                    <div class="tabs-container">
+                        <button class="tab-btn active" onclick="mudarTab('lote')">Estoque por Lote</button>
+                        <button class="tab-btn" onclick="mudarTab('total')">Estoque Total</button>
+                    </div>
+
+                    <!-- Tabela de Estoque por Lote -->
+                    <div id="lote" class="tab-content active">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Fornecedor</th>
+                                    <th>Preço</th>
+                                    <th>Quantidade</th>
+                                    <th>Validade</th>
+                                    <th>Status</th>
+                                    <th>Chegada</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php if ($result->num_rows > 0): ?>
+                                    <?php while ($row = $result->fetch_assoc()): 
+                                        $estoque = $row['estoque_total'] ?? 0;
+                                        $produto_id = $row['id'];
+                                        $validade = $row['validade'];
+                                        
+                                        // Buscar estoque total do produto
+                                        $sql_estoque_total = "SELECT estoque FROM produtos WHERE id = $produto_id";
+                                        $res_estoque_total = $sql->query($sql_estoque_total);
+                                        $estoque_total_produto = 0;
+                                        if ($res_estoque_total && $res_estoque_total->num_rows > 0) {
+                                            $row_est = $res_estoque_total->fetch_assoc();
+                                            $estoque_total_produto = $row_est['estoque'] ?? 0;
+                                        }
+                                        
+                                        // Alerta apenas se o TOTAL está baixo
+                                        $class_alerta_qtd = ($estoque_total_produto < 15) ? 'alerta-quantidade' : '';
+                                        
+                                        $class_alerta_val = '';
+                                        if ($validade) {
+                                            $data_validade = new DateTime($validade);
+                                            $data_hoje = new DateTime();
+                                            $intervalo = $data_hoje->diff($data_validade);
+                                            if ($intervalo->days <= 7 && $intervalo->invert == 0) {
+                                                $class_alerta_val = 'alerta-validade';
+                                            }
+                                        }
+                                    ?>
+                                    <tr>
+                                        <td><?= $row['id'] ?></td>
+                                        <td class="col-nome"><?= htmlspecialchars($row['nome']) ?></td>
+                                        <td><?= htmlspecialchars($row['categoria_nome'] ?? 'N/A') ?></td>
+                                        <td><?= htmlspecialchars($row['fornecedor_nome'] ?? 'N/A') ?></td>
+                                        <td class="col-preco">R$ <?= number_format($row['preco_venda'], 2, ',', '.') ?></td>
+                                        <td class="<?= $class_alerta_qtd ?>"><?= $estoque ?></td>
+                                        <td class="<?= $class_alerta_val ?>"><?= $validade ? date('d/m/Y', strtotime($validade)) : 'Sem validade' ?></td>
+                                        <td><?= ($row['status'] === 'ativo' ? 'Ativo' : 'Inativo') ?></td>
+                                        <td><?= date('d/m/Y', strtotime($row['criado_em'])) ?></td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                <tr>
+                                    <td colspan="9">Nenhum produto cadastrado.</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tabela de Estoque Total -->
+                    <div id="total" class="tab-content">
+                        <table class="table table-bordered table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Fornecedor</th>
+                                    <th>Preço</th>
+                                    <th>Quantidade Total</th>
+                                    <th>Status</th>
+                                    <th>Chegada</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php if ($result_total->num_rows > 0): ?>
+                                    <?php while ($row = $result_total->fetch_assoc()): 
+                                        $estoque_total = $row['estoque'] ?? 0;
+                                        $class_alerta_qtd_total = ($estoque_total < 15) ? 'alerta-quantidade' : '';
+                                    ?>
+                                    <tr>
+                                        <td><?= $row['id'] ?></td>
+                                        <td class="col-nome"><?= htmlspecialchars($row['nome']) ?></td>
+                                        <td><?= htmlspecialchars($row['categoria_nome'] ?? 'N/A') ?></td>
+                                        <td><?= htmlspecialchars($row['fornecedor_nome'] ?? 'N/A') ?></td>
+                                        <td class="col-preco">R$ <?= number_format($row['preco_venda'], 2, ',', '.') ?></td>
+                                        <td class="<?= $class_alerta_qtd_total ?>"><?= $estoque_total ?></td>
+                                        <td><?= ($row['status'] === 'ativo' ? 'Ativo' : 'Inativo') ?></td>
+                                        <td><?= date('d/m/Y', strtotime($row['criado_em'])) ?></td>
+                                        <td>
+                                            <?php if ($estoque_total < 15): ?>
+                                                <form method="post" style="display:inline;">
+                                                    <input type="hidden" name="produto_id" value="<?= $row['id'] ?>">
+                                                    <button type="submit" name="repor_estoque" class="btn-reposicao">+24</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                <tr>
+                                    <td colspan="9">Nenhum produto cadastrado.</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-</main>
 
-<footer></footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-    crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
-    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz"
-    crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function mudarTab(tabName) {
+        // Esconder todas as abas
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        // Remover classe active de todos os botões
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(btn => btn.classList.remove('active'));
+        
+        // Mostrar a aba selecionada
+        document.getElementById(tabName).classList.add('active');
+        
+        // Adicionar classe active ao botão clicado
+        event.target.classList.add('active');
+    }
+    </script>
 
 </body>
+
 </html>
+
+<?php $sql->close(); ?>

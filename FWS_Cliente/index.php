@@ -586,7 +586,8 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 
   <script>
     $(function () {
-      var usuario_id = < ? php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ? > ;
+      var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
+
 
       $(".Carrinho").on("click", function () {
         const dados = JSON.parse($(this).attr('data-produto'));
@@ -594,79 +595,97 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
           showLoginModal();
           return;
         }
-        let qtd = 1;
-        // Pegue o preço do produto aqui, ex: dados.preco
-        const preco = parseFloat(dados.preco); // o atributo .preco deve vir no seu data-produto
+        // Checar estoque antes de abrir modal (AJAX correto)
+        $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+          id_produto: dados.id,
+          verificar_limite: 1
+        }, function(resp) {
+          let data;
+          try { data = typeof resp === 'string' ? JSON.parse(resp) : resp; } catch(e) { data = {}; }
+          if (typeof data.restante !== 'undefined' && data.restante > 0) {
+            abrirPopupAdicionar(dados, data.restante);
+          } else {
+            mostrarAvisoLimite(dados.nome);
+          }
+        });
+      });
 
-        function atualizarPreco() {
-          $("#valor-unit").text(preco.toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL"
-          }));
-          $("#valor-total").text((preco * qtd).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL"
-          }));
-          $(".quantidade-number").text(qtd);
-        }
-
-        $("#modal-backdrop").show();
+      // Função igual à tela de produtos
+      function mostrarAvisoLimite(nomeProd) {
         $("#modal-add-carrinho").html(`
-      <div style="margin-bottom:10px">Você está adicionando ao carrinho:</div>
-      <img src="${dados.foto}" alt="${dados.nome}">
-      <div class="produto-titulo">${dados.nome}</div>
-      <div class="produto-descricao">${dados.descricao}</div>
-      <div style="margin:7px 0 3px 0"><b>Preço unitário: <span id="valor-unit"></span></b></div>
-      <div class="contador-box">
-        <button class="contador-btn menos">-</button>
-        <span class="quantidade-number">1</span>
-        <button class="contador-btn mais">+</button>
-      </div>
-      <div style="margin:6px 0;"><b>Total: <span id="valor-total"></span></b></div>
-      <div class="modal-actions">
-        <button class="btn-popup add">Adicionar</button>
-        <button class="btn-popup cancel">Cancelar</button>
-      </div>
-    `).show();
-
-        atualizarPreco();
-
-        $(".custom-modal .contador-btn.menos").on("click", function () {
-          if (qtd > 1) {
-            qtd--;
-            atualizarPreco();
-          }
-        });
-        $(".custom-modal .contador-btn.mais").on("click", function () {
-          if (qtd < 10) {
-            qtd++;
-            atualizarPreco();
-          }
-        });
-
-        $(".custom-modal .btn-popup.cancel").on("click", function () {
+          <div style="color:#b30000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
+              Limite atingido
+          </div>
+          <p style="text-align:center;margin-bottom:10px">
+              Você já adicionou o máximo permitido pelo estoque para <b>${nomeProd}</b>.
+          </p>
+          <div class="modal-actions">
+              <button class="btn-popup cancel ok-close">Fechar</button>
+          </div>
+        `).show();
+        $("#modal-backdrop").show();
+        $(".ok-close").on("click", function () {
           $("#modal-add-carrinho, #modal-backdrop").hide();
         });
+      }
 
-        // Adicionar ao carrinho AJAX
-        $(".custom-modal .btn-popup.add").on("click", function () {
+      function abrirPopupAdicionar(dados, maxPermitido) {
+        let qtd = 1;
+        const preco = parseFloat(dados.preco);
+        function atualizarPreco() {
+          $("#valor-unit").text(preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          $("#valor-total").text((preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
+          $(".quantidade-number").text(qtd);
+        }
+        $("#modal-backdrop").show();
+        $("#modal-add-carrinho").html(`
+          <div style="margin-bottom:10px">Você está adicionando ao carrinho:</div>
+          <img src="${dados.foto}" alt="${dados.nome}">
+          <div class="produto-titulo">${dados.nome}</div>
+          <div class="produto-descricao">${dados.descricao}</div>
+          <div style="margin:7px 0 3px 0"><b>Preço unitário: <span id="valor-unit"></span></b></div>
+          <div class="contador-box">
+            <button class="contador-btn menos">-</button>
+            <span class="quantidade-number">1</span>
+            <button class="contador-btn mais">+</button>
+          </div>
+          <div style="margin:6px 0;"><b>Total: <span id="valor-total"></span></b></div>
+          <div class="modal-actions">
+            <button class="btn-popup add">Adicionar</button>
+            <button class="btn-popup cancel">Cancelar</button>
+          </div>
+        `).show();
+        atualizarPreco();
+        $(".contador-btn.menos").on("click", function () {
+          if (qtd > 1) { qtd--; atualizarPreco(); }
+        });
+        $(".contador-btn.mais").on("click", function () {
+          if (qtd < maxPermitido) { qtd++; atualizarPreco(); }
+        });
+        $(".btn-popup.cancel").on("click", function () {
+          $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
+        $(".btn-popup.add").on("click", function () {
           $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
             id_produto: dados.id,
             quantidade: qtd,
             ajax: 1
           }, function (resp) {
-            $("#modal-add-carrinho").html(`<div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">✔️ ${dados.nome} foi adicionado ao seu carrinho!</div>
-          <img src="${dados.foto}" style="max-width:110px;margin-bottom:8px;">
-          <div>Quantidade: ${qtd}</div>
-          <div>Total: <b>${(preco*qtd).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</b></div>
-          <div class="modal-actions"><button class="btn-popup add ok-close">Fechar</button></div>
-        `);
+            $("#modal-add-carrinho").html(`
+                <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
+                    ✔️ ${dados.nome} foi adicionado ao seu carrinho!
+                </div>
+                <img src="${dados.foto}" style="max-width:110px;margin-bottom:8px;">
+                <div>Quantidade: ${qtd}</div>
+                <div>Total: <b>${(preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</b></div>
+                <div class="modal-actions"><button class="btn-popup add ok-close">Fechar</button></div>
+            `);
             $(".ok-close").on("click", function () {
               $("#modal-add-carrinho, #modal-backdrop").hide();
             });
           });
         });
-      });
+      }
 
       function showLoginModal() {
         $("#modal-login-alert").html(`

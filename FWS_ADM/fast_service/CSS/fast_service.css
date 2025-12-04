@@ -1,0 +1,33 @@
+@import url('../../Fonte_Config/fonte_geral.css');
+
+#texto {
+    text-align: center;
+    font-size: 80px;
+    height: 140px;
+}
+
+#menu {
+    background-color: black;
+}
+
+#fund {
+    background-color: black !important;
+}
+
+#cor-fonte {
+    color: #ff9100;
+    font-size: 23px;
+    padding-bottom: 30px;
+}
+
+#cor-fonte:hover {
+    background-color: #f4a21d67 !important;
+}
+
+#cor-fonte img{
+    width: 44px;
+}
+
+#logo-linha img {
+    width: 170px;
+}

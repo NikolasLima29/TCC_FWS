@@ -110,7 +110,7 @@ table th, table td {
                     </li>
 
                     <li>
-                        <a href="#" id="cor-fonte" class="nav-link align-middle px-0">
+                        <a href="/TCC_FWS/FWS_ADM/fast_service/HTML/fast_service.php" id="cor-fonte" class="nav-link align-middle px-0">
                             <img src="../../menu_principal/IMG/fastservice.png">
                             <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                         </a>
