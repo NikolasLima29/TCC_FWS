@@ -299,7 +299,7 @@ $resultado = mysqli_query($conn, $sql);
   <main class="my-5">
     <div class="container">
       <!-- Barra de pesquisa -->
-   <form class="d-flex mb-4" role="search" method="get" action="">
+    <form class="d-flex mb-4" role="search" method="get" action="">
   <style>
     /* Espaçamento de 1px entre Buscar e Filtro */
     #search + .btn.btn-warning {
