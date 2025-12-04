@@ -36,9 +36,9 @@ if (empty($categorias)) {
 
 // Monta a parte fixa da query SQL
 $sql_base = "FROM produtos p
-             INNER JOIN categorias c ON p.categoria_id = c.id
-             WHERE p.status = 'ativo'
-             AND p.estoque >= 2"; // mínimo 2 para aparecer
+              INNER JOIN categorias c ON p.categoria_id = c.id
+              WHERE p.status = 'ativo'
+              AND p.estoque >= 2"; // mínimo 2 para aparecer
 
 // Adiciona condição LIKE se tiver busca
 if ($busca !== '') {
@@ -240,7 +240,15 @@ $resultado = mysqli_query($conn, $sql);
           <i class="fas fa-user-circle fa-2x" id="user-menu-toggle"></i>
     </div>
 
-        
+    <div id="mobile-search-wrapper">
+      <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php" method="get">
+        <input id="search-mobile" class="form-control me-2" type="search" name="q"
+                placeholder="Pesquisar..." aria-label="Pesquisar">
+        <button class="btn btn-warning" type="submit">
+            <i class="bi bi-search"></i>
+        </button>
+      </form>
+    </div>
 
     <div id="bem-vindo" style="position: relative; display: inline-block;">
       <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
@@ -283,6 +291,9 @@ $resultado = mysqli_query($conn, $sql);
         Bem-vindo(a).
       <?php endif; ?>
     </div>
+
+      
+
   </header>
 
   <main class="my-5">

@@ -121,12 +121,18 @@ function formatarTelefone($tel) {
         white-space: nowrap;
     }
 
-    /* 🔹 encurta o email */
-    .email-curto {
-        max-width: 160px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    /* 🔹 Nome com quebra e largura reduzida */
+    .col-nome {
+        max-width: 220px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    /* 🔹 Email mais largo e SEM cortar */
+    .col-email {
+        max-width: 280px;
+        white-space: normal;
+        word-wrap: break-word;
     }
 
     @import url('../../Fonte_Config/fonte_geral.css');
@@ -248,16 +254,14 @@ function formatarTelefone($tel) {
                             <?php while($row = $result->fetch_assoc()): ?>
                             <tr>
                                 <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nome']); ?></td>
 
-                                <!-- CNPJ sem quebra -->
+                                <td class="col-nome"><?php echo htmlspecialchars($row['nome']); ?></td>
+
                                 <td class="sem-quebra"><?php echo htmlspecialchars(formatarCNPJ($row['cnpj'])); ?></td>
 
-                                <!-- Telefone sem quebra -->
                                 <td class="sem-quebra"><?php echo htmlspecialchars(formatarTelefone($row['telefone'])); ?></td>
 
-                                <!-- Email curto -->
-                                <td class="email-curto"><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td class="col-email"><?php echo htmlspecialchars($row['email']); ?></td>
 
                                 <td>
                                     <a href="produtos_por_fornecedor.php?id=<?php echo $row['id']; ?>"
