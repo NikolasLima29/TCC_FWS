@@ -341,4 +341,12 @@ nav ul li a:hover::after {
         padding-top: 6px !important;
         padding-bottom: 6px !important;
     }
+
+    .card .badge,
+    #categorias_filtro .badge {
+        font-size: 0.60rem !important;
+        padding: 3px 6px !important;
+        border-radius: 8px !important;
+        line-height: 1 !important;
+    }
 }
