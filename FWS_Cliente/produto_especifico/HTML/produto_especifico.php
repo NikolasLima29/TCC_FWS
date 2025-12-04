@@ -1028,22 +1028,36 @@ $(function () {
   padding: 5px;
 }
 
-/* Botão adicionar ao carrinho */
+/* Botão adicionar ao carrinho: manter cor/fonte/tamanho atuais, alterar apenas estilo/hover */
 #adicionar {
   margin-top: 15px;
-  background-color: #c40000;
-  color: white;
-  padding: 10px 20px;
+  /* não sobrescrever `background`, `color` ou `font-size` (são definidos inline para garantir consistência) */
   border: none;
-  border-radius: 6px;
-  font-size: 1.2rem;
+  border-radius: 9px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.12s ease;
+  will-change: transform, box-shadow;
+}
+
+#adicionar:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.18);
+  filter: brightness(0.98);
+}
+
+#adicionar:active:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 #adicionar:disabled {
-  background-color: #888;
+  opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 /* Preço total */

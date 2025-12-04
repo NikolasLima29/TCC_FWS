@@ -33,13 +33,12 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `carrinho_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `carrinho_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=56 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.carrinho: ~1 rows (aproximadamente)
+-- Copiando dados para a tabela fws.carrinho: ~5 rows (aproximadamente)
 INSERT INTO `carrinho` (`id`, `usuario_id`, `produto_id`, `quantidade`, `preco_unitario`, `codigo_cupom`, `data_criacao`) VALUES
 	(8, 9, 9, 3, 6.50, NULL, '2025-10-23 22:27:10'),
-	(54, 4, 64, 3, 13.90, NULL, '2025-12-02 12:21:30'),
-	(55, 4, 49, 10, 6.50, NULL, '2025-12-02 12:22:19');
+	(114, 4, 2, 1, 69.90, NULL, '2025-12-03 18:34:26');
 
 -- Copiando estrutura para tabela fws.categorias
 CREATE TABLE IF NOT EXISTS `categorias` (
@@ -74,7 +73,8 @@ CREATE TABLE IF NOT EXISTS `cupom` (
 
 -- Copiando dados para a tabela fws.cupom: ~0 rows (aproximadamente)
 INSERT INTO `cupom` (`id`, `nome`, `desconto`) VALUES
-	(1, 'VITAO20', 20);
+	(1, 'VITAO20', 20),
+	(2, 'yan69', 69);
 
 -- Copiando estrutura para tabela fws.despesas
 CREATE TABLE IF NOT EXISTS `despesas` (
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `despesas` (
   `descricao` varchar(255) NOT NULL,
   `valor` decimal(10,2) NOT NULL,
   `data_despesa` date NOT NULL,
-  `tipo` enum('compra','salario','manutencao','agua','luz','internet','outros') DEFAULT 'outros',
+  `tipo` enum('compra','manutencao','agua','luz','internet','outros') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'outros',
   `categoria_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `categoria_id` (`categoria_id`),
@@ -98,13 +98,13 @@ CREATE EVENT `ev_expirar_pre_compras` ON SCHEDULE EVERY 1 MINUTE STARTS '2025-10
     INSERT INTO expiracoes_pre_compras (usuario_id, venda_id, data_expiracao)
     SELECT usuario_id, id, NOW()
     FROM vendas
-    WHERE situacao_compra = 'pre_compra'
+    WHERE situacao_compra = 'em_preparo'
       AND TIMESTAMPDIFF(SECOND, data_criacao, NOW()) > TIME_TO_SEC(tempo_chegada);
 
     
     UPDATE vendas
     SET situacao_compra = 'cancelada'
-    WHERE situacao_compra = 'pre_compra'
+    WHERE situacao_compra = 'em_preparo'
       AND TIMESTAMPDIFF(SECOND, data_criacao, NOW()) > TIME_TO_SEC(tempo_chegada);
 END//
 DELIMITER ;
@@ -223,15 +223,19 @@ CREATE TABLE IF NOT EXISTS `itens_vendidos` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `itens_vendidos_ibfk_1` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`),
   CONSTRAINT `itens_vendidos_ibfk_2` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.itens_vendidos: ~3 rows (aproximadamente)
+-- Copiando dados para a tabela fws.itens_vendidos: ~5 rows (aproximadamente)
 INSERT INTO `itens_vendidos` (`id`, `venda_id`, `produto_id`, `quantidade`, `preco_unitario`) VALUES
-	(2, 11, 15, 3, 3.50),
-	(3, 12, 18, 2, 9.99),
-	(4, 12, 62, 3, 11.50),
-	(5, 13, 3, 1, 31.99),
-	(6, 13, 9, 21, 6.50);
+	(33, 29, 12, 1, 8.50),
+	(34, 30, 31, 2, 5.99),
+	(35, 31, 15, 2, 3.50),
+	(36, 31, 25, 1, 17.99),
+	(37, 35, 22, 1, 3.99),
+	(38, 36, 7, 1, 8.99),
+	(39, 38, 3, 1, 31.99),
+	(40, 39, 3, 1, 31.99),
+	(41, 40, 7, 1, 8.99);
 
 -- Copiando estrutura para tabela fws.lotes_produtos
 CREATE TABLE IF NOT EXISTS `lotes_produtos` (
@@ -370,7 +374,7 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   KEY `fornecedor_id` (`fornecedor_id`),
   CONSTRAINT `produtos_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`),
   CONSTRAINT `produtos_ibfk_2` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=82 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.produtos: ~79 rows (aproximadamente)
 INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descricao`, `foto_produto`, `preco_venda`, `preco_compra`, `estoque`, `validade_padrao_meses`, `status`, `criado_em`) VALUES
@@ -452,7 +456,8 @@ INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descrica
 	(77, 'BISC RECHEADO NESTLE BONO CHOCOLATE PCT 90G', 8, 13, 'Biscoito Nestlé Bono recheado com chocolate, sabor clássico e macio, ideal para lanches rápidos.', '/TCC_FWS/IMG_Produtos/77.png', 6.50, 2.27, 8, 12, 'ativo', '2025-10-30 13:08:18'),
 	(78, 'BISC RECHEADO NESTLE NEGRESCO CHOCOLATE PCT 90G', 8, 13, 'Biscoito Nestlé Negresco recheado com chocolate, crocante e sabor intenso, perfeito para sobremesas.', '/TCC_FWS/IMG_Produtos/78.png', 6.50, 2.14, 5, 12, 'ativo', '2025-10-30 13:08:18'),
 	(79, 'BISC RECHEADO NESTLE NEGRESCO MORANGO PCT 90G', 8, 13, 'Biscoito Nestlé Negresco recheado sabor morango, doce e crocante, ótimo para lanches infantis.', '/TCC_FWS/IMG_Produtos/79.png', 6.50, 2.27, 4, 12, 'ativo', '2025-10-30 13:08:18'),
-	(80, 'BISC TOSTINES NESTLE MACA E CANELA PCT 160G', 8, 13, 'Biscoito Tostines Nestlé sabor maçã e canela, crocante e aromático, perfeito para cafés e lanches.', '/TCC_FWS/IMG_Produtos/80.png', 7.50, 3.34, 4, 12, 'ativo', '2025-10-30 13:08:18');
+	(80, 'BISC TOSTINES NESTLE MACA E CANELA PCT 160G', 8, 13, 'Biscoito Tostines Nestlé sabor maçã e canela, crocante e aromático, perfeito para cafés e lanches.', '/TCC_FWS/IMG_Produtos/80.png', 7.50, 3.34, 4, 12, 'ativo', '2025-10-30 13:08:18'),
+	(81, 'santander', 1, 13, 'foda', '/TCC_FWS/IMG_Produtos/81.png', 69.99, 4.20, 50, 0, 'ativo', '2025-12-03 12:56:46');
 
 -- Copiando estrutura para tabela fws.retiradas
 CREATE TABLE IF NOT EXISTS `retiradas` (
@@ -492,15 +497,16 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf` (`cpf`),
   UNIQUE KEY `telefone` (`telefone`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.usuarios: ~5 rows (aproximadamente)
 INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `telefone`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
-	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '(11) 96854-4147', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-12-02 12:20:26', 1, NULL),
+	(4, 'NIKOLAS DE SOUZA LIMA', '2007-01-09', '(11) 96854-4147', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-12-03 14:24:53', 1, NULL),
 	(6, 'Sabrina', '2007-02-14', '11930265543', '54449709888', 'sabrina@gmail.com', '$2y$10$xVCz9nu7WWZVB25HuJQAJuVeIWKOMuqMtlEP68.sorCERfJ7LVO9.', '2025-10-22 11:30:07', '2025-10-22 08:32:23', 1, NULL),
 	(7, 'Nicolly Clement de Freitas', '2007-07-25', '11928926150', '50674089871', 'clementnicolly@gmail.com', '$2y$10$0Igs1yOGF5dtBMYbX/vlme9BcBJ3gu/VfRlwxSsOjCwq6ytGu3dJi', '2025-10-22 14:07:05', '2025-10-22 11:08:02', 1, NULL),
 	(8, 'nathally ferreira', '2007-08-13', '11999284328', '49681441800', 'nathally@gmail.com', '$2y$10$M45ldEWNbN1mc.pYonwGu.rJg9leM2BjTe3kynY6lN9K8KmVu.BPi', '2025-10-22 14:59:52', '2025-10-22 12:01:16', 1, NULL),
-	(9, 'Maria Da Silva', '2005-04-29', '11967222222', '85577959047', 'Maria@gmail.com', '$2y$10$oUmViqIQVL8Ys.jdemrrSOuSFaoECwDtUIR.bxzDzVKW63npUZMK2', '2025-10-24 01:22:47', '2025-10-23 22:23:34', 1, NULL);
+	(9, 'Maria Da Silva', '2005-04-29', '11967222222', '85577959047', 'Maria@gmail.com', '$2y$10$oUmViqIQVL8Ys.jdemrrSOuSFaoECwDtUIR.bxzDzVKW63npUZMK2', '2025-10-24 01:22:47', '2025-10-23 22:23:34', 1, NULL),
+	(10, 'Brayan', '2007-10-07', '11960173592', '56224173842', 'brayanbarbosadossantos@gmail.com', '$2y$10$nv7jrM8.38tjgASjTsfM0.fMkaobb9zlZChIEYLoJ93XjtHddH/v.', '2025-12-03 12:34:54', '2025-12-03 09:35:26', 1, NULL);
 
 -- Copiando estrutura para tabela fws.vendas
 CREATE TABLE IF NOT EXISTS `vendas` (
@@ -519,13 +525,25 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`),
   CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.vendas: ~2 rows (aproximadamente)
+-- Copiando dados para a tabela fws.vendas: ~15 rows (aproximadamente)
 INSERT INTO `vendas` (`id`, `funcionario_id`, `usuario_id`, `total`, `status_pagamento`, `situacao_compra`, `metodo_pagamento`, `tempo_chegada`, `data_criacao`, `data_finalizacao`) VALUES
 	(11, 1, 4, 10.50, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-10-30 11:05:40', NULL),
 	(12, 1, 4, 54.48, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-11-26 18:39:32', NULL),
-	(13, 1, 4, 168.49, 'pendente', 'em_preparo', 'dinheiro', '00:45:00', '2025-12-02 08:04:03', NULL);
+	(28, 1, 4, 0.00, 'pendente', 'em_preparo', 'cartao_debito', '00:30:00', '2025-12-03 18:22:49', NULL),
+	(29, 1, 10, 8.50, 'pendente', 'em_preparo', 'dinheiro', '00:15:00', '2025-12-03 18:49:45', NULL),
+	(30, 1, 10, 11.98, 'pendente', 'em_preparo', 'dinheiro', '00:30:00', '2025-12-03 19:03:51', NULL),
+	(31, 1, 10, 24.99, 'pendente', 'em_preparo', 'dinheiro', '00:15:00', '2025-12-03 19:05:36', NULL),
+	(32, 1, 10, 0.00, 'pendente', 'em_preparo', 'dinheiro', '00:15:00', '2025-12-03 19:09:25', NULL),
+	(33, 1, 10, 0.00, 'pendente', 'em_preparo', 'dinheiro', '00:15:00', '2025-12-03 19:09:48', NULL),
+	(34, 1, 10, 0.00, 'pendente', 'em_preparo', 'dinheiro', '00:30:00', '2025-12-03 19:09:55', NULL),
+	(35, 1, 10, 3.99, 'pendente', 'em_preparo', 'dinheiro', '00:30:00', '2025-12-03 19:10:46', NULL),
+	(36, 1, 10, 8.99, 'pendente', 'em_preparo', 'dinheiro', '01:00:00', '2025-12-03 19:16:47', NULL),
+	(37, 1, 10, 0.00, 'pendente', 'em_preparo', 'dinheiro', '01:00:00', '2025-12-03 19:16:55', NULL),
+	(38, 1, 10, 31.99, 'pendente', 'em_preparo', 'dinheiro', '01:00:00', '2025-12-03 19:20:20', NULL),
+	(39, 1, 10, 31.99, 'pendente', 'em_preparo', 'dinheiro', '00:30:00', '2025-12-03 19:23:23', NULL),
+	(40, 1, 10, 8.99, 'pendente', 'em_preparo', 'cartao_debito', '00:30:00', '2025-12-03 19:26:04', NULL);
 
 -- Copiando estrutura para trigger fws.trg_estoque_insuficiente
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
