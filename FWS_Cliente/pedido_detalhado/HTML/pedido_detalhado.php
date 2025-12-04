@@ -143,6 +143,224 @@ include "../../conn.php";
             .menu-toggle { display: block; }
             .carrinho, #bem-vindo { display: none; }
         }
+
+        /* Responsividade: Card de Pedido */
+        @media (max-width: 768px) {
+            /* Cabeçalho do Card */
+            .card-header-pedido {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 15px !important;
+                padding: 15px 20px !important;
+            }
+
+            .card-header-pedido > div:last-child {
+                width: 100%;
+                text-align: left !important;
+            }
+
+            .card-header-pedido h2 {
+                font-size: 1.2rem !important;
+            }
+
+            /* Título da página */
+            main h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* Seções do Card */
+            .card-section h3 {
+                font-size: 1rem !important;
+                margin-bottom: 12px !important;
+            }
+
+            /* Grid de informações do pedido */
+            .info-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            /* Tabela de itens */
+            .items-table {
+                font-size: 0.85rem !important;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 8px !important;
+            }
+
+            .items-table th {
+                font-size: 0.75rem !important;
+            }
+
+            /* Resumo financeiro */
+            .financial-summary {
+                padding: 15px !important;
+                border-left-width: 3px !important;
+            }
+
+            .financial-row {
+                font-size: 0.95rem !important;
+            }
+
+            .financial-row span:last-child {
+                font-size: 0.95rem !important;
+            }
+
+            .financial-total {
+                font-size: 1.1rem !important;
+            }
+
+            .financial-total span:last-child {
+                font-size: 1.1rem !important;
+            }
+
+            /* Botões de ação */
+            .action-buttons {
+                flex-direction: column !important;
+                gap: 10px !important;
+            }
+
+            .action-buttons button,
+            .action-buttons a {
+                min-width: 100% !important;
+                flex: 1 !important;
+                font-size: 0.9rem !important;
+                padding: 10px 15px !important;
+            }
+
+            /* Conteúdo do card */
+            .card-content {
+                padding: 20px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Ajustes adicionais para telas muito pequenas */
+            .card {
+                border-width: 2px !important;
+            }
+
+            .card-header-pedido {
+                padding: 12px 15px !important;
+            }
+
+            .card-header-pedido h2 {
+                font-size: 1rem !important;
+            }
+
+            .card-header-pedido p {
+                font-size: 0.8rem !important;
+            }
+
+            main {
+                padding: 20px 10px !important;
+            }
+
+            main h1 {
+                font-size: 1.3rem !important;
+            }
+
+            .card-section h3 {
+                font-size: 0.95rem !important;
+            }
+
+            .card-content {
+                padding: 15px !important;
+            }
+
+            /* Tabela responsiva para telas pequenas */
+            .items-table thead {
+                font-size: 0.7rem !important;
+            }
+
+            .items-table th {
+                padding: 6px 4px !important;
+            }
+
+            .items-table td {
+                padding: 6px 4px !important;
+                font-size: 0.8rem !important;
+            }
+
+            .financial-summary {
+                padding: 12px !important;
+            }
+
+            .financial-row {
+                font-size: 0.85rem !important;
+            }
+
+            .financial-total {
+                font-size: 1rem !important;
+            }
+        }
+
+        /* Responsividade: Modal de Pagamento */
+        @media (max-width: 768px) {
+            #modal-pagamento > div {
+                max-width: 90% !important;
+                width: 90% !important;
+            }
+
+            #modal-pagamento > div h3 {
+                font-size: 1.1rem !important;
+                margin-bottom: 15px !important;
+            }
+
+            .payment-option {
+                padding: 12px !important;
+                gap: 10px !important;
+            }
+
+            .payment-option i {
+                font-size: 1.1rem !important;
+            }
+
+            .payment-option p {
+                font-size: 0.9rem !important;
+            }
+
+            .payment-option p:first-child {
+                font-size: 0.95rem !important;
+            }
+
+            #btn-fechar-modal {
+                font-size: 0.9rem !important;
+                padding: 8px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #modal-pagamento > div {
+                max-width: 95% !important;
+                padding: 20px !important;
+            }
+
+            #modal-pagamento > div h3 {
+                font-size: 1rem !important;
+                margin-bottom: 12px !important;
+            }
+
+            .payment-option {
+                padding: 10px !important;
+                gap: 8px !important;
+            }
+
+            .payment-option i {
+                font-size: 1rem !important;
+            }
+
+            .payment-option p {
+                font-size: 0.85rem !important;
+            }
+
+            .payment-option p:first-child {
+                font-size: 0.9rem !important;
+            }
+        }
     </style>
 </head>
 
@@ -266,7 +484,7 @@ include "../../conn.php";
             <div class="card" style="border: 3px solid var(--accent-yellow); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden;">
                 
                 <!-- Cabeçalho do Card -->
-                <div style="background: linear-gradient(135deg, var(--primary-red) 0%, #a00000 100%); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
+                <div class="card-header-pedido" style="background: linear-gradient(135deg, var(--primary-red) 0%, #a00000 100%); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold;">Pedido #136ADG</h2>
                         <p style="margin: 5px 0 0 0; font-size: 0.95rem; opacity: 0.95;">Realizado em 03/12/2025 às 19:00</p>
@@ -278,14 +496,14 @@ include "../../conn.php";
                 </div>
 
                 <!-- Conteúdo do Card -->
-                <div style="padding: 30px;">
+                <div class="card-content" style="padding: 30px;">
                     
                     <!-- Seção: Informações do Pedido -->
-                    <div style="margin-bottom: 30px;">
+                    <div class="card-section" style="margin-bottom: 30px;">
                         <h3 style="font-size: 1.2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 15px; border-bottom: 2px solid var(--accent-yellow); padding-bottom: 10px;">
                             📋 Informações do Pedido
                         </h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div>
                                 <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Cliente:</label>
                                 <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;">Pedro Henrique Souza Brito</p>
@@ -304,12 +522,12 @@ include "../../conn.php";
                     </div>
 
                     <!-- Seção: Itens do Pedido -->
-                    <div style="margin-bottom: 30px;">
+                    <div class="card-section" style="margin-bottom: 30px;">
                         <h3 style="font-size: 1.2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 15px; border-bottom: 2px solid var(--accent-yellow); padding-bottom: 10px;">
                             🛒 Itens do Pedido
                         </h3>
-                        <div style="background: #f9f9f9; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
-                            <table style="width: 100%; border-collapse: collapse;">
+                        <div style="background: #f9f9f9; border-radius: 8px; overflow-x: auto; border: 1px solid #e0e0e0;">
+                            <table class="items-table" style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr style="background-color: var(--accent-yellow); color: #111;">
                                         <th style="padding: 12px; text-align: left; font-weight: bold;">Qtd</th>
@@ -337,37 +555,97 @@ include "../../conn.php";
                     </div>
 
                     <!-- Seção: Resumo Financeiro -->
-                    <div style="margin-bottom: 30px; background: linear-gradient(to right, rgba(255, 209, 0, 0.1), rgba(196, 0, 0, 0.05)); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-yellow);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <div class="financial-summary" style="margin-bottom: 30px; background: linear-gradient(to right, rgba(255, 209, 0, 0.1), rgba(196, 0, 0, 0.05)); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-yellow);">
+                        <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Subtotal:</span>
                             <span style="color: #555;">R$ 159,95</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Frete:</span>
                             <span style="color: #555;">R$ 0,00</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Desconto:</span>
                             <span style="color: #555;">-R$ 0,00</span>
                         </div>
                         <hr style="margin: 10px 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
-                        <div style="display: flex; justify-content: space-between;">
+                        <div class="financial-total" style="display: flex; justify-content: space-between;">
                             <span style="font-weight: bold; font-size: 1.1rem; color: var(--primary-red);">Total:</span>
                             <span style="font-weight: bold; font-size: 1.3rem; color: var(--primary-red);">R$ 159,95</span>
                         </div>
                     </div>
 
                     <!-- Botões de Ação -->
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <div class="action-buttons" style="display: flex; gap: 12px; flex-wrap: wrap;">
                         <button style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--accent-yellow); color: #111; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
                             ⏱️ Adicionar 15 Minutos
                         </button>
-                        <button style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--accent-orange); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
+                        <button id="btn-alterar-pagamento" style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--accent-orange); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
                             💳 Alterar Pagamento
                         </button>
-                        <a href="../../../meus_pedidos/HTML/Meus_pedidos.php" style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--primary-red); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                        <a href="../../meus_pedidos/HTML/Meus_pedidos.php" style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--primary-red); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center;">
                             ← Voltar aos Pedidos
                         </a>
+                    </div>
+
+                    <!-- Modal de Pagamento -->
+                    <div id="modal-pagamento" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
+                        <div style="background: white; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.2);">
+                            <h3 style="font-size: 1.3rem; font-weight: bold; color: var(--primary-red); margin-bottom: 20px; text-align: center;">
+                                Selecionar Método de Pagamento
+                            </h3>
+
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <!-- Crédito -->
+                                <button class="payment-option" data-payment="cartao-credito" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
+                                    <i class="fas fa-credit-card" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
+                                    <div>
+                                        <p style="margin: 0; font-weight: bold; color: #333;">Cartão de Crédito</p>
+                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Pague depois</p>
+                                    </div>
+                                </button>
+
+                                <!-- Débito -->
+                                <button class="payment-option" data-payment="cartao-debito" style="padding: 15px; border: 2px solid #FFD100; border-radius: 8px; background-color: rgba(255, 209, 0, 0.1); cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
+                                    <i class="fas fa-university" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
+                                    <div>
+                                        <p style="margin: 0; font-weight: bold; color: #333;">Cartão de Débito</p>
+                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Método atual</p>
+                                    </div>
+                                </button>
+
+                                <!-- PIX -->
+                                <button class="payment-option" data-payment="pix" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
+                                    <i class="fas fa-qrcode" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
+                                    <div>
+                                        <p style="margin: 0; font-weight: bold; color: #333;">PIX</p>
+                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Instantâneo</p>
+                                    </div>
+                                </button>
+
+                                <!-- Dinheiro -->
+                                <button class="payment-option" data-payment="dinheiro" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
+                                    <i class="fas fa-money-bill-wave" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
+                                    <div>
+                                        <p style="margin: 0; font-weight: bold; color: #333;">Dinheiro</p>
+                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Na retirada</p>
+                                    </div>
+                                </button>
+
+                                <!-- Boleto -->
+                                <button class="payment-option" data-payment="boleto" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
+                                    <i class="fas fa-receipt" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
+                                    <div>
+                                        <p style="margin: 0; font-weight: bold; color: #333;">Boleto Bancário</p>
+                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Até 3 dias úteis</p>
+                                    </div>
+                                </button>
+                            </div>
+
+                            <button id="btn-fechar-modal" style="width: 100%; margin-top: 20px; padding: 10px; background-color: #ddd; color: #333; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s;">
+                                Cancelar
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -409,6 +687,141 @@ include "../../conn.php";
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
+    </script>
+
+    <!-- Script para gerenciar modal de pagamento -->
+    <script>
+        // Elementos do modal
+        const modal = document.getElementById('modal-pagamento');
+        const btnAbrirModal = document.getElementById('btn-alterar-pagamento');
+        const btnFecharModal = document.getElementById('btn-fechar-modal');
+        const paymentOptions = document.querySelectorAll('.payment-option');
+
+        // Abrir modal
+        btnAbrirModal.addEventListener('click', function() {
+            modal.style.display = 'flex';
+        });
+
+        // Fechar modal (botão cancelar)
+        btnFecharModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        // Fechar modal ao clicar fora
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Selecionar opção de pagamento
+        paymentOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const paymentMethod = this.getAttribute('data-payment');
+                const paymentText = this.querySelector('p').textContent;
+
+                // Atualizar o método de pagamento na página
+                updatePaymentMethod(paymentText, paymentMethod);
+
+                // Fechar modal
+                modal.style.display = 'none';
+
+                // Mostrar mensagem de sucesso
+                showSuccessMessage(`Pagamento alterado para: ${paymentText}`);
+            });
+
+            // Efeito visual ao passar o mouse
+            option.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'var(--accent-orange)';
+                this.style.backgroundColor = 'rgba(243, 122, 39, 0.05)';
+            });
+
+            option.addEventListener('mouseleave', function() {
+                if (this.getAttribute('data-payment') !== 'cartao-debito') {
+                    this.style.borderColor = '#ddd';
+                    this.style.backgroundColor = '#f9f9f9';
+                }
+            });
+        });
+
+        // Função para atualizar o método de pagamento exibido
+        function updatePaymentMethod(paymentText, paymentMethod) {
+            // Encontrar o elemento que exibe o pagamento
+            const paymentDisplay = document.querySelector('[style*="Pagamento"]')?.parentElement;
+            if (paymentDisplay) {
+                const paymentValue = paymentDisplay.querySelector('p:last-of-type');
+                if (paymentValue) {
+                    paymentValue.textContent = paymentText;
+                }
+            }
+
+            // Aqui você pode adicionar uma requisição AJAX para atualizar no backend se necessário
+            // Por exemplo:
+            // fetch('update-pagamento.php', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ metodo: paymentMethod })
+            // });
+        }
+
+        // Função para mostrar mensagem de sucesso
+        function showSuccessMessage(message) {
+            // Criar div de notificação
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #4caf50;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-weight: bold;
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Remover após 3 segundos
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Adicionar animações CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+
+            .payment-option:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 
