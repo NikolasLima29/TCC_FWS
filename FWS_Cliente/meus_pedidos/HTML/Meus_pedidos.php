@@ -259,6 +259,109 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                 align-self: flex-end;
                 margin-top: .8rem;
             }
+            /* Responsividade dos cards de pedidos */
+            .card {
+                margin-bottom: 1.5rem !important;
+                border-radius: 12px !important;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            }
+            .card-body {
+                padding: 1.1rem !important;
+            }
+            .d-flex.justify-content-between.align-items-center.mb-2 {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 6px !important;
+            }
+            .badge {
+                font-size: 0.95rem !important;
+                padding: 6px 12px !important;
+                margin-bottom: 8px !important;
+            }
+            .mb-2 {
+                margin-bottom: 0.7rem !important;
+            }
+            .row.align-items-center.mb-2 {
+                flex-direction: row !important;
+                gap: 0 !important;
+            }
+            .col-3.text-center img {
+                max-width: 48px !important;
+                max-height: 48px !important;
+            }
+            .col-5 {
+                font-size: 0.95rem !important;
+            }
+            .col-4.text-end {
+                font-size: 0.9rem !important;
+            }
+            .d-flex.justify-content-between.mt-3 {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 4px !important;
+            }
+            .btn-success.btn-sm,
+            .btn.btn-accent {
+                width: 100% !important;
+                font-size: 1rem !important;
+                padding: 10px 0 !important;
+                margin-bottom: 8px !important;
+            }
+            /* Responsividade dos botões de ação */
+            .d-flex.gap-2.justify-content-end.mt-2 {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .card {
+                border-radius: 10px !important;
+                margin-bottom: 1.2rem !important;
+            }
+            .card-body {
+                padding: 0.7rem !important;
+            }
+            .badge {
+                font-size: 0.85rem !important;
+                padding: 5px 10px !important;
+            }
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
+            .col-3.text-center img {
+                max-width: 38px !important;
+                max-height: 38px !important;
+            }
+            .col-5 {
+                font-size: 0.9rem !important;
+            }
+            .col-4.text-end {
+                font-size: 0.85rem !important;
+            }
+            .btn-success.btn-sm,
+            .btn.btn-accent {
+                font-size: 0.95rem !important;
+                padding: 8px 0 !important;
+                margin-bottom: 6px !important;
+            }
+            .d-flex.justify-content-between.align-items-center.mb-2 {
+                gap: 4px !important;
+            }
+            .small {
+                font-size: 0.75rem !important;
+            }
+            .fw-bold {
+                font-size: 0.9rem !important;
+            }
+            /* Garantir que o container respeita a largura */
+            .row {
+                margin-right: -6px;
+                margin-left: -6px;
+            }
+            .col-md-6 {
+                padding-right: 6px;
+                padding-left: 6px;
+            }
         }
     </style>
 </head>
@@ -430,7 +533,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                             $status_color = isset($status_map[$status]) ? $status_map[$status][2] : 'black';
                             echo '<span class="badge" style="background:'.$status_bg.';color:'.$status_color.';font-size:1rem;padding:7px 16px;margin-bottom:10px;">'.$status_label.'</span>';
 
-                            // Tempo restante e código (só se em_preparo ou pronto_para_retirar)
+                            // Tempo restante (só se em_preparo ou pronto_para_retirar)
                             if (in_array($status, ['em_preparo','pronto_para_retirar'])) {
                                 // Tempo restante
                                 $tempo_restante = '';
@@ -449,9 +552,9 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                 } else {
                                     echo '<div class="mb-2"><span class="small text-muted">Tempo restante:</span> <span class="fw-bold">00:00:00</span></div>';
                                 }
-                                // Código
-                                echo '<div class="mb-2"><span class="small text-muted">Código:</span> <span class="fw-bold">'.$codigo.'</span></div>';
                             }
+                            // Código (em todos os pedidos)
+                            echo '<div class="mb-2"><span class="small text-muted">Código:</span> <span class="fw-bold">'.$codigo.'</span></div>';
 
                             // Produtos escolhidos
                             $venda_id = intval($venda['id']);
@@ -491,10 +594,13 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                 $produtos_json = htmlspecialchars(json_encode($produtos), ENT_QUOTES, 'UTF-8');
                                 echo '<div class="row mt-2">';
                                 echo '<div class="col text-end">';
-                                echo '<form method="post" class="form-pedir-novamente" style="display:inline;">';
+                                echo '<div class="d-flex gap-2 justify-content-end mt-2">';
+                                echo '<form method="post" class="form-pedir-novamente" style="margin:0;">';
                                 echo '<input type="hidden" name="itens" value=\''.$produtos_json.'\' />';
-                                echo '<button type="submit" name="pedir_novamente" class="btn btn-success btn-sm">Pedir novamente</button>';
+                                echo '<button type="submit" name="pedir_novamente" class="btn btn-success btn-sm" style="min-width:140px; font-size:0.93rem; font-weight:bold; border-radius:6px; padding:6px 0;">Pedir novamente</button>';
                                 echo '</form>';
+                                echo '<a href="../../pedido_detalhado/HTML/pedido_detalhado.php?id=' . $venda['id'] . '" class="btn btn-accent no-underline" style="background-color: var(--accent-yellow); color: #111; font-weight: bold; border-radius: 6px; min-width:120px; font-size:0.93rem; padding:6px 0; border: none; display: inline-block; transition: all 0.3s;">Ver detalhes</a>';
+                                echo '</div>';
                                 echo '</div>';
                                 echo '</div>';
                             }

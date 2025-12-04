@@ -1,6 +1,43 @@
 <?php
 session_start();
 include "../../conn.php";
+
+// Receber o ID da venda via GET
+$venda_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+// Buscar informações da venda
+$venda = null;
+$itens = [];
+$usuario_nome = '';
+$usuario_telefone = '';
+$codigo = '';
+
+if ($venda_id > 0) {
+    $sql_venda = "SELECT * FROM vendas WHERE id = $venda_id";
+    $result_venda = mysqli_query($conn, $sql_venda);
+    if ($result_venda && $row = mysqli_fetch_assoc($result_venda)) {
+        $venda = $row;
+        $usuario_id = intval($venda['usuario_id']);
+        
+        // Buscar dados do usuário (nome e telefone)
+        $sql_usuario = "SELECT nome, telefone FROM usuarios WHERE id = $usuario_id LIMIT 1";
+        $result_usuario = mysqli_query($conn, $sql_usuario);
+        if ($result_usuario && $row_usuario = mysqli_fetch_assoc($result_usuario)) {
+            $usuario_nome = htmlspecialchars($row_usuario['nome']);
+            $usuario_telefone = preg_replace('/[^0-9]/', '', $row_usuario['telefone']);
+            $codigo = $usuario_telefone ? substr($usuario_telefone, -4) : '';
+        }
+        
+        // Buscar itens da venda
+        $sql_itens = "SELECT iv.*, p.nome, p.foto_produto FROM itens_vendidos iv INNER JOIN produtos p ON iv.produto_id = p.id WHERE iv.venda_id = $venda_id";
+        $result_itens = mysqli_query($conn, $sql_itens);
+        if ($result_itens) {
+            while ($row_item = mysqli_fetch_assoc($result_itens)) {
+                $itens[] = $row_item;
+            }
+        }
+    }
+}
 ?>
 
 <!doctype html>
@@ -163,6 +200,11 @@ include "../../conn.php";
                 font-size: 1.2rem !important;
             }
 
+            /* Destaque do código */
+            .card-header-pedido > div:first-child > div {
+                margin-bottom: 10px !important;
+            }
+
             /* Título da página */
             main h1 {
                 font-size: 1.5rem !important;
@@ -253,6 +295,21 @@ include "../../conn.php";
 
             .card-header-pedido p {
                 font-size: 0.8rem !important;
+            }
+
+            /* Destaque do código em mobile */
+            .card-header-pedido > div:first-child > div {
+                padding: 8px 12px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .card-header-pedido > div:first-child > div p:first-child {
+                font-size: 0.75rem !important;
+            }
+
+            .card-header-pedido > div:first-child > div p:last-child {
+                font-size: 1.3rem !important;
+                margin-top: 4px !important;
             }
 
             main {
@@ -486,12 +543,30 @@ include "../../conn.php";
                 <!-- Cabeçalho do Card -->
                 <div class="card-header-pedido" style="background: linear-gradient(135deg, var(--primary-red) 0%, #a00000 100%); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold;">Pedido #136ADG</h2>
-                        <p style="margin: 5px 0 0 0; font-size: 0.95rem; opacity: 0.95;">Realizado em 03/12/2025 às 19:00</p>
+                        <div style="background: rgba(255, 209, 0, 0.25); padding: 10px 16px; border-radius: 8px; display: inline-block; margin-bottom: 12px;">
+                            <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">Código do Pedido</p>
+                            <p style="margin: 5px 0 0 0; font-size: 1.5rem; font-weight: bold; color: #FFD100; letter-spacing: 2px;"><?= $codigo ?: 'N/A' ?></p>
+                        </div>
+                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold;">Pedido #<?= $venda ? htmlspecialchars($venda['id']) : 'N/A' ?></h2>
+                        <p style="margin: 5px 0 0 0; font-size: 0.95rem; opacity: 0.95;">Realizado em <?= $venda ? date('d/m/Y H:i', strtotime($venda['data_criacao'])) : 'N/A' ?></p>
                     </div>
                     <div style="background: rgba(255,255,255,0.2); padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: right;">
                         <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">Status</p>
-                        <p style="margin: 5px 0 0 0; font-size: 1.1rem;">Não retirado</p>
+                        <p style="margin: 5px 0 0 0; font-size: 1.1rem;">
+                            <?php
+                            if ($venda) {
+                                $status_map = [
+                                    'em_preparo' => 'Ainda não foi retirado',
+                                    'pronto_para_retirar' => 'Pronto para retirar',
+                                    'finalizada' => 'Finalizado',
+                                    'cancelada' => 'Cancelado'
+                                ];
+                                echo isset($status_map[$venda['situacao_compra']]) ? $status_map[$venda['situacao_compra']] : ucfirst($venda['situacao_compra']);
+                            } else {
+                                echo 'N/A';
+                            }
+                            ?>
+                        </p>
                     </div>
                 </div>
 
@@ -506,18 +581,23 @@ include "../../conn.php";
                         <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div>
                                 <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Cliente:</label>
-                                <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;">Pedro Henrique Souza Brito</p>
+                                <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;"><?= $usuario_nome ?: 'N/A' ?></p>
                             </div>
                             <div>
                                 <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Pagamento:</label>
-                                <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;">Cartão Débito</p>
+                                <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;">
+                                    <?= $venda ? ucwords(str_replace('_', ' ', $venda['metodo_pagamento'])) : 'N/A' ?>
+                                </p>
                             </div>
+                            <?php if ($venda && in_array($venda['situacao_compra'], ['em_preparo', 'pronto_para_retirar']) && !empty($venda['tempo_chegada'])): ?>
                             <div>
                                 <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Tempo Restante:</label>
                                 <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;">
-                                    <i class="fas fa-hourglass-end" style="color: var(--accent-orange);"></i> 30 minutos
+                                    <i class="fas fa-hourglass-end" style="color: var(--accent-orange);"></i> 
+                                    <span id="timer-display"><?= $venda['tempo_chegada'] ?></span>
                                 </p>
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -537,18 +617,21 @@ include "../../conn.php";
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr style="border-bottom: 1px solid #e0e0e0;">
-                                        <td style="padding: 12px; text-align: left;">1</td>
-                                        <td style="padding: 12px; text-align: left; color: #333;">Água de Coco Kero Coco 1L</td>
-                                        <td style="padding: 12px; text-align: right; color: #555;">R$ 31,99</td>
-                                        <td style="padding: 12px; text-align: right; font-weight: bold; color: var(--primary-red);">R$ 31,99</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 12px; text-align: left;">4</td>
-                                        <td style="padding: 12px; text-align: left; color: #333;">Água de Coco Kero Coco 1L</td>
-                                        <td style="padding: 12px; text-align: right; color: #555;">R$ 31,99</td>
-                                        <td style="padding: 12px; text-align: right; font-weight: bold; color: var(--primary-red);">R$ 127,96</td>
-                                    </tr>
+                                    <?php
+                                    if (!empty($itens)) {
+                                        foreach ($itens as $item) {
+                                            $subtotal = floatval($item['preco_unitario']) * intval($item['quantidade']);
+                                            echo '<tr style="border-bottom: 1px solid #e0e0e0;">';
+                                            echo '<td style="padding: 12px; text-align: left;">' . intval($item['quantidade']) . '</td>';
+                                            echo '<td style="padding: 12px; text-align: left; color: #333;">' . htmlspecialchars($item['nome']) . '</td>';
+                                            echo '<td style="padding: 12px; text-align: right; color: #555;">R$ ' . number_format(floatval($item['preco_unitario']), 2, ',', '.') . '</td>';
+                                            echo '<td style="padding: 12px; text-align: right; font-weight: bold; color: var(--primary-red);">R$ ' . number_format($subtotal, 2, ',', '.') . '</td>';
+                                            echo '</tr>';
+                                        }
+                                    } else {
+                                        echo '<tr><td colspan="4" style="padding: 12px; text-align: center; color: #999;">Nenhum item encontrado.</td></tr>';
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -556,96 +639,49 @@ include "../../conn.php";
 
                     <!-- Seção: Resumo Financeiro -->
                     <div class="financial-summary" style="margin-bottom: 30px; background: linear-gradient(to right, rgba(255, 209, 0, 0.1), rgba(196, 0, 0, 0.05)); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-yellow);">
+                        <?php
+                        $subtotal = 0;
+                        $frete = 0;
+                        $desconto = 0;
+                        if ($venda) {
+                            foreach ($itens as $item) {
+                                $subtotal += floatval($item['preco_unitario']) * intval($item['quantidade']);
+                            }
+                            // Você pode adicionar lógica de frete e desconto aqui se necessário
+                            $frete = floatval($venda['frete'] ?? 0);
+                            $desconto = floatval($venda['desconto'] ?? 0);
+                        }
+                        $total = $subtotal + $frete - $desconto;
+                        ?>
                         <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Subtotal:</span>
-                            <span style="color: #555;">R$ 159,95</span>
+                            <span style="color: #555;">R$ <?= number_format($subtotal, 2, ',', '.') ?></span>
                         </div>
                         <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Frete:</span>
-                            <span style="color: #555;">R$ 0,00</span>
+                            <span style="color: #555;">R$ <?= number_format($frete, 2, ',', '.') ?></span>
                         </div>
                         <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Desconto:</span>
-                            <span style="color: #555;">-R$ 0,00</span>
+                            <span style="color: #555;">-R$ <?= number_format($desconto, 2, ',', '.') ?></span>
                         </div>
                         <hr style="margin: 10px 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
                         <div class="financial-total" style="display: flex; justify-content: space-between;">
                             <span style="font-weight: bold; font-size: 1.1rem; color: var(--primary-red);">Total:</span>
-                            <span style="font-weight: bold; font-size: 1.3rem; color: var(--primary-red);">R$ 159,95</span>
+                            <span style="font-weight: bold; font-size: 1.3rem; color: var(--primary-red);">R$ <?= number_format($total, 2, ',', '.') ?></span>
                         </div>
                     </div>
 
                     <!-- Botões de Ação -->
                     <div class="action-buttons" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <?php if ($venda && $venda['situacao_compra'] !== 'cancelada'): ?>
                         <button style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--accent-yellow); color: #111; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
                             ⏱️ Adicionar 15 Minutos
                         </button>
-                        <button id="btn-alterar-pagamento" style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--accent-orange); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
-                            💳 Alterar Pagamento
-                        </button>
+                        <?php endif; ?>
                         <a href="../../meus_pedidos/HTML/Meus_pedidos.php" style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--primary-red); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center;">
                             ← Voltar aos Pedidos
                         </a>
-                    </div>
-
-                    <!-- Modal de Pagamento -->
-                    <div id="modal-pagamento" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
-                        <div style="background: white; border-radius: 12px; padding: 30px; max-width: 400px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.2);">
-                            <h3 style="font-size: 1.3rem; font-weight: bold; color: var(--primary-red); margin-bottom: 20px; text-align: center;">
-                                Selecionar Método de Pagamento
-                            </h3>
-
-                            <div style="display: flex; flex-direction: column; gap: 12px;">
-                                <!-- Crédito -->
-                                <button class="payment-option" data-payment="cartao-credito" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-credit-card" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
-                                    <div>
-                                        <p style="margin: 0; font-weight: bold; color: #333;">Cartão de Crédito</p>
-                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Pague depois</p>
-                                    </div>
-                                </button>
-
-                                <!-- Débito -->
-                                <button class="payment-option" data-payment="cartao-debito" style="padding: 15px; border: 2px solid #FFD100; border-radius: 8px; background-color: rgba(255, 209, 0, 0.1); cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-university" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
-                                    <div>
-                                        <p style="margin: 0; font-weight: bold; color: #333;">Cartão de Débito</p>
-                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Método atual</p>
-                                    </div>
-                                </button>
-
-                                <!-- PIX -->
-                                <button class="payment-option" data-payment="pix" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-qrcode" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
-                                    <div>
-                                        <p style="margin: 0; font-weight: bold; color: #333;">PIX</p>
-                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Instantâneo</p>
-                                    </div>
-                                </button>
-
-                                <!-- Dinheiro -->
-                                <button class="payment-option" data-payment="dinheiro" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-money-bill-wave" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
-                                    <div>
-                                        <p style="margin: 0; font-weight: bold; color: #333;">Dinheiro</p>
-                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Na retirada</p>
-                                    </div>
-                                </button>
-
-                                <!-- Boleto -->
-                                <button class="payment-option" data-payment="boleto" style="padding: 15px; border: 2px solid #ddd; border-radius: 8px; background-color: #f9f9f9; cursor: pointer; text-align: left; transition: all 0.3s; display: flex; align-items: center; gap: 12px;">
-                                    <i class="fas fa-receipt" style="font-size: 1.3rem; color: var(--accent-orange);"></i>
-                                    <div>
-                                        <p style="margin: 0; font-weight: bold; color: #333;">Boleto Bancário</p>
-                                        <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #999;">Até 3 dias úteis</p>
-                                    </div>
-                                </button>
-                            </div>
-
-                            <button id="btn-fechar-modal" style="width: 100%; margin-top: 20px; padding: 10px; background-color: #ddd; color: #333; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s;">
-                                Cancelar
-                            </button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -689,139 +725,43 @@ include "../../conn.php";
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
     </script>
 
-    <!-- Script para gerenciar modal de pagamento -->
+    <!-- Script para gerenciar funcionalidades da página -->
     <script>
-        // Elementos do modal
-        const modal = document.getElementById('modal-pagamento');
-        const btnAbrirModal = document.getElementById('btn-alterar-pagamento');
-        const btnFecharModal = document.getElementById('btn-fechar-modal');
-        const paymentOptions = document.querySelectorAll('.payment-option');
-
-        // Abrir modal
-        btnAbrirModal.addEventListener('click', function() {
-            modal.style.display = 'flex';
-        });
-
-        // Fechar modal (botão cancelar)
-        btnFecharModal.addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
-
-        // Fechar modal ao clicar fora
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-        // Selecionar opção de pagamento
-        paymentOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                const paymentMethod = this.getAttribute('data-payment');
-                const paymentText = this.querySelector('p').textContent;
-
-                // Atualizar o método de pagamento na página
-                updatePaymentMethod(paymentText, paymentMethod);
-
-                // Fechar modal
-                modal.style.display = 'none';
-
-                // Mostrar mensagem de sucesso
-                showSuccessMessage(`Pagamento alterado para: ${paymentText}`);
-            });
-
-            // Efeito visual ao passar o mouse
-            option.addEventListener('mouseenter', function() {
-                this.style.borderColor = 'var(--accent-orange)';
-                this.style.backgroundColor = 'rgba(243, 122, 39, 0.05)';
-            });
-
-            option.addEventListener('mouseleave', function() {
-                if (this.getAttribute('data-payment') !== 'cartao-debito') {
-                    this.style.borderColor = '#ddd';
-                    this.style.backgroundColor = '#f9f9f9';
-                }
-            });
-        });
-
-        // Função para atualizar o método de pagamento exibido
-        function updatePaymentMethod(paymentText, paymentMethod) {
-            // Encontrar o elemento que exibe o pagamento
-            const paymentDisplay = document.querySelector('[style*="Pagamento"]')?.parentElement;
-            if (paymentDisplay) {
-                const paymentValue = paymentDisplay.querySelector('p:last-of-type');
-                if (paymentValue) {
-                    paymentValue.textContent = paymentText;
-                }
-            }
-
-            // Aqui você pode adicionar uma requisição AJAX para atualizar no backend se necessário
-            // Por exemplo:
-            // fetch('update-pagamento.php', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ metodo: paymentMethod })
-            // });
+        // Funcionalidade do timer
+        function parseTimeToMs(timestr) {
+            // espera formato HH:MM:SS
+            const parts = timestr.split(':').map(Number);
+            if (parts.length !== 3) return 0;
+            return ((parts[0]*3600) + (parts[1]*60) + parts[2]) * 1000;
+        }
+        function formatRemaining(ms) {
+            if (ms <= 0) return '00:00:00';
+            const totalSec = Math.floor(ms/1000);
+            const h = Math.floor(totalSec/3600);
+            const m = Math.floor((totalSec%3600)/60);
+            const s = totalSec % 60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         }
 
-        // Função para mostrar mensagem de sucesso
-        function showSuccessMessage(message) {
-            // Criar div de notificação
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background-color: #4caf50;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 6px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                z-index: 10000;
-                font-weight: bold;
-                animation: slideIn 0.3s ease-out;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
+        // Atualizar timer se existir
+        const timerDisplay = document.getElementById('timer-display');
+        <?php if ($venda && in_array($venda['situacao_compra'], ['em_preparo', 'pronto_para_retirar']) && !empty($venda['tempo_chegada'])): ?>
+        const vendaCreatedAt = new Date('<?= $venda['data_criacao'] ?>'.replace(' ', 'T'));
+        const tempoChegada = '<?= $venda['tempo_chegada'] ?>';
+        const msLimit = parseTimeToMs(tempoChegada);
+        const deadline = new Date(vendaCreatedAt.getTime() + msLimit);
 
-            // Remover após 3 segundos
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
-        }
-
-        // Adicionar animações CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from {
-                    transform: translateX(400px);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
+        setInterval(function() {
+            const now = Date.now();
+            const restante = deadline.getTime() - now;
+            if (timerDisplay) {
+                timerDisplay.textContent = formatRemaining(restante);
             }
-
-            @keyframes slideOut {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(400px);
-                    opacity: 0;
-                }
+            if (restante <= 0) {
+                location.reload();
             }
-
-            .payment-option:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            }
-        `;
-        document.head.appendChild(style);
+        }, 500);
+        <?php endif; ?>
     </script>
 </body>
 
