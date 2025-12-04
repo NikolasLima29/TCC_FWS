@@ -1,6 +1,24 @@
 <?php
 include "../../conn.php";
 
+session_start();
+
+// Verifica login
+if (!isset($_SESSION['usuario_id_ADM'])) {
+    header("Location: ../../index.html?status=erro&msg=Faça login primeiro");
+    exit;
+}
+
+$id = $_SESSION['usuario_id_ADM'];
+
+// Busca nome do ADM
+$stmt = $sql->prepare("SELECT nome FROM funcionarios WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$stmt->bind_result($nome_adm);
+$stmt->fetch();
+$stmt->close();
+
 $fornecedor_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Buscar nome do fornecedor
@@ -92,90 +110,82 @@ table th, table td {
 <body>
 
 <div class="container-fluid">
-    <div class="row flex-nowrap">
+        <div class="row flex-nowrap">
 
-        <!-- 🔹 NAVBAR LATERAL COMPLETA -->
-        <div class="col-auto px-sm-2 px-0 bg-dark" id="fund">
-            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100" id="menu">
-                <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
-                    <li id="logo-linha">
-                        <img src="../../menu_principal/IMG/logo_linhas.png" alt="Logo">
-                    </li>
+            <!-- NAVBAR -->
+            <div class="col-auto px-sm-2 px-0 bg-dark" id="fund">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
+                    id="menu">
 
-                    <li class="nav-item">
-                        <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/painelgeral.png">
-                            <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
-                        </a>
-                    </li>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
+                        <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
 
-                    <li>
-                        <a href="#" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/fastservice.png">
-                            <span class="ms-1 d-none d-sm-inline">Fast Service</span>
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html"
+                                class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/painelgeral.png">
+                                <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
+                            </a>
+                        </li>
 
-                    <li>
-                        <a href="#" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/financeiro.png">
-                            <span class="ms-1 d-none d-sm-inline">Financeiro</span>
-                        </a>
-                    </li>
+                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/fastservice.png">
+                                <span class="ms-1 d-none d-sm-inline">Fast Service</span>
+                            </a></li>
 
-                    <li>
-                        <a href="#" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/vendaspai.png">
-                            <span class="ms-1 d-none d-sm-inline">Vendas</span>
-                        </a>
-                    </li>
+                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/financeiro.png">
+                                <span class="ms-1 d-none d-sm-inline">Financeiro</span>
+                            </a></li>
 
-                    <li>
-                        <a href="/TCC_FWS/FWS_ADM/estoque/HTML/estoque.php" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/estoque.png">
-                            <span class="ms-1 d-none d-sm-inline">Estoque</span>
-                        </a>
-                    </li>
+                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/vendaspai.png">
+                                <span class="ms-1 d-none d-sm-inline">Vendas</span>
+                            </a></li>
 
-                    <li>
-                        <a href="/TCC_FWS/FWS_ADM/produtos/HTML/listar_produtos.php" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/produtos.png">
-                            <span class="ms-1 d-none d-sm-inline">Produtos</span>
-                        </a>
-                    </li>
+                        <li><a href="/TCC_FWS/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                                id="cor-fonte">
+                                <img src="../../menu_principal/IMG/estoque.png">
+                                <span class="ms-1 d-none d-sm-inline">Estoque</span>
+                            </a></li>
 
-                    <li>
-                        <a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/listar_fornecedores.php" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/fornecedor.png">
-                            <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
-                        </a>
-                    </li>
+                        <li><a href="/TCC_FWS/FWS_ADM/produtos/HTML/lista_produtos.php"
+                                class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/produtos.png">
+                                <span class="ms-1 d-none d-sm-inline">Produtos</span>
+                            </a></li>
 
-                    <li>
-                        <a href="#" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/funcionarios.png">
-                            <span class="ms-1 d-none d-sm-inline">Funcionários</span>
-                        </a>
-                    </li>
-                </ul>
+                        <li><a href="#"
+                                class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/fornecedor.png">
+                                <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
+                            </a></li>
 
-                <hr>
-
-                <div class="dropdown pb-4">
-                    <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                       id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://github.com/mdo.png" alt="usuário" width="30" height="30" class="rounded-circle">
-                        <span class="d-none d-sm-inline mx-1">Usuário</span>
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                        <li><a class="dropdown-item" href="#">Perfil</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Sair da conta</a></li>
+                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/funcionarios.png">
+                                <span class="ms-1 d-none d-sm-inline">Funcionários</span>
+                            </a></li>
                     </ul>
+
+                    <hr>
+
+                    <div class="dropdown pb-4">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                            data-bs-toggle="dropdown">
+                            <img src="../../fotodeperfiladm.png " width="30" height="30" class="rounded-circle">
+                            <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark shadow">
+                            <li><a class="dropdown-item" href="../../perfil/HTML/perfil.php">Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/logout.php">Sair</a></li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
-        </div>
         <!-- 🔹 FIM DA NAVBAR -->
 
         <!-- 🔹 CONTEÚDO PRINCIPAL -->
