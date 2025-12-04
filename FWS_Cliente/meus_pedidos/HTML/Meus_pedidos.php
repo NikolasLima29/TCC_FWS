@@ -90,6 +90,121 @@ include "../../conn.php";
         .btn-acoes:hover {
             opacity: 0.9;
         }
+
+        /* Paleta do site */
+        :root {
+            --primary-red: #c40000;
+            --accent-yellow: #FFD100;
+            --accent-orange: #f37a27;
+        }
+
+        /* Estilos para os itens do pedido (restaurado para versão inicial)
+           Mantemos apenas espaçamento simples; removemos regras flex/widths customizadas. */
+        .pedido-box {
+            padding: 0.5rem 0.25rem;
+        }
+
+        .pedido-item {
+            font-size: 1.03rem;
+        }
+
+        .pedido-item>[class*="col-"] {
+            padding: .5rem .75rem;
+        }
+
+        .pedido-item .col-2 {
+            /* volta ao comportamento padrão do grid (quantidade pequena) */
+            text-align: center;
+        }
+
+        .pedido-item .col-7 {
+            /* ocupa o espaço restante via grid; sem regras flex customizadas */
+        }
+
+        .pedido-item .col-3 {
+            text-align: right;
+        }
+
+        .no-underline {
+            text-decoration: none !important;
+        }
+
+        /* Acentos usados nos outros arquivos do site */
+        .accent-text {
+            color: var(--primary-red) !important;
+        }
+
+        .card-accent {
+            border-color: var(--accent-yellow) !important;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-yellow) !important;
+            color: #111 !important;
+            border: none;
+        }
+
+        /* Status style: bottom-right badge-like text */
+        .order-status {
+            margin-top: auto;
+            align-self: flex-end;
+            color: var(--primary-red);
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: rgba(196, 0, 0, 0.06);
+            padding: .25rem .6rem;
+            border-radius: 6px;
+        }
+
+        /* Responsividade: ajustes para mobile */
+        @media (max-width: 767.98px) {
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            /* Empilha os itens do pedido verticalmente */
+            .pedido-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: .35rem;
+            }
+
+            .pedido-item>[class*="col-"] {
+                padding: .35rem 0 !important;
+            }
+
+            .pedido-item .col-2,
+            .pedido-item .col-3 {
+                flex: none !important;
+                max-width: none !important;
+                width: auto !important;
+            }
+
+            /* Botões e selects ficam em bloco e ocupam toda a largura */
+            .list-inline {
+                flex-direction: column;
+                gap: .5rem;
+                padding-left: 0;
+            }
+
+            .list-inline-item.items-list {
+                width: 100%;
+            }
+
+            .btn-accent,
+            .no-underline.btn-accent,
+            .btn-acoes {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
+            }
+
+            /* Ajuste do badge de status para não colidir com conteúdo */
+            .order-status {
+                align-self: flex-end;
+                margin-top: .8rem;
+            }
+        }
     </style>
 </head>
 
@@ -214,126 +329,153 @@ include "../../conn.php";
 
     <!-- Corpo principal -->
     <main>
-        <section class="h-100 h-custom" style="background-color: #eee;">
-            <div class="container py-5 h-100">
-                <div class="row d-flex justify-content-center align-items-center h-100">
-                    <div class="col-lg-6 col-xl-5">
-                        <div class="card border-top border-bottom border-3" style="border-color: #f37a27 !important;">
-                            <div class="card-body p-5">
+        <section class="h-custom" style="background-color: #eee;">
+            <div class="container py-3">
+                <div class="row d-flex justify-content-center align-items-center">
+                    <div class="container-fluid py-3">
+                        <div class="row g-4 align-items-stretch">
+                            <!-- g-4 adiciona espaço entre os cards -->
 
-                                <p class="lead fw-bold mb-5" style="color: #f37a27;">Código: 136ADG</p>
+                            <!-- CARD 1 -->
+                            <div class="col-12 col-lg-6 d-flex">
+                                <div class="card h-100 w-100 border-top border-bottom border-3 card-accent">
+                                    <div class="card-body p-5 d-flex flex-column h-100">
+                                        <div class="row g-0 w-100 flex-grow-1">
 
-                                <div class="row">
-                                    <div class="col mb-3">
-                                        <p class="small text-muted mb-1">Data:</p>
-                                        <p>03/12/2025</p>
-                                    </div>
-                                    <div class="col mb-3">
-                                        <p class="small text-muted mb-1">Pedido por:</p>
-                                        <p>Pedro Henrique Souza Brito</p>
-                                    </div>
-                                    <div class="col mb-3">
-                                        <p class="small text-muted mb-1">Modo de pagamento:</p>
-                                        <p>Cartão Débito</p>
-                                    </div>
-                                </div>
+                                            <!-- Coluna esquerda do card -->
+                                            <div class="col-12 col-lg-6 pe-lg-4 d-flex flex-column"
+                                                style="border-right: 2px solid #ddd;">
+                                                <p class="lead fw-bold mb-4 accent-text">Código do Pedido:
+                                                    136ADG</p>
+                                                <p><strong>Data:</strong> 03/12/2025</p>
+                                                <p><strong>Pedido por:</strong> Pedro Henrique Souza Brito</p>
+                                                <p><strong>Pagamento:</strong> Cartão Débito</p>
+                                                <div class="pedido-box px-3 py-3">
+                                                    <div class="row pedido-item">
+                                                        <div class="col-2">1</div>
+                                                        <div class="col-7">Água de Coco Kero Coco 1L</div>
+                                                        <div class="col-3 text-end">R$31,99</div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row pedido-item">
+                                                        <div class="col-2">4</div>
+                                                        <div class="col-7">Água de Coco Kero Coco 1L</div>
+                                                        <div class="col-3 text-end">R$31,99</div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                <div class="mx-n5 px-5 py-4" style="background-color: #f2f2f2;">
-                                    <div class="row pedido-item">
-                                        <div class="col-2">
-                                            <p>1</p>
-                                        </div>
-                                        <div class="col-7">
-                                            <p>Água de Coco Kero Coco 1L</p>
-                                        </div>
-                                        <div class="col-3 text-end">
-                                            <p>R$31,99</p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row pedido-item">
-                                        <div class="col-2">
-                                            <p>4</p>
-                                        </div>
-                                        <div class="col-7">
-                                            <p>Água de Coco Kero Coco 1L</p>
-                                        </div>
-                                        <div class="col-3 text-end">
-                                            <p>R$31,99</p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row pedido-item">
-                                        <div class="col-2">
-                                            <p>5</p>
-                                        </div>
-                                        <div class="col-7">
-                                            <p>Água de Coco Kero Coco 1L</p>
-                                        </div>
-                                        <div class="col-3 text-end">
-                                            <p>R$31,99</p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row pedido-item">
-                                        <div class="col-2">
-                                            <p>2</p>
-                                        </div>
-                                        <div class="col-7">
-                                            <p>Água de Coco Kero Coco 1L</p>
-                                        </div>
-                                        <div class="col-3 text-end">
-                                            <p>R$31,99</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                            <!-- Coluna direita do card -->
+                                            <div class="col-12 col-lg-6 ps-lg-4 mt-4 mt-lg-0 d-flex flex-column">
+                                                <p class="lead fw-bold mt-4 accent-text">Total geral: R$61,39
+                                                </p>
+                                                <p class="lead fw-bold accent-text">Tempo restante: 30 Minutos
+                                                </p>
+                                                <p class="lead fw-bold accent-text">Horário do pedido: 19:00</p>
 
-                                <div class="row my-4">
-                                    <p class="lead fw-bold mb-4 pb-2" style="color: #f37a27;">Total: R$61,39</p>
-                                    <p class="lead fw-bold mb-4 pb-2" style="color: #f37a27;">Tempo restante: 30 Minutos
-                                    </p>
-                                    <p class="lead fw-bold mb-4 pb-2" style="color: #f37a27;">Horário do pedido: 19:00
-                                    </p>
-                                </div>
+                                                <ul class="list-inline mt-4 d-flex flex-wrap gap-3">
+                                                    <li class="list-inline-item items-list">
+                                                        <select class="py-1 px-2 rounded btn-accent">
+                                                            <option>Alterar pagamento:</option>
+                                                            <option value="Cartão Crédito">Cartão Crédito</option>
+                                                            <option value="Cartão Débito">Cartão Débito</option>
+                                                            <option value="Pix">Pix</option>
+                                                            <option value="Dinheiro">Dinheiro</option>
+                                                        </select>
+                                                    </li>
 
-                                <div class="row">
-                                    <div class="col-lg-12">
+                                                    <li class="list-inline-item items-list">
+                                                        <button class="py-1 px-2 rounded btn-accent">
+                                                            Adicionar 15 Minutos
+                                                        </button>
+                                                    </li>
 
-                                        <div class="horizontal-timeline">
+                                                    <li class="list-inline-item items-list">
+                                                        <a href="../../pedido_detalhado/pedido_detalhado.php"
+                                                            class="py-1 px-2 rounded no-underline btn-accent">
+                                                            Visualizar pedido
+                                                        </a>
+                                                    </li>
+                                                </ul>
 
-                                            <ul class="list-inline items d-flex justify-content-between">
-                                                <li class="list-inline-item items-list">
-                                                    <select class="py-1 px-2 rounded text-white"
-                                                        style="background-color: #f37a27;">
-                                                        <option value="0">Alterar pagamento:</option>
-                                                        <option value="Cartão Crédito">Cartão Crédito</option>
-                                                        <option value="Cartão Débito">Cartão Débito</option>
-                                                        <option value="Pix">Pix</option>
-                                                        <option value="Dinheiro">Dinheiro</option>
-                                                    </select class="py-1 px-2 rounded text-white"
-                                                        style="background-color: #f37a27;">
-                                                </li>
-                                                <li class="list-inline-item items-list">
-                                                    <button type="submit" class="py-1 px-2 rounded text-white"
-                                                        style="background-color: #f37a27;">Adicionar 15 Minutos</button
-                                                        class="py-1 px-2 rounded text-white"
-                                                        style="background-color: #f37a27;">
-                                                </li>
-                                                <li class="list-inline-item items-list">
-                                                    <a href="../../pedido_detalhado/pedido_detalhado.php"
-                                                        class="py-1 px-2 rounded text-white"
-                                                        style="background-color: #f37a27;">Vizualizar pedido</a
-                                                        class="py-1 px-2 rounded text-white"
-                                                        style="background-color: #f37a27;">
-                                                </li>
-                                            </ul>
-                                            <li class="list-inline-item items-list text-end" style="margin-right: 8px;">
-                                                <p style="margin-right: -8px;">Status: Não retirado</p>
-                                            </li>
+                                                <p class="order-status">Status: Não retirado</p>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- CARD 2 (igual ao card 1, só altere os dados) -->
+                            <div class="col-12 col-lg-6 d-flex">
+                                <div class="card h-100 w-100 border-top border-bottom border-3 card-accent">
+                                    <div class="card-body p-5 d-flex flex-column h-100">
+                                        <div class="row g-0 w-100 flex-grow-1">
+
+                                            <!-- Coluna esquerda do card -->
+                                            <div class="col-12 col-lg-6 pe-lg-4 d-flex flex-column"
+                                                style="border-right: 2px solid #ddd;">
+                                                <p class="lead fw-bold mb-4 accent-text">Código do Pedido:
+                                                    137BHF</p>
+                                                <p><strong>Data:</strong> 03/12/2025</p>
+                                                <p><strong>Pedido por:</strong> Maria Silva</p>
+                                                <p><strong>Pagamento:</strong> Pix</p>
+                                                <div class="pedido-box px-3 py-3">
+                                                    <div class="row pedido-item">
+                                                        <div class="col-2">2</div>
+                                                        <div class="col-7">Suco Natural 500ml</div>
+                                                        <div class="col-3 text-end">R$15,50</div>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row pedido-item">
+                                                        <div class="col-2">3</div>
+                                                        <div class="col-7">Água Mineral 500ml</div>
+                                                        <div class="col-3 text-end">R$5,99</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Coluna direita do card -->
+                                            <div class="col-12 col-lg-6 ps-lg-4 mt-4 mt-lg-0 d-flex flex-column">
+                                                <p class="lead fw-bold mt-4 accent-text">Total geral: R$21,49
+                                                </p>
+                                                <p class="lead fw-bold accent-text">Tempo restante: 25 Minutos
+                                                </p>
+                                                <p class="lead fw-bold accent-text">Horário do pedido: 19:30</p>
+
+                                                <ul class="list-inline mt-4 d-flex flex-wrap gap-3">
+                                                    <li class="list-inline-item items-list">
+                                                        <select class="py-1 px-2 rounded btn-accent">
+                                                            <option>Alterar pagamento:</option>
+                                                            <option value="Cartão Crédito">Cartão Crédito</option>
+                                                            <option value="Cartão Débito">Cartão Débito</option>
+                                                            <option value="Pix">Pix</option>
+                                                            <option value="Dinheiro">Dinheiro</option>
+                                                        </select>
+                                                    </li>
+
+                                                    <li class="list-inline-item items-list">
+                                                        <button class="py-1 px-2 rounded btn-accent">
+                                                            Adicionar 15 Minutos
+                                                        </button>
+                                                    </li>
+
+                                                    <li class="list-inline-item items-list">
+                                                        <a href="../../pedido_detalhado/pedido_detalhado.php"
+                                                            class="py-1 px-2 rounded no-underline btn-accent">
+                                                            Visualizar pedido
+                                                        </a>
+                                                    </li>
+                                                </ul>
+
+                                                <p class="order-status">Status: Não retirado</p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -341,8 +483,32 @@ include "../../conn.php";
         </section>
     </main>
 
-    <footer>
-        <!-- place footer here -->
+    <footer class="text-center" style="background-color: #eee;">
+        <div class="container pt-4">
+            <!-- Section: Redes sociais -->
+            <section class="mb-4">
+                <!-- Facebook -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+                    href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
+
+                <!-- Google -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fa-solid fa-phone"></i></a>
+
+                <!-- Instagram -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+                    href="https://www.instagram.com/shell.brasil/" role="button" data-mdb-ripple-color="dark"><i
+                        class="fab fa-instagram"></i></a>
+            </section>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: #FFD100;">
+            © 2025 Copyright:
+            <a class="text-body">FWS - Faster Way Service</a>
+        </div>
+        <!-- Copyright -->
     </footer>
 
     <!-- Bootstrap JavaScript Libraries -->

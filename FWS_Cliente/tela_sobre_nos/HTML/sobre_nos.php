@@ -21,106 +21,108 @@ session_start();
 
 
 
-        <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- JQuery UI -->
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <!-- JQuery UI -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-<!-- JQuery UI css -->
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+    <!-- JQuery UI css -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
 </head>
 
 <body>
     <!-- Header with same nav, style, and behavior -->
-        <header id="header">
-<style>
-#header {
-    position: sticky;
-    top: 0;
-    background-color: rgba(255, 255, 255, 0.2); /* transparência correta */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    <header id="header">
+        <style>
+            #header {
+                position: sticky;
+                top: 0;
+                background-color: rgba(255, 255, 255, 0.2);
+                /* transparência correta */
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                z-index: 1000;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+        <div class="logo">
+            <a href="../../index.php">
+                <img src="../../index/IMG/shell_select.png" alt="logo" />
+            </a>
+        </div>
 
-</style>
-    <div class="logo">
-        <a href="../../index.php">
-            <img src="../../index/IMG/shell_select.png" alt="logo" />
-        </a>
-    </div>
+        <button class="menu-toggle" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i>
+        </button>
 
-    <button class="menu-toggle" aria-label="Abrir menu">
-        <i class="fas fa-bars"></i>
-    </button>
+        <nav class="nav-links">
+            <ul class="ul align-items-center">
+                <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+                <li>
+                    <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php"
+                        method="get" style="margin: 0 10px;">
+                        <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
+                            placeholder="Pesquisar..." aria-label="Pesquisar">
+                        <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </form>
+                </li>
+                <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+                <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+            </ul>
+        </nav>
 
-    <nav class="nav-links">
-        <ul class="ul align-items-center">
-            <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
-            <li>
-                <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php" method="get" style="margin: 0 10px;">
-                    <input id="search" class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..." aria-label="Pesquisar">
-                    <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </form>
-            </li>
-            <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
-            <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
-        </ul>
-    </nav>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const toggleButton = document.querySelector('.menu-toggle');
+                const navLinks = document.querySelector('nav.nav-links');
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const toggleButton = document.querySelector('.menu-toggle');
-        const navLinks = document.querySelector('nav.nav-links');
+                if (!toggleButton || !navLinks) return;
 
-    if (!toggleButton || !navLinks) return;
+                toggleButton.setAttribute('aria-expanded', 'false');
 
-    toggleButton.setAttribute('aria-expanded', 'false');
+                function setMenu(open) {
+                    if (open) {
+                        navLinks.classList.add('active');
+                        toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+                        toggleButton.setAttribute('aria-expanded', 'true');
+                    } else {
+                        navLinks.classList.remove('active');
+                        toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+                        toggleButton.setAttribute('aria-expanded', 'false');
+                    }
+                }
 
-    function setMenu(open) {
-        if (open) {
-            navLinks.classList.add('active');
-            toggleButton.innerHTML = '<i class="fas fa-times"></i>';
-            toggleButton.setAttribute('aria-expanded', 'true');
-        } else {
-            navLinks.classList.remove('active');
-            toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
-            toggleButton.setAttribute('aria-expanded', 'false');
-        }
-    }
+                toggleButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    setMenu(!navLinks.classList.contains('active'));
+                });
 
-    toggleButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        setMenu(!navLinks.classList.contains('active'));
-    });
+                document.addEventListener('click', (e) => {
+                    if (!navLinks.classList.contains('active')) return;
+                    if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
+                        setMenu(false);
+                    }
+                });
 
-    document.addEventListener('click', (e) => {
-        if (!navLinks.classList.contains('active')) return;
-        if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
-            setMenu(false);
-        }
-    });
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 768) {
+                        navLinks.classList.remove('active');
+                    }
+                });
+            });
+        </script>
 
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            navLinks.classList.remove('active');
-        }
-    });
-});
-</script>
+        <div class="carrinho">
+            <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
+                <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+            </a>
+        </div>
 
-    <div class="carrinho">
-        <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
-            <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
-        </a>
-    </div>
-
-    <div id="bem-vindo" style="position: relative; display: inline-block;">
-        <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
+        <div id="bem-vindo" style="position: relative; display: inline-block;">
+            <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
             <?php
                 $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
                 $primeiroNome = explode(' ', $nomeCompleto)[0];
@@ -130,13 +132,16 @@ session_start();
                 <i class="fas fa-user-circle fa-2x" style="max width: 90px;"></i>
             </div>
 
-            <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-                <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-                <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
+            <div id="user-menu"
+                style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
+                <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php"
+                    style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
+                <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link"
+                    style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
             </div>
 
             <script>
-                document.getElementById('user-menu-toggle').addEventListener('click', function() {
+                document.getElementById('user-menu-toggle').addEventListener('click', function () {
                     var menu = document.getElementById('user-menu');
                     if (menu.style.display === 'none') {
                         menu.style.display = 'block';
@@ -146,7 +151,7 @@ session_start();
                 });
 
                 // Fecha o menu se clicar fora
-                document.addEventListener('click', function(event) {
+                document.addEventListener('click', function (event) {
                     var container = document.getElementById('bem-vindo');
                     var menu = document.getElementById('user-menu');
                     if (!container.contains(event.target)) {
@@ -154,12 +159,12 @@ session_start();
                     }
                 });
             </script>
-        <?php else: ?>
+            <?php else: ?>
             Bem-vindo(a).
-        <?php endif; ?>
-    </div>
-</header>
-<main>
+            <?php endif; ?>
+        </div>
+    </header>
+    <main>
         <h1 id="sobre_nos">Sobre Nós</h1>
         <p>
             A Shell Select representa a evolução das lojas de conveniência no Brasil, trazendo praticidade, qualidade e
@@ -370,53 +375,56 @@ session_start();
         }
     </style>
 
-<script>
-$(function() {
-  var autocomplete = $("#search").autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: '../../produto/PHP/api-produtos.php',
-        dataType: 'json',
-        data: { q: request.term },
-        success: function(data) {
-          response(data);
+    <script>
+        $(function () {
+            var autocomplete = $("#search").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '../../produto/PHP/api-produtos.php',
+                        dataType: 'json',
+                        data: {
+                            q: request.term
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    window.location.href =
+                        '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+                }
+            }).data('ui-autocomplete') || $("#search").data('autocomplete');
+
+            if (autocomplete) {
+                autocomplete._renderItem = function (ul, item) {
+                    return $("<li>")
+                        .append("<div><img src='" + item.foto +
+                            "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" +
+                            item.label + "</div>")
+                        .appendTo(ul);
+                };
+            }
+        });
+    </script>
+
+    <style>
+        .ui-menu .ui-menu-item.ui-state-focus,
+        .ui-menu .ui-menu-item:hover {
+            background-color: #FFD100 !important;
+            background-image: none !important;
+            color: #000 !important;
+            cursor: pointer;
         }
-      });
-    },
-    minLength: 2,
-    select: function(event, ui) {
-      window.location.href = '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
-    }
-  }).data('ui-autocomplete') || $("#search").data('autocomplete');
-
-  if (autocomplete) {
-    autocomplete._renderItem = function(ul, item) {
-      return $("<li>")
-        .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" + item.label + "</div>")
-        .appendTo(ul);
-    };
-  }
-});
-
-
-</script>
-
-<style>.ui-menu .ui-menu-item.ui-state-focus,
-.ui-menu .ui-menu-item:hover {
-    background-color: #FFD100 !important;
-    background-image: none !important;
-    color: #000 !important;
-    cursor: pointer;
-}
 
 
 
-.ui-menu .ui-menu-item.ui-state-focus,
-.ui-menu .ui-menu-item:hover {
-    box-shadow: none !important;
-}
-
-</style>
+        .ui-menu .ui-menu-item.ui-state-focus,
+        .ui-menu .ui-menu-item:hover {
+            box-shadow: none !important;
+        }
+    </style>
 
 </body>
 
