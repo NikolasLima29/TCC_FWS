@@ -144,6 +144,10 @@ nav ul li a:hover::after {
         flex-direction: row;
         gap: 20px;
     }
+
+    #icone-usuario {
+        margin-right: 8px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -216,8 +220,16 @@ nav ul li a:hover::after {
         color: white;
     }
 
-    #bem-vindo {
+    #mobile-search-wrapper {
         order: 5;
+        width: 100%;
+        display: block;
+        z-index: 0 !important;
+        position: relative;
+    }
+
+    #bem-vindo {
+        order: 6;
         width: 100%;
         text-align: center;
         margin-top: 8px;
@@ -270,5 +282,71 @@ nav ul li a:hover::after {
         margin-left: auto !important;
         margin-right: auto !important;
         justify-content: center !important;
+    }
+    
+    nav.nav-links form {
+        display: none !important;
+    }
+}
+
+/* Remover o fundo separado (vai ficar dentro do header) */
+#mobile-search-wrapper {
+    display: none;
+    width: 100%;
+    padding: 10px 10px 0 10px;
+}
+
+/* Mostrar somente no mobile */
+@media (max-width: 768px) {
+
+    #mobile-search-wrapper form {
+        display: flex;
+        width: 100%;
+    }
+
+    #mobile-search-wrapper input {
+        border-radius: 6px;
+    }
+
+    /* esconder pesquisa desktop no menu mobile */
+    
+}
+
+/* Compact mobile nav: reduzir espaçamento entre itens e esconder o form duplicado dentro do nav */
+@media (max-width: 768px) {
+    /* reduz o espaçamento vertical entre itens do menu */
+    nav.nav-links ul {
+        gap: 6px !important;
+    }
+
+    /* Esconde o form que fica dentro do <nav> (a busca já existe em #mobile-search-wrapper) */
+    nav.nav-links ul li form,
+    nav.nav-links ul li form * {
+        display: none !important;
+    }
+
+    /* Mais compactos: remover margens/paddings extras */
+    nav.nav-links ul li {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    nav.nav-links ul li a {
+        padding: 6px 0 !important;
+        line-height: 1.1 !important;
+        font-size: 20px !important;
+    }
+
+    nav.nav-links {
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+
+    .card .badge,
+    #categorias_filtro .badge {
+        font-size: 0.60rem !important;
+        padding: 3px 6px !important;
+        border-radius: 8px !important;
+        line-height: 1 !important;
     }
 }
