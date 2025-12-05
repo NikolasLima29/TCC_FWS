@@ -2,6 +2,28 @@
 include '../../conn.php';
 $conn = $sql;
 
+session_start();
+
+/* ============================================================
+   AUTENTICAÇÃO
+   ============================================================ */
+if (!isset($_SESSION['usuario_id_ADM'])) {
+    header("Location: ../../index.html?status=erro&msg=Faça login primeiro");
+    exit;
+}
+
+$id = $_SESSION['usuario_id_ADM'];
+
+/* ============================================================
+   CARREGAR DADOS DO ADM (NAVBAR)
+   ============================================================ */
+$stmt = $sql->prepare("SELECT nome, cpf, email, nivel_permissao FROM funcionarios WHERE id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$stmt->bind_result($nome_adm, $cpf, $email, $nivel);
+$stmt->fetch();
+$stmt->close();
+
 // Processar POST primeiro
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['alterar_estado'], $_POST['pedido_id'], $_POST['novo_estado'])) {
@@ -162,72 +184,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <!-- Barra lateral -->
+
+            <!-- NAVBAR -->
             <div class="col-auto px-sm-2 px-0 bg-dark" id="fund">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100" id="menu">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
+                    id="menu">
+
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
-                        <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png" alt="Logo"></li>
+                        <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
+
                         <li class="nav-item">
-                            <a href="../../menu_principal/HTML/menu_principal1.html" class="nav-link align-middle px-0" id="cor-fonte">
+                            <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.php"
+                                class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="/TCC_FWS/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+
+                        <li><a href="/TCC_FWS/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fastservice.png">
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                            </a></li>
+
+                        <li><a href="/TCC_FWS/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                            </a></li>
+
+                        <li><a href="/TCC_FWS/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/vendaspai.png">
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/TCC_FWS/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0" id="cor-fonte">
+                            </a></li>
+
+                        <li><a href="/TCC_FWS/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/estoque.png">
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/TCC_FWS/FWS_ADM/produtos/HTML/cadastro_produto.php" class="nav-link align-middle px-0" id="cor-fonte">
+                            </a></li>
+
+                        <li><a href="/TCC_FWS/FWS_ADM/produtos/HTML/lista_produtos.php"
+                                class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/listar_fornecedores.php" class="nav-link align-middle px-0" id="cor-fonte">
+                            </a></li>
+
+                        <li><a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
+                                class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                            </a></li>
+
+                        <li><a href="/TCC_FWS/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
-                            </a>
-                        </li>
+                            </a></li>
                     </ul>
+
                     <hr>
+
                     <div class="dropdown pb-4">
-                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="usuário" width="30" height="30" class="rounded-circle">
-                            <span class="d-none d-sm-inline mx-1">Usuário</span>
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                            data-bs-toggle="dropdown">
+                            <img src="../../fotodeperfiladm.png" width="30" height="30" class="rounded-circle">
+                            <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                            <li><a class="dropdown-item" href="#">Perfil</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Sair da conta</a></li>
+                        <ul class="dropdown-menu dropdown-menu-dark shadow">
+                            <li><a class="dropdown-item" href="../../perfil/HTML/perfil.php">Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/logout.php">Sair</a></li>
                         </ul>
                     </div>
+
                 </div>
             </div>
 

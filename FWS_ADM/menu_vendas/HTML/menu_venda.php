@@ -2,7 +2,9 @@
 include "../../conn.php";
 session_start();
 
-// Verifica login
+/* ============================================================
+   AUTENTICAÇÃO
+   ============================================================ */
 if (!isset($_SESSION['usuario_id_ADM'])) {
     header("Location: ../../index.html?status=erro&msg=Faça login primeiro");
     exit;
@@ -10,122 +12,144 @@ if (!isset($_SESSION['usuario_id_ADM'])) {
 
 $id = $_SESSION['usuario_id_ADM'];
 
-// Busca nome do ADM
-$stmt = $sql->prepare("SELECT nome FROM funcionarios WHERE id = ?");
+/* ============================================================
+   CARREGAR DADOS DO ADM (NAVBAR)
+   ============================================================ */
+$stmt = $sql->prepare("SELECT nome, cpf, email, nivel_permissao FROM funcionarios WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$stmt->bind_result($nome_adm);
+$stmt->bind_result($nome_adm, $cpf, $email, $nivel);
 $stmt->fetch();
 $stmt->close();
 
-// Buscar todos os funcionários
-$query = "SELECT id, nome, email, CPF, nivel_permissao, criado_em, ultimo_login FROM funcionarios ORDER BY id ASC";
-$result = $sql->query($query);
-
-// Função para traduzir nível de permissão
-function nivelPermissao($nivel) {
-    return ($nivel == 1) ? 'Atendente' : 'Gerente';
-}
+$foto = "../../fotodeperfiladm.png";
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Funcionários</title>
-    <link rel="icon" type="image/x-icon" href="../../logotipo.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<title>Vendas</title>
+<link rel="icon" type="image/x-icon" href="../../logotipo.png">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-    body {
-        background-color: #fff8e1;
-        font-family: "Poppins", sans-serif;
-        margin: 0;
-    }
+<style>
 
-    /* NAVBAR LATERAL */
-    #fund {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: 250px;
-        background-color: black !important;
-        overflow-y: auto;
-        z-index: 1000;
-    }
+/* ======== ESTILO GLOBAL ======== */
 
-    #menu { background-color: black; }
+body {
+    background-color: #fff8e1;
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+}
 
-    #cor-fonte { color: #ff9100; font-size: 23px; padding-bottom: 30px; }
-    #cor-fonte:hover { background-color: #f4a21d67 !important; }
-    #cor-fonte img { width: 44px; }
-    #logo-linha img { width: 170px; }
+/* Barra lateral fixa */
+#fund {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background-color: black !important;
+    overflow-y: auto;
+}
 
-    /* CONTEÚDO PRINCIPAL */
-    #conteudo-principal { margin-left: 250px; padding: 40px; }
+#menu {
+    background-color: black;
+}
 
-    .container {
-        max-width: 1000px;
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    }
+#cor-fonte {
+    color: #ff9100;
+    font-size: 23px;
+    padding-bottom: 30px;
+    width: 100%;
+}
 
-    h2 {
-        text-align: center;
-        margin-bottom: 15px;
-        color: #ff9100;
-        font-weight: bold;
-    }
+#cor-fonte:hover {
+    background-color: #f4a21d67 !important;
+}
 
-    .btn-voltar {
-        margin-bottom: 20px;
-        background-color: #ff9100;
-        color: white;
-        font-weight: bold;
-    }
-    .btn-voltar:hover { background-color: #e68000; }
+#cor-fonte img {
+    width: 44px;
+}
 
-    table th, table td {
-        text-align: center;
-        vertical-align: middle;
-    }
+#logo-linha img {
+    width: 170px;
+}
 
-    .table thead.table-dark {
-        background-color: #ff9100;
-    }
+#conteudo-principal {
+    margin-left: 250px;
+    padding: 40px;
+}
 
-    .table thead.table-dark th {
-        background-color: #ff9100;
-        color: white;
-        border-color: #ff9100;
-        border-right: 1px solid #e68000;
-    }
+/* ===========================
+   TÍTULO
+   =========================== */
 
-    .table thead.table-dark th:last-child {
-        border-right: none;
-    }
+.titulo {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 900;
+    color: #ff9100;
+    margin-top: 40px;
+}
 
-    /* Nome com quebra de linha */
-    .col-nome {
-        max-width: 220px;
-        white-space: normal;
-        word-wrap: break-word;
-    }
+/* ===========================
+   CARDS (BOTÕES)
+   =========================== */
 
-    /* Sem quebra de linha em email, CPF e datas */
-    .sem-quebra { white-space: nowrap; }
+#btn-container {
+    margin-top: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 90px;
+}
 
-    /* Nível de permissão em vermelho */
-    .nivel-vermelho { color: #d11b1b; font-weight: bold; }
+.action-card {
+    width: 410px;
+    height: 180px;
+    background: #ff9100;
+    border-radius: 22px;
+    cursor: pointer;
 
-    @import url('../../Fonte_Config/fonte_geral.css');
-    </style>
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    transition: all .25s ease-in-out;
+}
+
+.action-card img {
+    width: 82px;
+    opacity: 0.95;
+    transition: .25s;
+}
+
+.action-card span {
+    margin-top: 12px;
+    font-size: 23px;
+    font-weight: 800;
+    color: black;
+}
+
+.action-card:hover {
+    transform: translateY(-8px) scale(1.05);
+    background: #ffa733;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.32);
+}
+
+.action-card:hover img {
+    transform: scale(1.18);
+    opacity: 1;
+}
+
+</style>
 </head>
 
 <body>
+
 <div class="container-fluid">
         <div class="row flex-nowrap">
 
@@ -204,47 +228,26 @@ function nivelPermissao($nivel) {
                 </div>
             </div>
 
-        <!-- CONTEÚDO PRINCIPAL -->
+        <!-- ================= CONTEÚDO PRINCIPAL ================= -->
         <div class="col py-3" id="conteudo-principal">
-            <div class="container">
-                <a href="javascript:history.back()" class="btn btn-voltar">← Voltar</a>
-                <h2>Funcionários Cadastrados</h2>
 
-                <table class="table table-bordered table-hover">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>CPF</th>
-                            <th>Nível de permissão</th>
-                            <th>Criado em</th>
-                            <th>Último login</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if($result->num_rows > 0): ?>
-                            <?php while($row = $result->fetch_assoc()): ?>
-                                <tr>
-                                    <td class="sem-quebra"><?= $row['id'] ?></td>
-                                    <td class="col-nome"><?= htmlspecialchars($row['nome']) ?></td>
-                                    <td class="sem-quebra"><?= htmlspecialchars($row['email']) ?></td>
-                                    <td class="sem-quebra"><?= htmlspecialchars($row['CPF']) ?></td>
-                                    <td class="nivel-vermelho"><?= nivelPermissao($row['nivel_permissao']) ?></td>
-                                    <td class="sem-quebra"><?= date('d/m/Y H:i', strtotime($row['criado_em'])) ?></td>
-                                    <td class="sem-quebra"><?= $row['ultimo_login'] ? date('d/m/Y H:i', strtotime($row['ultimo_login'])) : '-' ?></td>
-                                </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="7">Nenhum funcionário cadastrado.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <h1 class="titulo">Vendas</h1>
+
+            <div id="btn-container">
+
+                <div class="action-card" onclick="window.location.href='historico_vendas.php'">
+                    <img src="../../menu_principal/IMG/vendaspai.png">
+                    <span>Histórico de Vendas</span>
+                </div>
+
+                <div class="action-card" onclick="window.location.href='caixa_diario.php'">
+                    <img src="../../menu_principal/IMG/financeiro.png">
+                    <span>Caixa Diário</span>
+                </div>
+
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
 
