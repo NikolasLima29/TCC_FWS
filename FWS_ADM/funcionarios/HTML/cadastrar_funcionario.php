@@ -22,7 +22,7 @@ $stmtAdm->bind_result($adm_nome, $adm_cpf, $adm_email, $adm_nivel);
 $stmtAdm->fetch();
 $stmtAdm->close();
 
-$foto = "../../fotodeperfiladm.png"; // imagem default
+
 
 /* ==========================================
    PROCESSAR CADASTRO
@@ -173,6 +173,19 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     .btn-cadastrar:hover {
         background-color: #ff9e22;
     }
+    .btn-voltar {
+        margin-bottom: 20px;
+        background-color: #d11b1b;
+        color: white;
+        font-weight: bold;
+    }
+    .btn-voltar:hover { 
+        background-color: #a00f0f; 
+    }
+
+
+    
+
 
     /* ======= MODAL ======= */
     .modal-fundo {
@@ -280,15 +293,15 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     <div class="dropdown pb-4">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                             data-bs-toggle="dropdown">
-                            <img src="<?= $foto ?>" width="30" height="30" class="rounded-circle" alt="Foto Perfil">
+                            <img src="../../fotodeperfiladm.png" width="30" height="30" class="rounded-circle" alt="Foto Perfil">
                             <span class="d-none d-sm-inline mx-1"><?= htmlspecialchars($adm_nome) ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark shadow">
-                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/perfil.php">Perfil</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="logout.php">Sair</a></li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/logout.php">Sair</a></li>
                         </ul>
                     </div>
 
@@ -299,6 +312,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <div class="col py-3" id="conteudo-principal">
 
                 <div class="container-form">
+                     <a href="javascript:history.back()" class="btn btn-voltar">← Voltar</a>
                     <h2 class="form-title">Cadastrar Funcionário</h2>
 
                     <?php if (!empty($alertas_form)): ?>

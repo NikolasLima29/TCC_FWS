@@ -1,9 +1,10 @@
 <?php
 include "../../conn.php";
-
 session_start();
 
-// Verifica login
+/* ============================================================
+   AUTENTICAÇÃO 
+============================================================ */
 if (!isset($_SESSION['usuario_id_ADM'])) {
     header("Location: ../../index.html?status=erro&msg=Faça login primeiro");
     exit;
@@ -11,67 +12,25 @@ if (!isset($_SESSION['usuario_id_ADM'])) {
 
 $id = $_SESSION['usuario_id_ADM'];
 
-// Busca nome do ADM
-$stmt = $sql->prepare("SELECT nome FROM funcionarios WHERE id = ?");
+/* ============================================================
+   CARREGAR DADOS DO ADM (NAVBAR)
+============================================================ */
+$stmt = $sql->prepare("SELECT nome, cpf, email, nivel_permissao FROM funcionarios WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$stmt->bind_result($nome_adm);
+$stmt->bind_result($nome_adm, $cpf, $email, $nivel);
 $stmt->fetch();
 $stmt->close();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Limpando e preparando os dados
-    $nome = trim($_POST['nome'] ?? '');
-    $cnpj = preg_replace('/\D/', '', $_POST['cnpj'] ?? '');
-    $telefone = preg_replace('/\D/', '', $_POST['telefone'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-
-    // Validação básica
-    if ($nome === '' || $cnpj === '') {
-        header("Location: cadastrar_fornecedor.php?status=erro&msg=Preencha todos os campos obrigatórios");
-        exit;
-    }
-
-    // Verificar duplicidade de CNPJ
-    $stmt = $sql->prepare("SELECT COUNT(*) FROM fornecedores WHERE cnpj = ?");
-    $stmt->bind_param("s", $cnpj);
-    $stmt->execute();
-    $stmt->bind_result($count);
-    $stmt->fetch();
-    $stmt->close();
-
-    if ($count > 0) {
-        header("Location: cadastrar_fornecedor.php?status=erro&msg=Fornecedor com este CNPJ já cadastrado");
-        exit;
-    }
-
-    // Inserir no banco
-    $stmt = $sql->prepare("INSERT INTO fornecedores (nome, cnpj, telefone, email) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $nome, $cnpj, $telefone, $email);
-
-    if (!$stmt->execute()) {
-        die("Erro ao cadastrar: " . $stmt->error);
-    }
-
-    $stmt->close();
-
-    header("Location: cadastrar_fornecedor.php?status=sucesso&msg=Fornecedor cadastrado com sucesso!");
-    exit;
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Fornecedor</title>
+    <title>Financeiro</title>
+
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
     <style>
         body {
@@ -80,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin: 0;
         }
 
-        /* Barra lateral fixa */
         #fund {
             position: fixed;
             top: 0;
@@ -89,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 250px;
             background-color: black !important;
             overflow-y: auto;
-            z-index: 1000;
         }
 
         #menu {
@@ -100,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #ff9100;
             font-size: 23px;
             padding-bottom: 30px;
+            width: 100%;
         }
 
         #cor-fonte:hover {
@@ -114,79 +72,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 170px;
         }
 
-        /* Área principal */
         #conteudo-principal {
             margin-left: 250px;
             padding: 40px;
         }
 
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
+        .titulo {
             text-align: center;
-            margin-bottom: 25px;
-            color: #d11b1b;
-            font-weight: bold;
+            font-size: 42px;
+            font-weight: 900;
+            color: #ff9100;
+            margin-top: 40px;
         }
 
-        label {
-            font-weight: 600;
-            color: #333;
+        /* ======================= BOTÕES FINANCEIRO ======================= */
+
+        #btn-container {
+            margin-top: 60px; /* ✓ Ajustado para subir os botões */
+            display: flex;
+            flex-direction: column; /* Linha de cima + botão de baixo */
+            justify-content: center;
+            align-items: center;
+            gap: 50px; /* Distância entre linha superior e botão inferior */
         }
 
-        input[type="text"],
-        input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #f4a01d;
-            border-radius: 5px;
-            font-size: 16px;
-            margin-bottom: 15px;
+        .btn-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 90px; /* Distância entre os botões da linha superior */
         }
 
-        .btn-primary {
-            background-color: #f4a01d;
-            border: none;
+        .action-card {
+            width: 410px;
+            height: 180px;
+            background: #ff9100;
+            border-radius: 22px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            transition: all .25s ease-in-out;
+        }
+
+        .action-card img {
+            width: 82px;
+            opacity: .95;
+            transition: .25s;
+        }
+
+        .action-card span {
+            margin-top: 12px;
+            font-size: 23px;
+            font-weight: 800;
             color: black;
-            font-weight: bold;
-            width: 100%;
-            transition: 0.3s;
         }
 
-        .btn-primary:hover {
-            background-color: #d68c19;
-            color: white;
+        .action-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            background: #ffa733;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.32);
         }
 
-        .btn-secondary {
-            background-color: #d11b1b;
-            border: none;
-            color: white;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
+        .action-card:hover img {
+            transform: scale(1.18);
         }
     </style>
-
-    <script>
-        $(document).ready(function () {
-            $("#cnpj").mask("00.000.000/0000-00");
-            $("#telefone").mask("(00) 00000-0000");
-        });
-    </script>
-
 </head>
 
 <body>
 
-    <div class="container-fluid">
+<div class="container-fluid">
         <div class="row flex-nowrap">
 
             <!-- NAVBAR -->
@@ -253,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark shadow">
-                            <li><a class="dropdown-item" href="#../../perfil/HTML/perfil.php">Perfil</a></li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/perfil.php">Perfil</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -264,45 +222,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <!-- Conteúdo principal -->
-            <div class="col py-3" id="conteudo-principal">
-                <div class="container">
-                    <h2>Cadastro de Fornecedor</h2>
+        <!-- CONTEÚDO -->
+        <div class="col py-3" id="conteudo-principal">
 
-                    <!-- ALERTA -->
-                    <?php if (isset($_GET['status']) && isset($_GET['msg'])) : ?>
-                        <div
-                            class="alert <?php echo $_GET['status'] == 'erro' ? 'alert-danger' : 'alert-success'; ?>">
-                            <?= htmlspecialchars($_GET['msg']); ?>
-                        </div>
-                    <?php endif; ?>
+            <h1 class="titulo">Financeiro</h1>
 
-                    <!-- FORMULÁRIO -->
-                    <form method="POST" novalidate>
+            <div id="btn-container">
 
-                        <label>Nome do Fornecedor *</label>
-                        <input type="text" name="nome" required>
+                <!-- LINHA SUPERIOR: 2 botões -->
+                <div class="btn-row">
+                    <div class="action-card" onclick="window.location.href='relatorio_financeiro.php'">
+                        <img src="../../menu_principal/IMG/financeiro.png">
+                        <span>Relatório Financeiro</span>
+                    </div>
 
-                        <label>CNPJ *</label>
-                        <input type="text" id="cnpj" name="cnpj" maxlength="18" required>
-
-                        <label>Telefone</label>
-                        <input type="text" id="telefone" name="telefone" maxlength="15" placeholder="(00) 00000-0000">
-
-                        <label>E-mail</label>
-                        <input type="email" name="email" placeholder="exemplo@dominio.com">
-
-                        <button type="submit" class="btn btn-primary mt-3">Cadastrar</button>
-                        <a href="lista_fornecedores.php" class="btn btn-secondary mt-2">Voltar</a>
-                    </form>
-
+                    <div class="action-card" onclick="window.location.href='despesas.php'">
+                        <img src="../../menu_principal/IMG/estoque.png">
+                        <span>Despesas</span>
+                    </div>
                 </div>
+
+                <!-- BOTÃO INFERIOR CENTRAL -->
+                <div class="action-card" onclick="window.location.href='fluxo_caixa.php'">
+                    <img src="../../menu_principal/IMG/fastservice.png">
+                    <span>Fluxo de Caixa</span>
+                </div>
+
             </div>
+
         </div>
+
     </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>
 
 <?php $sql->close(); ?>

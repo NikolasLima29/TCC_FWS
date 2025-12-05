@@ -121,26 +121,24 @@ table th, table td {
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
 
                         <li class="nav-item">
-                            <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html"
+                            <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
                             </a>
                         </li>
 
-                    <li>
-                        <a href="/TCC_FWS/FWS_ADM/fast_service/HTML/fast_service.php" id="cor-fonte" class="nav-link align-middle px-0">
-                            <img src="../../menu_principal/IMG/fastservice.png">
-                            <span class="ms-1 d-none d-sm-inline">Fast Service</span>
-                        </a>
-                    </li>
+                        <li><a href="/TCC_FWS/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/fastservice.png">
+                                <span class="ms-1 d-none d-sm-inline">Fast Service</span>
+                            </a></li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/TCC_FWS/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                             </a></li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/TCC_FWS/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/vendaspai.png">
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
                             </a></li>
@@ -157,13 +155,13 @@ table th, table td {
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
 
-                        <li><a href="#"
+                        <li><a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a></li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/TCC_FWS/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a></li>
@@ -174,7 +172,7 @@ table th, table td {
                     <div class="dropdown pb-4">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                             data-bs-toggle="dropdown">
-                            <img src="../../fotodeperfiladm.png " width="30" height="30" class="rounded-circle">
+                            <img src="../../fotodeperfiladm.png" width="30" height="30" class="rounded-circle">
                             <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark shadow">

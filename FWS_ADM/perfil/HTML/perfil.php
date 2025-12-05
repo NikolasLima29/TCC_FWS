@@ -217,7 +217,7 @@ $foto = "../../fotodeperfiladm.png";
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
 
                         <li class="nav-item">
-                            <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html"
+                            <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
@@ -229,12 +229,12 @@ $foto = "../../fotodeperfiladm.png";
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                             </a></li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/TCC_FWS/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                             </a></li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/TCC_FWS/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/vendaspai.png">
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
                             </a></li>
@@ -257,7 +257,7 @@ $foto = "../../fotodeperfiladm.png";
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a></li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/TCC_FWS/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a></li>
