@@ -226,6 +226,18 @@ session_start();
             praticidade.
         </p>
         <img src="../IMG/interior7.jpeg" id="imagem">
+        <div id="mapa-container" style="margin-top: 40px; margin-bottom: 40px; 
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;">
+
+            <h2 style="text-align: center; margin-bottom: 20px; width: 100%;">Nos Visite!</h2>
+
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.0842014343346!2d-46.65555!3d-23.55614!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c73d6c5555%3A0x1c1c1c1c1c1c1c1c!2sR.%20Col%C3%B4mbia%2C%2026%20-%20Jardim%20Am%C3%A9rica%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2001438-000!5e0!3m2!1spt-BR!2sbr!4v1734012345678"
+                width="70%" height="300" style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
     </main>
 
     <footer class="text-center bg-body-tertiary">
