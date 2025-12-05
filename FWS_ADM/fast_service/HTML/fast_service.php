@@ -21,6 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $qtd = intval($item['quantidade']);
             // Desconta do estoque principal
             $conn->query("UPDATE produtos SET estoque = estoque - $qtd WHERE id = $produto_id");
+            // Registrar a saída na tabela movimentacao_estoque com o id da venda
+            $conn->query("INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, data_movimentacao, venda_id) 
+                         VALUES ($produto_id, 'saida', $qtd, NOW(), $pedido_id)");
             // Desconta do lote com validade mais próxima
             $lote = $conn->query("SELECT id, quantidade FROM lotes_produtos WHERE produto_id = $produto_id AND quantidade > 0 ORDER BY validade ASC LIMIT 1");
             if ($lote && $lote->num_rows > 0) {

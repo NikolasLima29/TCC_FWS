@@ -82,7 +82,7 @@ $result = $sql->query($query);
 h2 {
     text-align: center;
     margin-bottom: 25px;
-    color: #d11b1b;
+    color: #ff9100;
     font-weight: bold;
 }
 
@@ -99,6 +99,21 @@ table td {
     vertical-align: middle;
     word-break: break-word;
     white-space: normal;
+}
+
+.table thead.table-dark {
+    background-color: #ff9100;
+}
+
+.table thead.table-dark th {
+    background-color: #ff9100;
+    color: white;
+    border-color: #ff9100;
+    border-right: 1px solid #e68000;
+}
+
+.table thead.table-dark th:last-child {
+    border-right: none;
 }
 
 /* 🔹 LARGURAS IDEIAIS */
@@ -157,6 +172,18 @@ table td:nth-child(9) {
 }
 .no-wrap {
     white-space: nowrap !important;
+}
+
+.btn-cadastro {
+    background-color: #ff9100;
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-cadastro:hover {
+    background-color: #e68000;
+    color: white;
 }
 
 
@@ -326,7 +353,7 @@ table td:nth-child(9) {
                         </tbody>
                     </table>
 
-                    <a href="cadastro_produto.php" class="btn btn-dark mt-3">Cadastrar Novo Produto</a>
+                    <a href="cadastro_produto.php" class="btn btn-cadastro mt-3">Cadastrar Novo Produto</a>
 
                 </div>
             </div>

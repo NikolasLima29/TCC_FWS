@@ -76,21 +76,36 @@ function nivelPermissao($nivel) {
     h2 {
         text-align: center;
         margin-bottom: 15px;
-        color: #d11b1b;
+        color: #ff9100;
         font-weight: bold;
     }
 
     .btn-voltar {
         margin-bottom: 20px;
-        background-color: #d11b1b;
+        background-color: #ff9100;
         color: white;
         font-weight: bold;
     }
-    .btn-voltar:hover { background-color: #a00f0f; }
+    .btn-voltar:hover { background-color: #e68000; }
 
     table th, table td {
         text-align: center;
         vertical-align: middle;
+    }
+
+    .table thead.table-dark {
+        background-color: #ff9100;
+    }
+
+    .table thead.table-dark th {
+        background-color: #ff9100;
+        color: white;
+        border-color: #ff9100;
+        border-right: 1px solid #e68000;
+    }
+
+    .table thead.table-dark th:last-child {
+        border-right: none;
     }
 
     /* Nome com quebra de linha */
