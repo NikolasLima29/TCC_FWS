@@ -25,7 +25,10 @@ if ($venda_id > 0) {
         if ($result_usuario && $row_usuario = mysqli_fetch_assoc($result_usuario)) {
             $usuario_nome = htmlspecialchars($row_usuario['nome']);
             $usuario_telefone = preg_replace('/[^0-9]/', '', $row_usuario['telefone']);
-            $codigo = $usuario_telefone ? substr($usuario_telefone, -4) : '';
+            // Gerar código único para este pedido: últimos 2 dígitos do telefone + últimos 2 dígitos do ID da venda
+            $telefone_ultimos = $usuario_telefone ? substr($usuario_telefone, -2) : '00';
+            $venda_id_ultimos = str_pad($venda_id % 100, 2, '0', STR_PAD_LEFT);
+            $codigo = $telefone_ultimos . $venda_id_ultimos;
         }
         
         // Buscar itens da venda
@@ -145,13 +148,48 @@ if ($venda_id > 0) {
             position: relative;
         }
 
-        .logo img { height: 45px; }
-        .menu-toggle { display: none; font-size: 28px; background: none; border: none; color: white; margin-left: auto; cursor: pointer; }
-        nav { margin-left: 40px; }
-        nav ul { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; }
-        nav ul li a { text-decoration: none; color: white; font-weight: bold; font-size: 15px; }
-        .carrinho img { height: 27px; }
-        #bem-vindo { font-weight: bold; font-size: 16px; color: white; }
+        .logo img {
+            height: 45px;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 28px;
+            background: none;
+            border: none;
+            color: white;
+            margin-left: auto;
+            cursor: pointer;
+        }
+
+        nav {
+            margin-left: 40px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .carrinho img {
+            height: 27px;
+        }
+
+        #bem-vindo {
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+        }
 
         .no-underline {
             text-decoration: none !important;
@@ -174,26 +212,62 @@ if ($venda_id > 0) {
 
         /* Responsividade: header adjustments for mobile */
         @media (max-width: 768px) {
-            nav { position: fixed; top: 70px; left: 0; width: 100%; background: var(--primary-red); padding: 20px 0; display: none; z-index: 2000; }
-            nav.active { display: block; }
-            nav ul { flex-direction: column; text-align: center; gap: 14px; }
-            .menu-toggle { display: block; }
-            .carrinho, #bem-vindo { display: none; }
+            nav {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: var(--primary-red);
+                padding: 20px 0;
+                display: none;
+                z-index: 2000;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                text-align: center;
+                gap: 14px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .carrinho,
+            #bem-vindo {
+                display: none;
+            }
         }
 
         /* Responsividade: Card de Pedido */
         @media (max-width: 768px) {
+
             /* Cabeçalho do Card */
             .card-header-pedido {
                 flex-direction: column !important;
-                align-items: flex-start !important;
+                align-items: center !important;
                 gap: 15px !important;
                 padding: 15px 20px !important;
+                text-align: center !important;
             }
 
-            .card-header-pedido > div:last-child {
+            .card-header-pedido>div:first-child {
                 width: 100%;
                 text-align: left !important;
+            }
+
+            .card-header-pedido>div:nth-child(2) {
+                width: 100%;
+                text-align: center !important;
+            }
+
+            .card-header-pedido>div:last-child {
+                width: 100%;
+                text-align: center !important;
             }
 
             .card-header-pedido h2 {
@@ -201,7 +275,7 @@ if ($venda_id > 0) {
             }
 
             /* Destaque do código */
-            .card-header-pedido > div:first-child > div {
+            .card-header-pedido>div:nth-child(2)>div {
                 margin-bottom: 10px !important;
             }
 
@@ -280,6 +354,7 @@ if ($venda_id > 0) {
         }
 
         @media (max-width: 480px) {
+
             /* Ajustes adicionais para telas muito pequenas */
             .card {
                 border-width: 2px !important;
@@ -298,16 +373,16 @@ if ($venda_id > 0) {
             }
 
             /* Destaque do código em mobile */
-            .card-header-pedido > div:first-child > div {
+            .card-header-pedido>div:first-child>div {
                 padding: 8px 12px !important;
                 margin-bottom: 8px !important;
             }
 
-            .card-header-pedido > div:first-child > div p:first-child {
+            .card-header-pedido>div:first-child>div p:first-child {
                 font-size: 0.75rem !important;
             }
 
-            .card-header-pedido > div:first-child > div p:last-child {
+            .card-header-pedido>div:first-child>div p:last-child {
                 font-size: 1.3rem !important;
                 margin-top: 4px !important;
             }
@@ -357,12 +432,12 @@ if ($venda_id > 0) {
 
         /* Responsividade: Modal de Pagamento */
         @media (max-width: 768px) {
-            #modal-pagamento > div {
+            #modal-pagamento>div {
                 max-width: 90% !important;
                 width: 90% !important;
             }
 
-            #modal-pagamento > div h3 {
+            #modal-pagamento>div h3 {
                 font-size: 1.1rem !important;
                 margin-bottom: 15px !important;
             }
@@ -391,12 +466,12 @@ if ($venda_id > 0) {
         }
 
         @media (max-width: 480px) {
-            #modal-pagamento > div {
+            #modal-pagamento>div {
                 max-width: 95% !important;
                 padding: 20px !important;
             }
 
-            #modal-pagamento > div h3 {
+            #modal-pagamento>div h3 {
                 font-size: 1rem !important;
                 margin-bottom: 12px !important;
             }
@@ -508,20 +583,27 @@ if ($venda_id > 0) {
                         $.ajax({
                             url: '/TCC_FWS/FWS_Cliente/produto/PHP/api-produtos.php',
                             dataType: 'json',
-                            data: { q: request.term },
-                            success: function (data) { response(data); }
+                            data: {
+                                q: request.term
+                            },
+                            success: function (data) {
+                                response(data);
+                            }
                         });
                     },
                     minLength: 2,
                     select: function (event, ui) {
-                        window.location.href = 'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+                        window.location.href =
+                            'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
                     }
                 }).data('ui-autocomplete') || $("#search").data('autocomplete');
 
                 if (autocomplete) {
                     autocomplete._renderItem = function (ul, item) {
                         return $("<li>")
-                            .append("<div><img src='" + item.foto + "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle; background-color: #FFD100 !important;'/>" + item.label + "</div>")
+                            .append("<div><img src='" + item.foto +
+                                "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle; background-color: #FFD100 !important;'/>" +
+                                item.label + "</div>")
                             .appendTo(ul);
                     };
                 }
@@ -533,55 +615,68 @@ if ($venda_id > 0) {
     <main style="background-color: #eee; min-height: calc(100vh - 200px); padding: 40px 20px;">
         <div class="container" style="max-width: 900px;">
             <!-- Título da página -->
-            <h1 style="font-size: 2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 30px; text-align: center;">
+            <h1
+                style="font-size: 2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 30px; text-align: center;">
                 Detalhes do Pedido
             </h1>
 
             <!-- Card Principal do Pedido -->
-            <div class="card" style="border: 3px solid var(--accent-yellow); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden;">
-                
+            <div class="card"
+                style="border: 3px solid var(--accent-yellow); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden;">
+
                 <!-- Cabeçalho do Card -->
-                <div class="card-header-pedido" style="background: linear-gradient(135deg, var(--primary-red) 0%, #a00000 100%); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
+                <div class="card-header-pedido"
+                    style="background: linear-gradient(135deg, var(--primary-red) 0%, #a00000 100%); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="background: rgba(255, 209, 0, 0.25); padding: 10px 16px; border-radius: 8px; display: inline-block; margin-bottom: 12px;">
-                            <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">Código do Pedido</p>
-                            <p style="margin: 5px 0 0 0; font-size: 1.5rem; font-weight: bold; color: #FFD100; letter-spacing: 2px;"><?= $codigo ?: 'N/A' ?></p>
-                        </div>
-                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold;">Pedido #<?= $venda ? htmlspecialchars($venda['id']) : 'N/A' ?></h2>
-                        <p style="margin: 5px 0 0 0; font-size: 0.95rem; opacity: 0.95;">Realizado em <?= $venda ? date('d/m/Y H:i', strtotime($venda['data_criacao'])) : 'N/A' ?></p>
+                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: bold;">Pedido
+                            #<?= $venda ? htmlspecialchars($venda['id']) : 'N/A' ?></h2>
+                        <p style="margin: 5px 0 0 0; font-size: 0.95rem; opacity: 0.95;">Realizado em
+                            <?= $venda ? date('d/m/Y H:i', strtotime($venda['data_criacao'])) : 'N/A' ?></p>
                     </div>
-                    <div style="background: rgba(255,255,255,0.2); padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: right;">
-                        <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">Status</p>
-                        <p style="margin: 5px 0 0 0; font-size: 1.1rem;">
-                            <?php
-                            if ($venda) {
-                                $status_map = [
-                                    'em_preparo' => 'Ainda não foi retirado',
-                                    'pronto_para_retirar' => 'Pronto para retirar',
-                                    'finalizada' => 'Finalizado',
-                                    'cancelada' => 'Cancelado'
-                                ];
-                                echo isset($status_map[$venda['situacao_compra']]) ? $status_map[$venda['situacao_compra']] : ucfirst($venda['situacao_compra']);
-                            } else {
-                                echo 'N/A';
-                            }
-                            ?>
-                        </p>
+                    <div style="display: flex; gap: 20px; align-items: center;">
+                        <div
+                            style="background: rgba(255, 209, 0, 0.25); padding: 10px 16px; border-radius: 8px; text-align: center;">
+                            <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">Código</p>
+                            <p
+                                style="margin: 5px 0 0 0; font-size: 1.3rem; font-weight: bold; color: #FFD100; letter-spacing: 2px;">
+                                <?= $codigo ?: 'N/A' ?></p>
+                        </div>
+                        <div
+                            style="background: rgba(255,255,255,0.2); padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: center; white-space: nowrap;">
+                            <p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">Status</p>
+                            <p style="margin: 5px 0 0 0; font-size: 1.1rem;">
+                                <?php
+                                if ($venda) {
+                                    $status_map = [
+                                        'em_preparo' => 'Ainda não foi retirado',
+                                        'pronto_para_retirar' => 'Pronto para retirar',
+                                        'finalizada' => 'Finalizado',
+                                        'cancelada' => 'Cancelado'
+                                    ];
+                                    echo isset($status_map[$venda['situacao_compra']]) ? $status_map[$venda['situacao_compra']] : ucfirst($venda['situacao_compra']);
+                                } else {
+                                    echo 'N/A';
+                                }
+                                ?>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Conteúdo do Card -->
                 <div class="card-content" style="padding: 30px;">
-                    
+
                     <!-- Seção: Informações do Pedido -->
                     <div class="card-section" style="margin-bottom: 30px;">
-                        <h3 style="font-size: 1.2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 15px; border-bottom: 2px solid var(--accent-yellow); padding-bottom: 10px;">
+                        <h3
+                            style="font-size: 1.2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 15px; border-bottom: 2px solid var(--accent-yellow); padding-bottom: 10px;">
                             📋 Informações do Pedido
                         </h3>
                         <div class="info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div>
                                 <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Cliente:</label>
-                                <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;"><?= $usuario_nome ?: 'N/A' ?></p>
+                                <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;">
+                                    <?= $usuario_nome ?: 'N/A' ?></p>
                             </div>
                             <div>
                                 <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Pagamento:</label>
@@ -591,9 +686,10 @@ if ($venda_id > 0) {
                             </div>
                             <?php if ($venda && in_array($venda['situacao_compra'], ['em_preparo', 'pronto_para_retirar']) && !empty($venda['tempo_chegada'])): ?>
                             <div>
-                                <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Tempo Restante:</label>
+                                <label style="font-weight: bold; color: #333; font-size: 0.9rem;">Tempo
+                                    Restante:</label>
                                 <p style="margin: 5px 0 0 0; font-size: 1rem; color: #555;">
-                                    <i class="fas fa-hourglass-end" style="color: var(--accent-orange);"></i> 
+                                    <i class="fas fa-hourglass-end" style="color: var(--accent-orange);"></i>
                                     <span id="timer-display"><?= $venda['tempo_chegada'] ?></span>
                                 </p>
                             </div>
@@ -603,16 +699,19 @@ if ($venda_id > 0) {
 
                     <!-- Seção: Itens do Pedido -->
                     <div class="card-section" style="margin-bottom: 30px;">
-                        <h3 style="font-size: 1.2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 15px; border-bottom: 2px solid var(--accent-yellow); padding-bottom: 10px;">
+                        <h3
+                            style="font-size: 1.2rem; font-weight: bold; color: var(--primary-red); margin-bottom: 15px; border-bottom: 2px solid var(--accent-yellow); padding-bottom: 10px;">
                             🛒 Itens do Pedido
                         </h3>
-                        <div style="background: #f9f9f9; border-radius: 8px; overflow-x: auto; border: 1px solid #e0e0e0;">
+                        <div
+                            style="background: #f9f9f9; border-radius: 8px; overflow-x: auto; border: 1px solid #e0e0e0;">
                             <table class="items-table" style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr style="background-color: var(--accent-yellow); color: #111;">
                                         <th style="padding: 12px; text-align: left; font-weight: bold;">Qtd</th>
                                         <th style="padding: 12px; text-align: left; font-weight: bold;">Produto</th>
-                                        <th style="padding: 12px; text-align: right; font-weight: bold;">Valor Unit.</th>
+                                        <th style="padding: 12px; text-align: right; font-weight: bold;">Valor Unit.
+                                        </th>
                                         <th style="padding: 12px; text-align: right; font-weight: bold;">Subtotal</th>
                                     </tr>
                                 </thead>
@@ -638,7 +737,8 @@ if ($venda_id > 0) {
                     </div>
 
                     <!-- Seção: Resumo Financeiro -->
-                    <div class="financial-summary" style="margin-bottom: 30px; background: linear-gradient(to right, rgba(255, 209, 0, 0.1), rgba(196, 0, 0, 0.05)); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-yellow);">
+                    <div class="financial-summary"
+                        style="margin-bottom: 30px; background: linear-gradient(to right, rgba(255, 209, 0, 0.1), rgba(196, 0, 0, 0.05)); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-yellow);">
                         <?php
                         $subtotal = 0;
                         $frete = 0;
@@ -653,33 +753,39 @@ if ($venda_id > 0) {
                         }
                         $total = $subtotal + $frete - $desconto;
                         ?>
-                        <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div class="financial-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Subtotal:</span>
                             <span style="color: #555;">R$ <?= number_format($subtotal, 2, ',', '.') ?></span>
                         </div>
-                        <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div class="financial-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Frete:</span>
                             <span style="color: #555;">R$ <?= number_format($frete, 2, ',', '.') ?></span>
                         </div>
-                        <div class="financial-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <div class="financial-row"
+                            style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                             <span style="font-weight: 500; color: #333;">Desconto:</span>
                             <span style="color: #555;">-R$ <?= number_format($desconto, 2, ',', '.') ?></span>
                         </div>
                         <hr style="margin: 10px 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
                         <div class="financial-total" style="display: flex; justify-content: space-between;">
                             <span style="font-weight: bold; font-size: 1.1rem; color: var(--primary-red);">Total:</span>
-                            <span style="font-weight: bold; font-size: 1.3rem; color: var(--primary-red);">R$ <?= number_format($total, 2, ',', '.') ?></span>
+                            <span style="font-weight: bold; font-size: 1.3rem; color: var(--primary-red);">R$
+                                <?= number_format($total, 2, ',', '.') ?></span>
                         </div>
                     </div>
 
                     <!-- Botões de Ação -->
                     <div class="action-buttons" style="display: flex; gap: 12px; flex-wrap: wrap;">
                         <?php if ($venda && $venda['situacao_compra'] !== 'cancelada'): ?>
-                        <button style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--accent-yellow); color: #111; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
+                        <button
+                            style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--accent-yellow); color: #111; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s;">
                             ⏱️ Adicionar 15 Minutos
                         </button>
                         <?php endif; ?>
-                        <a href="../../meus_pedidos/HTML/Meus_pedidos.php" style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--primary-red); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                        <a href="../../meus_pedidos/HTML/Meus_pedidos.php"
+                            style="flex: 1; min-width: 150px; padding: 12px 20px; background-color: var(--primary-red); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: center;">
                             ← Voltar aos Pedidos
                         </a>
                     </div>
@@ -732,26 +838,31 @@ if ($venda_id > 0) {
             // espera formato HH:MM:SS
             const parts = timestr.split(':').map(Number);
             if (parts.length !== 3) return 0;
-            return ((parts[0]*3600) + (parts[1]*60) + parts[2]) * 1000;
+            return ((parts[0] * 3600) + (parts[1] * 60) + parts[2]) * 1000;
         }
+
         function formatRemaining(ms) {
             if (ms <= 0) return '00:00:00';
-            const totalSec = Math.floor(ms/1000);
-            const h = Math.floor(totalSec/3600);
-            const m = Math.floor((totalSec%3600)/60);
+            const totalSec = Math.floor(ms / 1000);
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
             const s = totalSec % 60;
             return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
         }
 
         // Atualizar timer se existir
-        const timerDisplay = document.getElementById('timer-display');
-        <?php if ($venda && in_array($venda['situacao_compra'], ['em_preparo', 'pronto_para_retirar']) && !empty($venda['tempo_chegada'])): ?>
-        const vendaCreatedAt = new Date('<?= $venda['data_criacao'] ?>'.replace(' ', 'T'));
-        const tempoChegada = '<?= $venda['tempo_chegada'] ?>';
+        const timerDisplay = document.getElementById('timer-display'); <
+        ? php
+        if ($venda && in_array($venda['situacao_compra'], ['em_preparo', 'pronto_para_retirar']) && !empty($venda[
+                'tempo_chegada'])): ? >
+            const vendaCreatedAt = new Date('<?= $venda['
+                data_criacao '] ?>'.replace(' ', 'T'));
+        const tempoChegada = '<?= $venda['
+        tempo_chegada '] ?>';
         const msLimit = parseTimeToMs(tempoChegada);
         const deadline = new Date(vendaCreatedAt.getTime() + msLimit);
 
-        setInterval(function() {
+        setInterval(function () {
             const now = Date.now();
             const restante = deadline.getTime() - now;
             if (timerDisplay) {
@@ -760,8 +871,8 @@ if ($venda_id > 0) {
             if (restante <= 0) {
                 location.reload();
             }
-        }, 500);
-        <?php endif; ?>
+        }, 500); <
+        ? php endif; ? >
     </script>
 </body>
 
