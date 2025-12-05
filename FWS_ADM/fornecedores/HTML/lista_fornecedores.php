@@ -113,7 +113,7 @@ function formatarTelefone($tel) {
     h2 {
         text-align: center;
         margin-bottom: 25px;
-        color: #d11b1b;
+        color: #ff9100;
         font-weight: bold;
     }
 
@@ -121,6 +121,21 @@ function formatarTelefone($tel) {
     table td {
         text-align: center;
         vertical-align: middle;
+    }
+
+    .table thead.table-dark {
+        background-color: #ff9100;
+    }
+
+    .table thead.table-dark th {
+        background-color: #ff9100;
+        color: white;
+        border-color: #ff9100;
+        border-right: 1px solid #e68000;
+    }
+
+    .table thead.table-dark th:last-child {
+        border-right: none;
     }
 
     .btn-edit {
@@ -132,6 +147,30 @@ function formatarTelefone($tel) {
 
     .btn-edit:hover {
         background-color: #d68c19;
+        color: white;
+    }
+
+    .btn-produtos {
+        background-color: #1b8914;
+        border: none;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-produtos:hover {
+        background-color: #157d10;
+        color: white;
+    }
+
+    .btn-cadastro {
+        background-color: #ff9100;
+        border: none;
+        color: white;
+        font-weight: bold;
+    }
+
+    .btn-cadastro:hover {
+        background-color: #e68000;
         color: white;
     }
 
@@ -271,7 +310,7 @@ function formatarTelefone($tel) {
 
                                 <td>
                                     <a href="produtos_por_fornecedor.php?id=<?php echo $row['id']; ?>"
-                                        class="btn btn-info btn-sm">Ver Produtos</a>
+                                        class="btn btn-produtos btn-sm">Ver Produtos</a>
                                 </td>
 
                                 <td>
@@ -289,7 +328,7 @@ function formatarTelefone($tel) {
 
                     </table>
 
-                    <a href="cadastrar_fornecedor.php" class="btn btn-dark mt-3">Cadastrar Novo Fornecedor</a>
+                    <a href="cadastrar_fornecedor.php" class="btn btn-cadastro mt-3">Cadastrar Novo Fornecedor</a>
                 </div>
             </div>
         </div>
