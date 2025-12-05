@@ -43,7 +43,6 @@ function nivel($n) {
     return $n == 1 ? "Atendente" : "Gerente";
 }
 
-$foto = "../../fotodeperfiladm.png";
 
 /* ============================================================
    PROCESSAR EXCLUSÃO
