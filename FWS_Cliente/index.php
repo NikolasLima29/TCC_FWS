@@ -193,10 +193,10 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 
     <nav id="menu-nav">
       <ul class="ul align-items-center">
-        <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+        <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
 
         <li>
-          <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php" method="get"
+          <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php" method="get"
             style="margin: 0 10px;">
             <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
               placeholder="Pesquisar..." aria-label="Pesquisar">
@@ -206,14 +206,14 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
           </form>
         </li>
 
-        <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
-        <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+        <li><a href="/Fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+        <li><a href="/Fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
       </ul>
     </nav>
 
     <div class="carrinho">
-      <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
-        <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+      <a href="/Fws/FWS_Cliente/carrinho/HTML/carrinho.php">
+        <img src="/Fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
       </a>
     </div>
 
@@ -230,9 +230,9 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 
       <div id="user-menu"
         style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-        <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php"
+        <a href="/Fws/FWS_Cliente/info_usuario/HTML/info_usuario.php"
           style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-        <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link"
+        <a href="/Fws/FWS_Cliente/logout.php" id="logout-link"
           style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
       </div>
 
@@ -269,7 +269,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
         var autocomplete = $("#search").autocomplete({
           source: function (request, response) {
             $.ajax({
-              url: '/TCC_FWS/FWS_Cliente/produto/PHP/api-produtos.php',
+              url: '/Fws/FWS_Cliente/produto/PHP/api-produtos.php',
               dataType: 'json',
               data: {
                 q: request.term
@@ -472,12 +472,12 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
       <div class="carousel-inner">
         <?php foreach($produtos_carrossel as $index => $produto): ?>
         <div class="carousel-item <?= $index===0 ? 'active' : '' ?>">
-          <a href="/TCC_FWS/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>">
+          <a href="/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>">
             <img src="<?= htmlspecialchars($produto['foto_produto']) ?>" class="d-block w-100"
               alt="<?= htmlspecialchars($produto['nome']) ?>">
           </a>
           <div class="carousel-caption d-block">
-            <a href="/TCC_FWS/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>"
+            <a href="/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>"
               style="color:#c40000; text-decoration:none;">
               <h5 id="nome"><?= htmlspecialchars($produto['nome']) ?></h5>
             </a>
@@ -485,7 +485,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
             <p><strong>R$ <?= number_format($produto['preco_venda'],2,',','.') ?></strong></p>
             <div class="carrossel-buttons">
               <a class="ver"
-                href="/TCC_FWS/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>"
+                href="/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=<?= $produto['id'] ?>"
                 style="margin-right:7px;">Ver Mais</a>
               <button type="button" class="Carrinho btn btn-outline-success btn-sm" data-produto='<?= htmlspecialchars(json_encode([
       "id"=>$produto["id"],
@@ -596,7 +596,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
           return;
         }
         // Checar estoque antes de abrir modal (AJAX correto)
-        $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+        $.post('/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
           id_produto: dados.id,
           verificar_limite: 1
         }, function(resp) {
@@ -666,7 +666,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
           $("#modal-add-carrinho, #modal-backdrop").hide();
         });
         $(".btn-popup.add").on("click", function () {
-          $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+          $.post('/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
             id_produto: dados.id,
             quantidade: qtd,
             ajax: 1
@@ -691,8 +691,8 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
         $("#modal-login-alert").html(`
       <div style="color:#c40000;font-weight:700;font-size:1.1rem;margin-bottom:14px;text-align:center">É necessário fazer login para adicionar produtos ao carrinho</div>
       <div class="modal-actions" style="margin-bottom:16px;">
-        <a href="/TCC_FWS/FWS_Cliente/login/HTML/login.html" class="btn-login">Login</a>
-        <a id="btn_modal_cadastrar"href="/TCC_FWS/FWS_Cliente/cadastro/HTML/cadastro.html" class="btn-cadastrar">Cadastrar</a>
+        <a href="/Fws/FWS_Cliente/login/HTML/login.html" class="btn-login">Login</a>
+        <a id="btn_modal_cadastrar"href="/Fws/FWS_Cliente/cadastro/HTML/cadastro.html" class="btn-cadastrar">Cadastrar</a>
  <button class="btn-popup btn-voltar">Voltar</button>    
     
     `).show();
@@ -831,34 +831,36 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     }
 
     .ver {
-      background: white;
+      background: #FFD100;
       border: 3px solid #FFD100;
       color: black;
       padding: 5px 10px;
       border-radius: 4px;
       text-decoration: none;
+      font-weight: 600;
     }
 
     .ver:hover {
-      background: #FFD100;
+      background: white;
       color: black;
-      border-color: black;
+      border-color: #FFD100;
     }
 
 
     .Carrinho {
       background: white;
-      border: 3px solid #23d44cff;
-      color: black;
+      border: 2px solid #00BC5B;
+      color: #00BC5B;
       padding: 5px 10px;
       border-radius: 4px;
       text-decoration: none;
+      font-weight: 600;
     }
 
     .Carrinho:hover {
-      background: #23d44cff;
-      color: black;
-      border-color: black !important;
+      background: #00BC5B;
+      color: white;
+      border-color: #00BC5B !important;
     }
 
     .carousel-control-prev,

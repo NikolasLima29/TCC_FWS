@@ -73,6 +73,7 @@ if (in_array($categoria_atual, $categorias_sem_sinergia)) {
         WHERE LOWER(c.nome) = '$categoria_alvo'
         AND p.id != $produto_id
         AND p.estoque >= 2
+        ORDER BY p.nome ASC
         LIMIT 5
     ";
 
@@ -94,6 +95,24 @@ $result_recomendados = $conn->query($sql_recomendados);
 
 if (!$result_recomendados) {
     die("Erro ao buscar recomendações: " . $conn->error);
+}
+
+// Se não encontrou produtos na categoria sinérgica, usar fallback aleatório
+if ($result_recomendados->num_rows == 0) {
+    $titulo_recomendacoes = "Talvez você goste destes produtos:";
+    $sql_fallback = "
+        SELECT id, nome, preco_venda, foto_produto
+        FROM produtos
+        WHERE id != $produto_id
+        AND estoque >= 2
+        ORDER BY RAND()
+        LIMIT 5
+    ";
+    $result_recomendados = $conn->query($sql_fallback);
+    
+    if (!$result_recomendados) {
+        die("Erro ao buscar recomendações (fallback): " . $conn->error);
+    }
 }
 
 ?>
@@ -144,17 +163,17 @@ if (!$result_recomendados) {
 
     <nav class="nav-links">
         <ul class="ul align-items-center">
-            <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+            <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
             <li>
-                <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php" method="get" style="margin: 0 10px;">
+                <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php" method="get" style="margin: 0 10px;">
                     <input id="search" class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..." aria-label="Pesquisar">
                     <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
                         <i class="bi bi-search"></i>
                     </button>
                 </form>
             </li>
-            <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
-            <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+            <li><a href="/Fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+            <li><a href="/Fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>
 
@@ -200,8 +219,8 @@ if (!$result_recomendados) {
 </script>
 
     <div class="carrinho">
-        <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
-            <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+        <a href="/Fws/FWS_Cliente/carrinho/HTML/carrinho.php">
+            <img src="/Fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
         </a>
     </div>
 
@@ -217,8 +236,8 @@ if (!$result_recomendados) {
             </div>
 
             <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-                <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-                <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
+                <a href="/Fws/FWS_Cliente/info_usuario/HTML/info_usuario.php" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
+                <a href="/Fws/FWS_Cliente/logout.php" id="logout-link" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
             </div>
 
             <script>
@@ -251,12 +270,15 @@ if (!$result_recomendados) {
   <div
   class="w-100 py-4 d-flex justify-content-center align-items-center"
   style="background: <?php echo $produto['categoria_cor']; ?>; min-height: 330px; border-bottom: 8px solid rgba(251, 46, 46, 1);">
-  <img
-    src="<?php echo $produto['foto_produto']; ?>"
-    alt="Produto"
-    class="img-fluid rounded shadow bg-white p-3"
-    style="max-width: 420px; background: white;"
-  />
+  <div class="zoom-container" style="position: relative; overflow: hidden; width: 420px; height: 420px; border-radius: 8px; background: white;">
+    <img
+      id="imagem-zoom"
+      src="<?php echo $produto['foto_produto']; ?>"
+      alt="Produto"
+      class="img-fluid rounded shadow bg-white p-3"
+      style="max-width: 420px; width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; transition: transform 0.3s ease;"
+    />
+  </div>
 </div>
 
   <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap:32px; margin: 40px 40px 0 40px;">
@@ -277,6 +299,20 @@ if (!$result_recomendados) {
       <div style="margin-bottom: 30px; background:#F2F2F2; border-radius: 7px; border:2px solid #222; padding:12px 18px 10px 18px;">
         <span style="font-weight:bold;">Fornecedor:</span>
         <span style="margin-left: 7px;"><?php echo htmlspecialchars($produto['fornecedor_nome']); ?></span>
+      </div>
+
+      <!-- Botões de Compartilhamento -->
+      <div style="margin-bottom: 30px; display: flex; gap: 12px; align-items: center;">
+        <span style="font-weight:bold; font-size: 0.95rem;">Compartilhar:</span>
+        <button type="button" class="btn-compartilhar-whatsapp" data-produto-id="<?php echo $produto['id']; ?>" data-produto-nome="<?php echo htmlspecialchars($produto['nome']); ?>" title="Compartilhar no WhatsApp" style="background: white; border: 2px solid #25D366; color: #25D366; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem;">
+          <i class="fab fa-whatsapp"></i>
+        </button>
+        <button type="button" class="btn-compartilhar-facebook" data-produto-id="<?php echo $produto['id']; ?>" data-produto-nome="<?php echo htmlspecialchars($produto['nome']); ?>" title="Compartilhar no Facebook" style="background: white; border: 2px solid #1877F2; color: #1877F2; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem;">
+          <i class="fab fa-facebook"></i>
+        </button>
+        <button type="button" class="btn-compartilhar-link" data-produto-id="<?php echo $produto['id']; ?>" title="Copiar link" style="background: white; border: 2px solid #c40000; color: #c40000; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem;">
+          <i class="fas fa-link"></i>
+        </button>
       </div>
 
       <!-- Aviso +18 para bebidas/cigarros -->
@@ -326,7 +362,7 @@ echo '<div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">';
 
 while ($rec = $result_recomendados->fetch_assoc()) {
 
-    $foto = !empty($rec["foto_produto"]) ? htmlspecialchars($rec["foto_produto"]) : "/TCC_FWS/IMG_Produtos/sem_imagem.png";
+    $foto = !empty($rec["foto_produto"]) ? htmlspecialchars($rec["foto_produto"]) : "/Fws/IMG_Produtos/sem_imagem.png";
     $nome = ucwords(strtolower(htmlspecialchars($rec["nome"])));
     $preco = number_format($rec["preco_venda"], 2, ',', '.');
     $id = $rec["id"];
@@ -352,10 +388,10 @@ while ($rec = $result_recomendados->fetch_assoc()) {
                 <div class="mt-2 d-flex flex-column gap-2">
 
                     <a href="produto_especifico.php?id=' . $id . '" 
-                       class="btn btn-primary btn-sm">Ver mais</a>
+                       class="btn btn-primary btn-sm" style="width: 100%; text-align: center;">Ver mais</a>
 
                     <button type="button"
-                        class="Carrinho btn btn-outline-success btn-sm"
+                        class="Carrinho btn btn-outline-success btn-sm" style="width: 100%;"
                         data-produto=\'' . htmlspecialchars(json_encode([
                             "id" => $id,
                             "nome" => $nome,
@@ -717,7 +753,7 @@ $(function () {
 
     // PRIMEIRO: verifica limite no backend com tratamento de 403
     $.ajax({
-      url: '/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
+      url: '/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
       method: 'POST',
       data: {
         verificar_limite: 1,
@@ -841,7 +877,7 @@ $(function () {
     // CONFIRMAR ADIÇÃO
     $(".btn-popup.add").on("click", function () {
 
-      $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+      $.post('/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
         id_produto: dados.id,
         quantidade: qtd,
         ajax: 1
@@ -1242,19 +1278,36 @@ main p {
     }
 
     .btn-primary.btn-sm {
-      background: white;
-      border: 3px solid #FFD100;
-
-      color: black;
-      padding: 5px 10px;
-      border-radius: 4px;
-      text-decoration: none;
+      background: #FFD100 !important;
+      border: 3px solid #FFD100 !important;
+      color: black !important;
+      padding: 5px 10px !important;
+      border-radius: 4px !important;
+      text-decoration: none !important;
+      font-weight: 600 !important;
     }
 
     .btn-primary.btn-sm:hover {
-      background: #FFD100;
-      color: black;
-      border-color: black;
+      background: white !important;
+      color: black !important;
+      border-color: #FFD100 !important;
+    }
+
+    .btn-outline-success.btn-sm {
+      background: white !important;
+      border: 2px solid #00BC5B !important;
+      color: #00BC5B !important;
+      padding: 5px 10px !important;
+      border-radius: 4px !important;
+      text-decoration: none !important;
+      font-weight: 600 !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .btn-outline-success.btn-sm:hover {
+      background: #00BC5B !important;
+      color: white !important;
+      border-color: #00BC5B !important;
     }
 
     .custom-backdrop {
@@ -1393,10 +1446,162 @@ main p {
       cursor: pointer;
       margin: 0 6px;
     }
+
+    /* Zoom de imagem */
+    .zoom-container {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .zoom-container img {
+      transition: transform 0.3s ease;
+      transform-origin: center;
+    }
+
+    .zoom-container img:hover {
+      transform: scale(1.5);
+      cursor: zoom-out;
+    }
+
+    .modal-zoom {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-zoom.active {
+      display: flex;
+    }
+
+    .modal-zoom img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+
+    .modal-zoom .close-zoom {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      z-index: 10000;
+    }
+
+    .modal-zoom .close-zoom:hover {
+      color: #ccc;
+    }
 </style>
 
 
     </style>
+
+  <div id="modal-zoom" class="modal-zoom">
+    <span class="close-zoom">&times;</span>
+    <img id="imagem-zoom-modal" src="" alt="Zoom da imagem">
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const imagemZoom = document.getElementById('imagem-zoom');
+      const modalZoom = document.getElementById('modal-zoom');
+      const imagemZoomModal = document.getElementById('imagem-zoom-modal');
+      const closeZoom = document.querySelector('.close-zoom');
+
+      if (!imagemZoom) return;
+
+      // Abrir modal com zoom
+      imagemZoom.addEventListener('click', function() {
+        imagemZoomModal.src = this.src;
+        modalZoom.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+
+      // Fechar modal
+      closeZoom.addEventListener('click', function() {
+        modalZoom.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      });
+
+      // Fechar modal clicando fora da imagem
+      modalZoom.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+          document.body.style.overflow = 'auto';
+        }
+      });
+
+      // Fechar com ESC
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modalZoom.classList.contains('active')) {
+          modalZoom.classList.remove('active');
+          document.body.style.overflow = 'auto';
+        }
+      });
+
+      // Compartilhamento no WhatsApp
+      document.querySelectorAll('.btn-compartilhar-whatsapp').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const produtoId = this.dataset.produtoId;
+          const produtoNome = this.dataset.produtoNome;
+          const url = `${window.location.origin}/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
+          const mensagem = encodeURIComponent(`Confira este produto:\n\n${produtoNome}\n\n${url}`);
+          window.open(`https://wa.me/?text=${mensagem}`, '_blank');
+        });
+      });
+
+      // Compartilhamento no Facebook
+      document.querySelectorAll('.btn-compartilhar-facebook').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const produtoId = this.dataset.produtoId;
+          const url = `${window.location.origin}/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
+        });
+      });
+
+      // Copiar link para clipboard
+      document.querySelectorAll('.btn-compartilhar-link').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const produtoId = this.dataset.produtoId;
+          const url = `${window.location.origin}/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
+          
+          navigator.clipboard.writeText(url).then(() => {
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+              this.innerHTML = originalHTML;
+            }, 2000);
+          }).catch(() => {
+            // Fallback para browsers antigos
+            const textarea = document.createElement('textarea');
+            textarea.value = url;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            const originalHTML = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+              this.innerHTML = originalHTML;
+            }, 2000);
+          });
+        });
+      });
+    });
+  </script>
 
 
 </body>

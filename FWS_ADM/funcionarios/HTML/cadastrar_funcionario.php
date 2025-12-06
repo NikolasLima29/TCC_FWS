@@ -242,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png" alt="Logo"></li>
 
                         <li class="nav-item">
-                            <a href="/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html"
+                            <a href="/Fws/FWS_ADM/menu_principal/HTML/menu_principal1.html"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png" alt="Painel Geral">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
@@ -264,19 +264,19 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
                             </a></li>
 
-                        <li><a href="/TCC_FWS/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                        <li><a href="/Fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
                                 id="cor-fonte">
                                 <img src="../../menu_principal/IMG/estoque.png" alt="Estoque">
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
                             </a></li>
 
-                        <li><a href="/TCC_FWS/FWS_ADM/produtos/HTML/lista_produtos.php"
+                        <li><a href="/Fws/FWS_ADM/produtos/HTML/lista_produtos.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png" alt="Produtos">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
 
-                        <li><a href="/TCC_FWS/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
+                        <li><a href="/Fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png" alt="Fornecedores">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
@@ -454,7 +454,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     .then(resp => {
                         if (resp.status === "ok") {
                             window.location.href =
-                                "/TCC_FWS/FWS_ADM/menu_principal/HTML/menu_principal1.html";
+                                "/Fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
                         } else {
                             alert("Erro ao logar: " + resp.msg);
                         }

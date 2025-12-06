@@ -57,6 +57,31 @@ if (!empty($categorias)) {
     $sql_base .= " AND p.categoria_id IN (" . implode(',', $categorias) . ")";
 }
 
+// Adiciona ordenação
+$ordenar = isset($_GET['ordenar']) ? $_GET['ordenar'] : '';
+$order_by = "ORDER BY p.nome ASC";
+
+switch ($ordenar) {
+    case 'nome_asc':
+        $order_by = "ORDER BY p.nome COLLATE utf8mb4_general_ci ASC";
+        break;
+    case 'nome_desc':
+        $order_by = "ORDER BY p.nome COLLATE utf8mb4_general_ci DESC";
+        break;
+    case 'preco_asc':
+        $order_by = "ORDER BY p.preco_venda ASC";
+        break;
+    case 'preco_desc':
+        $order_by = "ORDER BY p.preco_venda DESC";
+        break;
+    case 'mais_vendidos':
+        // Assumindo que existe um campo de vendas ou quantidade vendida
+        $order_by = "ORDER BY p.id DESC"; // Pode ajustar se houver campo de vendas
+        break;
+    default:
+        $order_by = "ORDER BY p.nome COLLATE utf8mb4_general_ci ASC";
+}
+
 // Consulta total de produtos conforme filtro
 $sql_total = "SELECT COUNT(*) as total $sql_base";
 $result_total = mysqli_query($conn, $sql_total);
@@ -66,7 +91,7 @@ $total_paginas = ceil($total_produtos / $produtos_por_pagina);
 // Consulta produtos paginados conforme filtro e pagina atual
 $sql = "SELECT p.id, p.nome, p.preco_venda, p.descricao, p.foto_produto, p.estoque,
                 c.nome AS categoria, c.cor
-        $sql_base LIMIT $produtos_por_pagina OFFSET $offset";
+        $sql_base $order_by LIMIT $produtos_por_pagina OFFSET $offset";
 
 $resultado = mysqli_query($conn, $sql);
 ?>
@@ -173,9 +198,9 @@ $resultado = mysqli_query($conn, $sql);
 
     <nav class="nav-links">
       <ul class="ul align-items-center">
-        <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+        <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
         <li>
-          <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php" method="get"
+          <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php" method="get"
             style="margin: 0 10px;">
             <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
               placeholder="Pesquisar..." aria-label="Pesquisar">
@@ -184,8 +209,8 @@ $resultado = mysqli_query($conn, $sql);
             </button>
           </form>
         </li>
-        <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
-        <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+        <li><a href="/Fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+        <li><a href="/Fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
       </ul>
     </nav>
 
@@ -231,8 +256,8 @@ $resultado = mysqli_query($conn, $sql);
     </script>
 
     <div class="carrinho">
-      <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
-        <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+      <a href="/Fws/FWS_Cliente/carrinho/HTML/carrinho.php">
+        <img src="/Fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
       </a>
     </div>
 
@@ -254,9 +279,9 @@ $resultado = mysqli_query($conn, $sql);
 
       <div id="user-menu"
               style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-              <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php"
+              <a href="/Fws/FWS_Cliente/info_usuario/HTML/info_usuario.php"
               style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-              <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link"
+              <a href="/Fws/FWS_Cliente/logout.php" id="logout-link"
               style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
       </div>
 
@@ -287,6 +312,21 @@ $resultado = mysqli_query($conn, $sql);
 
   <main class="my-5">
     <div class="container">
+      <!-- Título e subtítulo -->
+      <div style="text-align: center; margin-bottom: 30px;">
+        <?php
+          $hora = date('H');
+          if ($hora >= 6 && $hora < 12) {
+            $saudacao = "Bom dia";
+          } elseif ($hora >= 12 && $hora < 18) {
+            $saudacao = "Boa tarde";
+          } else {
+            $saudacao = "Boa noite";
+          }
+        ?>
+        <h1 style="font-size: 2.5rem; font-weight: bold; color: #c40000; margin-bottom: 8px;"><?php echo $saudacao; ?>! O que você está procurando?</h1>
+      </div>
+
       <!-- Barra de pesquisa -->
     <form class="d-flex mb-4" role="search" method="get" action="">
   <style>
@@ -294,6 +334,23 @@ $resultado = mysqli_query($conn, $sql);
     #search + .btn.btn-warning {
         margin-right: 5px;
     }
+    
+    /* Borda vermelha na barra de pesquisa */
+    #search {
+      border: 2px solid #c40000 !important;
+    }
+    
+    /* Dropdown de ordenação */
+    #ordenar {
+      border: 2px solid #c40000 !important;
+      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      margin-left: 5px;
+      font-size: 0.85rem;
+      max-width: 150px;
+    }
+    
+
   </style>
 
   <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
@@ -303,6 +360,21 @@ $resultado = mysqli_query($conn, $sql);
   <button type="button" id="btn-filtro" class="btn btn-outline-secondary">
     <i class="fas fa-filter"></i>
   </button>
+
+  <select id="ordenar" class="form-select" name="ordenar">
+    <option value="">Ordenar por</option>
+    <option value="nome_asc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'nome_asc') ? 'selected' : ''; ?>>Nome (A-Z)</option>
+    <option value="nome_desc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'nome_desc') ? 'selected' : ''; ?>>Nome (Z-A)</option>
+    <option value="preco_asc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'preco_asc') ? 'selected' : ''; ?>>Menor preço</option>
+    <option value="preco_desc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'preco_desc') ? 'selected' : ''; ?>>Maior preço</option>
+    <option value="mais_vendidos" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'mais_vendidos') ? 'selected' : ''; ?>>Mais vendidos</option>
+  </select>
+
+  <script>
+    document.getElementById('ordenar').addEventListener('change', function() {
+      this.form.submit();
+    });
+  </script>
 
   <div id="popup-filtro" class="custom-modal" style="display:none;">
     <h5>Filtrar produtos</h5>
@@ -364,6 +436,10 @@ $resultado = mysqli_query($conn, $sql);
       <button type="submit" class="btn-popup add" id="aplicar-filtro">Buscar</button>
     </div>
   </div>
+  
+  <!-- Hidden inputs para manter parâmetros -->
+  <input type="hidden" name="page" value="<?php echo $pagina_atual; ?>">
+  
 </form>
 
 
@@ -392,27 +468,28 @@ $resultado = mysqli_query($conn, $sql);
             $id = $produto["id"];
             $nome = ucwords(strtolower(htmlspecialchars($produto["nome"])));
             $preco = number_format($produto["preco_venda"], 2, ',', '.');
-            $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/TCC_FWS/IMG_Produtos/sem_imagem.png";
+            $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/Fws/IMG_Produtos/sem_imagem.png";
             $descricao = isset($produto["descricao"]) ? htmlspecialchars($produto["descricao"]) : "Produto sem descrição.";
             $categoria = htmlspecialchars($produto["categoria"]);
             $cor = htmlspecialchars($produto["cor"]);
 
             echo '
             <div class="col">
-              <div class="card h-100">
+              <div class="card h-100" data-produto-id="' . $id . '">
                 <img src="' . $foto . '" class="card-img-top" alt="' . $nome . '">
                 <div class="card-body">
-                  <h6 class="card-title mb-2 fs-7" style="font-weight: normal !important;">
+                  <h6 class="card-title mb-2" style="font-weight: 600 !important; font-size: 1rem; min-height: 2.4em; line-height: 1.2;">
                     <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
                       style="text-decoration: none; color: inherit;">' . $nome . '</a>
                   </h6>
-                  <p class="card-text mb-2" style="font-weight: bold; color: green;">R$ ' . $preco . '</p>
+                  <p class="card-text mb-2" style="font-size: 0.85rem; color: #777; min-height: 1.6em; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem !important;">' . substr($descricao, 0, 60) . (strlen($descricao) > 60 ? '...' : '') . '</p>
+                  <p class="card-text mb-2" style="font-weight: bold; color: green; font-size: 1.1rem; margin-bottom: 0.5rem !important;">R$ ' . $preco . '</p>
                   <span class="badge" style="background-color: ' . $cor . '; color: white; padding: 6px 10px; border-radius: 12px;">' . $categoria . '</span>
-                  <div class="mt-3 carrossel-buttons">
+                  <div class="mt-3 carrossel-buttons d-flex flex-column gap-2">
                     <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
-                      class="btn btn-primary btn-sm" style="margin-right:7px;">Ver mais</a>
+                      class="btn btn-primary btn-sm" style="margin-right:0; width: 100%; text-align: center;">Ver mais sobre</a>
                     <button type="button"
-                      class="Carrinho btn btn-outline-success btn-sm"
+                      class="Carrinho btn btn-outline-success btn-sm" style="width: 100%;"
                       data-produto=\'' . htmlspecialchars(json_encode([
                 "id" => $id,
                 "nome" => $nome,
@@ -434,27 +511,28 @@ $resultado = mysqli_query($conn, $sql);
               $id = $produto["id"];
               $nome = ucwords(strtolower(htmlspecialchars($produto["nome"])));
               $preco = number_format($produto["preco_venda"], 2, ',', '.');
-              $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/TCC_FWS/IMG_Produtos/sem_imagem.png";
+              $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/Fws/IMG_Produtos/sem_imagem.png";
               $descricao = isset($produto["descricao"]) ? htmlspecialchars($produto["descricao"]) : "Produto sem descrição.";
               $categoria = htmlspecialchars($produto["categoria"]);
               $cor = htmlspecialchars($produto["cor"]);
 
               echo '
               <div class="col">
-                <div class="card h-100">
+                <div class="card h-100" data-produto-id="' . $id . '">
                   <img src="' . $foto . '" class="card-img-top" alt="' . $nome . '">
                   <div class="card-body">
-                    <h6 class="card-title mb-2 fs-7" style="font-weight: normal !important;">
+                    <h6 class="card-title mb-2" style="font-weight: 600 !important; font-size: 1rem; min-height: 2.4em; line-height: 1.2;">
                       <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
                         style="text-decoration: none; color: inherit;">' . $nome . '</a>
                     </h6>
-                    <p class="card-text mb-2" style="font-weight: bold; color: green;">R$ ' . $preco . '</p>
+                    <p class="card-text mb-2" style="font-size: 0.85rem; color: #777; min-height: 1.6em; line-height: 1.1; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.5rem !important;">' . substr($descricao, 0, 60) . (strlen($descricao) > 60 ? '...' : '') . '</p>
+                    <p class="card-text mb-2" style="font-weight: bold; color: green; font-size: 1.1rem; margin-bottom: 0.5rem !important;">R$ ' . $preco . '</p>
                     <span class="badge" style="background-color: ' . $cor . '; color: white; padding: 6px 10px; border-radius: 12px;">' . $categoria . '</span>
                     <div class="mt-2 carrossel-buttons  d-flex flex-column gap-2">
                       <a href="../../produto_especifico/HTML/produto_especifico.php?id=' . $id . '"
-                        class="btn btn-primary btn-sm" style="margin-right:7px;">Ver mais</a>
+                        class="btn btn-primary btn-sm" style="margin-right:0; width: 100%; text-align: center;">Ver mais sobre</a>
                       <button type="button"
-  class="Carrinho btn btn-outline-success btn-sm"
+  class="Carrinho btn btn-outline-success btn-sm" style="width: 100%;"
   data-produto=\'' . htmlspecialchars(json_encode([
                   "id" => $id,
                   "nome" => $nome,
@@ -479,7 +557,25 @@ $resultado = mysqli_query($conn, $sql);
       </div>
 
       <?php
-      $pagina_query = $busca !== '' ? '&q=' . urlencode($busca) : '';
+      $pagina_query = '';
+      if ($busca !== '') {
+        $pagina_query .= '&q=' . urlencode($busca);
+      }
+      if (isset($_GET['ordenar']) && $_GET['ordenar'] !== '') {
+        $pagina_query .= '&ordenar=' . urlencode($_GET['ordenar']);
+      }
+      if (isset($_GET['min_price'])) {
+        $pagina_query .= '&min_price=' . $_GET['min_price'];
+      }
+      if (isset($_GET['max_price'])) {
+        $pagina_query .= '&max_price=' . $_GET['max_price'];
+      }
+      if (isset($_GET['categorias']) && is_array($_GET['categorias'])) {
+        foreach ($_GET['categorias'] as $cat) {
+          $pagina_query .= '&categorias[]=' . intval($cat);
+        }
+      }
+      
       echo '<nav aria-label="Page navigation">';
       echo '<ul class="pagination justify-content-center mt-4">';
 
@@ -546,6 +642,25 @@ $resultado = mysqli_query($conn, $sql);
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
     </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Fazer os cards inteiros serem clicáveis
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+          // Não redirecionar se clicou em um botão
+          if (e.target.closest('button')) return;
+
+          // Pega o link do "Ver mais sobre"
+          const link = this.querySelector('a.btn-primary');
+          if (link) {
+            window.location.href = link.href;
+          }
+        });
+      });
+    });
+  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -621,7 +736,7 @@ $(function () {
 
     // PRIMEIRO: verifica limite no backend com tratamento de 403
     $.ajax({
-      url: '/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
+      url: '/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
       method: 'POST',
       data: {
         verificar_limite: 1,
@@ -745,7 +860,7 @@ $(function () {
     // CONFIRMAR ADIÇÃO
     $(".btn-popup.add").on("click", function () {
 
-      $.post('/TCC_FWS/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+      $.post('/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
         id_produto: dados.id,
         quantidade: qtd,
         ajax: 1
@@ -900,25 +1015,45 @@ $(function () {
 
     .card:hover {
       transform: scale(1.05);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 16px rgba(196, 0, 0, 0.5);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
+    .card {
+      border: 2px solid #c40000;
     }
 
     .btn-primary.btn-sm {
-      background: white;
+      background: #FFD100;
       border: 3px solid #FFD100;
-
       color: black;
       padding: 5px 10px;
       border-radius: 4px;
       text-decoration: none;
+      font-weight: 600;
     }
 
     .btn-primary.btn-sm:hover {
-      background: #FFD100;
+      background: white;
       color: black;
-      border-color: black;
+      border-color: #FFD100;
+    }
+
+    .btn-outline-success.btn-sm {
+      background: white;
+      border: 2px solid #00BC5B;
+      color: #00BC5B;
+      padding: 5px 10px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-success.btn-sm:hover {
+      background: #00BC5B;
+      color: white;
+      border-color: #00BC5B;
     }
 
 
@@ -1119,7 +1254,60 @@ $(function () {
     background-color: white;
     color: black;
 }
-=
+
+/* Paginação com cores Shell */
+.pagination {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.page-item .page-link {
+  background-color: #FFD100;
+  color: #c40000;
+  border: 1px solid #c40000;
+  border-radius: 5px;
+  padding: 8px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.page-item .page-link:hover {
+  background-color: #c40000;
+  color: #FFD100;
+  border-color: #c40000;
+}
+
+.page-item.active .page-link {
+  background-color: #c40000;
+  color: #FFD100;
+  border-color: #c40000;
+}
+
+.page-item.disabled .page-link {
+  background-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  border-color: #999;
+}
+
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+  background-color: #FFD100;
+  color: #c40000;
+  border-color: #c40000;
+  font-weight: 700;
+}
+
+.page-item:first-child .page-link:hover,
+.page-item:last-child .page-link:hover {
+  background-color: #c40000;
+  color: #FFD100;
+  border-color: #c40000;
+}
 
   </style>
 

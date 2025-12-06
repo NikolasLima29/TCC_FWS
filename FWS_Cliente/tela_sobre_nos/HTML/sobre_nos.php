@@ -58,9 +58,9 @@ session_start();
 
         <nav class="nav-links">
             <ul class="ul align-items-center">
-                <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+                <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
                 <li>
-                    <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php"
+                    <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php"
                         method="get" style="margin: 0 10px;">
                         <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
                             placeholder="Pesquisar..." aria-label="Pesquisar">
@@ -69,8 +69,8 @@ session_start();
                         </button>
                     </form>
                 </li>
-                <li><a href="/TCC_FWS/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
-                <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+                <li><a href="/Fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+                <li><a href="/Fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
             </ul>
         </nav>
 
@@ -116,8 +116,8 @@ session_start();
         </script>
 
         <div class="carrinho">
-            <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
-                <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+            <a href="/Fws/FWS_Cliente/carrinho/HTML/carrinho.php">
+                <img src="/Fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
             </a>
         </div>
 
@@ -134,9 +134,9 @@ session_start();
 
             <div id="user-menu"
                 style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-                <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php"
+                <a href="/Fws/FWS_Cliente/info_usuario/HTML/info_usuario.php"
                     style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-                <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link"
+                <a href="/Fws/FWS_Cliente/logout.php" id="logout-link"
                     style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
             </div>
 

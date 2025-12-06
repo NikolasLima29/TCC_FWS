@@ -2,6 +2,12 @@
 session_start();
 include "../../conn.php";
 
+// Verifica se o usuário está logado
+if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
+    header("Location: /Fws/FWS_Cliente/login/HTML/login.html");
+    exit;
+}
+
 // Checagem de estoque AJAX
 if (isset($_POST['checar_estoque']) && isset($_POST['itens']) && isset($_SESSION['usuario_id'])) {
     $itens = json_decode($_POST['itens'], true);
@@ -52,7 +58,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
             exit;
         }
         // Redireciona para o carrinho (fallback)
-        header("Location: /TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php");
+        header("Location: /Fws/FWS_Cliente/carrinho/HTML/carrinho.php");
         exit;
     }
 }
@@ -396,7 +402,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     <header id="header">
         <div class="logo">
             <a href="../../index.php">
-                <img src="/TCC_FWS/FWS_Cliente/index/IMG/shell_select.png" alt="logo" />
+                <img src="/Fws/FWS_Cliente/index/IMG/shell_select.png" alt="logo" />
             </a>
         </div>
 
@@ -406,9 +412,9 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
 
         <nav>
             <ul class="ul align-items-center">
-                <li><a href="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+                <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
                 <li>
-                    <form class="d-flex" role="search" action="/TCC_FWS/FWS_Cliente/produto/HTML/produto.php"
+                    <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php"
                         method="get" style="margin: 0 10px;">
                         <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
                             placeholder="Pesquisar..." aria-label="Pesquisar">
@@ -418,13 +424,13 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                     </form>
                 </li>
                 <li><a href="Meus_pedidos.php">Meus pedidos</a></li>
-                <li><a href="/TCC_FWS/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+                <li><a href="/Fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
             </ul>
         </nav>
 
         <div class="carrinho">
-            <a href="/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php">
-                <img src="/TCC_FWS/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+            <a href="/Fws/FWS_Cliente/carrinho/HTML/carrinho.php">
+                <img src="/Fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
             </a>
         </div>
 
@@ -441,9 +447,9 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
 
             <div id="user-menu"
                 style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-                <a href="/TCC_FWS/FWS_Cliente/info_usuario/HTML/info_usuario.php"
+                <a href="/Fws/FWS_Cliente/info_usuario/HTML/info_usuario.php"
                     style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-                <a href="/TCC_FWS/FWS_Cliente/logout.php" id="logout-link"
+                <a href="/Fws/FWS_Cliente/logout.php" id="logout-link"
                     style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
             </div>
 
@@ -480,7 +486,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
             var autocomplete = $("#search").autocomplete({
                 source: function(request, response) {
                     $.ajax({
-                        url: '/TCC_FWS/FWS_Cliente/produto/PHP/api-produtos.php',
+                        url: '/Fws/FWS_Cliente/produto/PHP/api-produtos.php',
                         dataType: 'json',
                         data: {
                             q: request.term
@@ -534,20 +540,34 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                         }
 
                         $col_count = 0;
-                        foreach ($vendas as $venda) {
-                            // Gerar código único para cada pedido: últimos 2 dígitos do telefone + últimos 2 dígitos do ID da venda
-                            $telefone_ultimos = $telefone ? substr($telefone, -2) : '00';
-                            $venda_id_ultimos = str_pad(intval($venda['id']) % 100, 2, '0', STR_PAD_LEFT);
-                            $codigo = $telefone_ultimos . $venda_id_ultimos;
+                        
+                        // Verificar se há pedidos
+                        if (empty($vendas)) {
+                            // Mensagem quando não tem pedidos
+                            echo '<div class="col-12">';
+                            echo '<div class="alert alert-info text-center" style="margin-top: 40px; padding: 60px 20px; background-color: #FFD100; border: none;">';
+                            echo '<i class="bi bi-inbox" style="font-size: 4rem; color: #c40000; margin-bottom: 20px; display: block;"></i>';
+                            echo '<h3 style="color: #c40000; margin-bottom: 15px; font-weight: bold;">Nenhum pedido encontrado</h3>';
+                            echo '<p style="font-size: 1.1rem; color: #c40000; margin-bottom: 30px;">Você ainda não realizou nenhum pedido. Que tal começar agora?</p>';
+                            echo '<a href="/Fws/FWS_Cliente/produto/HTML/produto.php" class="btn btn-primary btn-lg" style="background-color: #c40000; border-color: #c40000; font-weight: bold; padding: 12px 40px;">';
+                            echo '<i class="bi bi-shop" style="margin-right: 8px;"></i>Ir aos Produtos';
+                            echo '</a>';
+                            echo '</div>';
+                            echo '</div>';
+                        } else {
+                            // Exibir pedidos normalmente
+                            foreach ($vendas as $venda) {
+                                // Gerar código: últimos 4 dígitos do telefone
+                                $codigo = $telefone ? substr($telefone, -4) : '0000';
 
-                            if ($col_count % 2 == 0) echo '<div class="row mb-4">';
-                            echo '<div class="col-md-6">';
-                            echo '<div class="card mb-4">';
-                            echo '<div class="card-body">';
-                            // Data e método de pagamento
-                            echo '<div class="d-flex justify-content-between align-items-center mb-2">';
-                            echo '<span class="small text-muted">'.date('d/m/Y H:i', strtotime($venda['data_criacao'])).'</span>';
-                            echo '<span class="small">'.ucwords(str_replace('_',' ',$venda['metodo_pagamento'])).'</span>';
+                                if ($col_count % 2 == 0) echo '<div class="row mb-4">';
+                                echo '<div class="col-md-6">';
+                                echo '<div class="card mb-4">';
+                                echo '<div class="card-body">';
+                                // Data e método de pagamento
+                                echo '<div class="d-flex justify-content-between align-items-center mb-2">';
+                                echo '<span class="small text-muted">'.date('d/m/Y H:i', strtotime($venda['data_criacao'])).'</span>';
+                                echo '<span class="small">'.ucwords(str_replace('_',' ',$venda['metodo_pagamento'])).'</span>';
                             echo '</div>';
                             // Status com cor
                             $status = $venda['situacao_compra'];
@@ -638,6 +658,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                             echo '</div>';
                             $col_count++;
                             if ($col_count % 2 == 0) echo '</div>';
+                            }
                         }
                         if ($col_count % 2 != 0) echo '</div>';
                     } else {
@@ -810,7 +831,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                         .parse(resp2) : resp2;
                                     if (data2 && data2.ok) {
                                         window.location.href =
-                                            '/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php';
+                                            '/Fws/FWS_Cliente/carrinho/HTML/carrinho.php';
                                     } else {
                                         mostrarToastSucesso('Pedido refeito!');
                                         setTimeout(function() {
@@ -819,12 +840,12 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                     }
                                 } catch (e) {
                                     window.location.href =
-                                        '/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php';
+                                        '/Fws/FWS_Cliente/carrinho/HTML/carrinho.php';
                                 }
                             },
                             error: function() {
                                 window.location.href =
-                                    '/TCC_FWS/FWS_Cliente/carrinho/HTML/carrinho.php';
+                                    '/Fws/FWS_Cliente/carrinho/HTML/carrinho.php';
                             }
                         });
                     } else if (data.falta_nome) {
