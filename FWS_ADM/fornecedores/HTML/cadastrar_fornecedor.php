@@ -198,47 +198,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
 
                         <li class="nav-item">
-                            <a href="/Fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
+                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
                             </a>
                         </li>
 
-                        <li><a href="/Fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fastservice.png">
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/vendaspai.png">
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                        <li><a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
                                 id="cor-fonte">
                                 <img src="../../menu_principal/IMG/estoque.png">
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/produtos/HTML/lista_produtos.php"
+                        <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
+                        <li><a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a></li>

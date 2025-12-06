@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .then(r => r.json())
             .then(resp => {
                 if (resp.status === "ok") {
-                    window.location.href = "/Fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
+                    window.location.href = "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
                 } else {
                     alert("Erro ao logar: " + resp.msg);
                 }
@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     };
 
     document.getElementById("btnNao").onclick = function() {
-        window.location.href = "/Fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php";
+        window.location.href = "/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php";
     };
     </script>
     <?php endif; ?>

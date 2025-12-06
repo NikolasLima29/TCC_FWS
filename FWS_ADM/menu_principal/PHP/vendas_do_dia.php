@@ -28,7 +28,7 @@
                           </a>
                       </li>
                       <li>
-                        <a href="/Fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
                           <img src="../../menu_principal/IMG/fastservice.png">
                           <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                         </a>

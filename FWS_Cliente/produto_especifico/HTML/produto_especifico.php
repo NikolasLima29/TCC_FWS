@@ -163,17 +163,17 @@ if ($result_recomendados->num_rows == 0) {
 
     <nav class="nav-links">
         <ul class="ul align-items-center">
-            <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+            <li><a href="/fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
             <li>
-                <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php" method="get" style="margin: 0 10px;">
+                <form class="d-flex" role="search" action="/fws/FWS_Cliente/produto/HTML/produto.php" method="get" style="margin: 0 10px;">
                     <input id="search" class="form-control form-control-sm me-2" type="search" name="q" placeholder="Pesquisar..." aria-label="Pesquisar">
                     <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
                         <i class="bi bi-search"></i>
                     </button>
                 </form>
             </li>
-            <li><a href="/Fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
-            <li><a href="/Fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+            <li><a href="/fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+            <li><a href="/fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
         </ul>
     </nav>
 
@@ -219,8 +219,8 @@ if ($result_recomendados->num_rows == 0) {
 </script>
 
     <div class="carrinho">
-        <a href="/Fws/FWS_Cliente/carrinho/HTML/carrinho.php">
-            <img src="/Fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+        <a href="/fws/FWS_Cliente/carrinho/HTML/carrinho.php">
+            <img src="/fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
         </a>
     </div>
 
@@ -236,8 +236,8 @@ if ($result_recomendados->num_rows == 0) {
             </div>
 
             <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-                <a href="/Fws/FWS_Cliente/info_usuario/HTML/info_usuario.php" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-                <a href="/Fws/FWS_Cliente/logout.php" id="logout-link" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
+                <a href="/fws/FWS_Cliente/info_usuario/HTML/info_usuario.php" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
+                <a href="/fws/FWS_Cliente/logout.php" id="logout-link" style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
             </div>
 
             <script>
@@ -362,7 +362,7 @@ echo '<div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">';
 
 while ($rec = $result_recomendados->fetch_assoc()) {
 
-    $foto = !empty($rec["foto_produto"]) ? htmlspecialchars($rec["foto_produto"]) : "/Fws/IMG_Produtos/sem_imagem.png";
+    $foto = !empty($rec["foto_produto"]) ? htmlspecialchars($rec["foto_produto"]) : "/fws/IMG_Produtos/sem_imagem.png";
     $nome = ucwords(strtolower(htmlspecialchars($rec["nome"])));
     $preco = number_format($rec["preco_venda"], 2, ',', '.');
     $id = $rec["id"];
@@ -753,7 +753,7 @@ $(function () {
 
     // PRIMEIRO: verifica limite no backend com tratamento de 403
     $.ajax({
-      url: '/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
+      url: '/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
       method: 'POST',
       data: {
         verificar_limite: 1,
@@ -877,7 +877,7 @@ $(function () {
     // CONFIRMAR ADIÇÃO
     $(".btn-popup.add").on("click", function () {
 
-      $.post('/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+      $.post('/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
         id_produto: dados.id,
         quantidade: qtd,
         ajax: 1
@@ -1554,7 +1554,7 @@ main p {
           e.preventDefault();
           const produtoId = this.dataset.produtoId;
           const produtoNome = this.dataset.produtoNome;
-          const url = `${window.location.origin}/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
+          const url = `${window.location.origin}/fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
           const mensagem = encodeURIComponent(`Confira este produto:\n\n${produtoNome}\n\n${url}`);
           window.open(`https://wa.me/?text=${mensagem}`, '_blank');
         });
@@ -1565,7 +1565,7 @@ main p {
         btn.addEventListener('click', function(e) {
           e.preventDefault();
           const produtoId = this.dataset.produtoId;
-          const url = `${window.location.origin}/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
+          const url = `${window.location.origin}/fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
           window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
         });
       });
@@ -1575,7 +1575,7 @@ main p {
         btn.addEventListener('click', function(e) {
           e.preventDefault();
           const produtoId = this.dataset.produtoId;
-          const url = `${window.location.origin}/Fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
+          const url = `${window.location.origin}/fws/FWS_Cliente/produto_especifico/HTML/produto_especifico.php?id=${produtoId}`;
           
           navigator.clipboard.writeText(url).then(() => {
             const originalHTML = this.innerHTML;
