@@ -47,51 +47,51 @@ $stmt->close();
                         <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
                             <a id="logo-linha"><img src="../IMG/logo_linhas.png"></a>
                             <li class="nav-item">
-                                <a href="/Fws/FWS_ADM/menu_principal/HTML/menu_principal1.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php" class="nav-link align-middle px-0" id="cor-fonte">
                                     <i class="fs-4 bi-house"></i><img src="../IMG/painelgeral.png"> <span
                                         class="ms-1 d-none d-sm-inline">Painel Geral</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/Fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
                                     <i class="fs-4 bi-house"></i><img src="../IMG/fastservice.png"> <span
                                         class="ms-1 d-none d-sm-inline">Fast Service</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/Fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
                                     <i class="fs-4 bi-house"></i><img src="../IMG/financeiro.png"> <span
                                         class="ms-1 d-none d-sm-inline">Financeiro</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/Fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
                                     <i class="fs-4 bi-house"></i><img src="../IMG/vendaspai.png"> <span
                                         class="ms-1 d-none d-sm-inline">Vendas</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/Fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                                <a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
                                     id="cor-fonte">
                                     <i class="fs-4 bi-house"></i><img src="../IMG/estoque.png"> <span
                                         class="ms-1 d-none d-sm-inline">Estoque</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/Fws/FWS_ADM/produtos/HTML/cadastro_produto.php"
+                                <a href="/fws/FWS_ADM/produtos/HTML/cadastro_produto.php"
                                     class="nav-link align-middle px-0" id="cor-fonte">
                                     <i class="fs-4 bi-house"></i><img src="../IMG/produtos.png"> <span
                                         class="ms-1 d-none d-sm-inline">Produtos</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/Fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php" class="nav-link align-middle px-0" id="cor-fonte">
                                     <img src="../../menu_principal/IMG/fornecedor.png">
                                     <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="/Fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
                                     <i class="fs-4 bi-house"></i><img src="../IMG/funcionarios.png"> <span
                                         class="ms-1 d-none d-sm-inline">Funcionários</span></img>
                                 </a>

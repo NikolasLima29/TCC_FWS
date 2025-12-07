@@ -98,7 +98,7 @@ function sair() {
 
 function cancelar() {
     // Redireciona para a página anterior ou para o menu principal
-    const voltar = document.referrer || "/Fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
+    const voltar = document.referrer || "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
     window.location.href = voltar;
 }
 </script>

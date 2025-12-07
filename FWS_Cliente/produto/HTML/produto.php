@@ -198,9 +198,9 @@ $resultado = mysqli_query($conn, $sql);
 
     <nav class="nav-links">
       <ul class="ul align-items-center">
-        <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
+        <li><a href="/fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
         <li>
-          <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php" method="get"
+          <form class="d-flex" role="search" action="/fws/FWS_Cliente/produto/HTML/produto.php" method="get"
             style="margin: 0 10px;">
             <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
               placeholder="Pesquisar..." aria-label="Pesquisar">
@@ -209,8 +209,8 @@ $resultado = mysqli_query($conn, $sql);
             </button>
           </form>
         </li>
-        <li><a href="/Fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
-        <li><a href="/Fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
+        <li><a href="/fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php">Meus pedidos</a></li>
+        <li><a href="/fws/FWS_Cliente/tela_sobre_nos/HTML/sobre_nos.php">Sobre nós</a></li>
       </ul>
     </nav>
 
@@ -256,8 +256,8 @@ $resultado = mysqli_query($conn, $sql);
     </script>
 
     <div class="carrinho">
-      <a href="/Fws/FWS_Cliente/carrinho/HTML/carrinho.php">
-        <img src="/Fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
+      <a href="/fws/FWS_Cliente/carrinho/HTML/carrinho.php">
+        <img src="/fws/FWS_Cliente/index/IMG/carrinho.png" alt="carrinho" id="carrinho" />
       </a>
     </div>
 
@@ -279,9 +279,9 @@ $resultado = mysqli_query($conn, $sql);
 
       <div id="user-menu"
               style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 4px; padding: 6px 0; min-width: 120px; z-index: 1000;">
-              <a href="/Fws/FWS_Cliente/info_usuario/HTML/info_usuario.php"
+              <a href="/fws/FWS_Cliente/info_usuario/HTML/info_usuario.php"
               style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Ver perfil</a>
-              <a href="/Fws/FWS_Cliente/logout.php" id="logout-link"
+              <a href="/fws/FWS_Cliente/logout.php" id="logout-link"
               style="display: block; padding: 8px 16px; color: black; text-decoration: none;">Sair</a>
       </div>
 
@@ -468,7 +468,7 @@ $resultado = mysqli_query($conn, $sql);
             $id = $produto["id"];
             $nome = ucwords(strtolower(htmlspecialchars($produto["nome"])));
             $preco = number_format($produto["preco_venda"], 2, ',', '.');
-            $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/Fws/IMG_Produtos/sem_imagem.png";
+            $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/fws/IMG_Produtos/sem_imagem.png";
             $descricao = isset($produto["descricao"]) ? htmlspecialchars($produto["descricao"]) : "Produto sem descrição.";
             $categoria = htmlspecialchars($produto["categoria"]);
             $cor = htmlspecialchars($produto["cor"]);
@@ -511,7 +511,7 @@ $resultado = mysqli_query($conn, $sql);
               $id = $produto["id"];
               $nome = ucwords(strtolower(htmlspecialchars($produto["nome"])));
               $preco = number_format($produto["preco_venda"], 2, ',', '.');
-              $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/Fws/IMG_Produtos/sem_imagem.png";
+              $foto = !empty($produto["foto_produto"]) ? htmlspecialchars($produto["foto_produto"]) : "/fws/IMG_Produtos/sem_imagem.png";
               $descricao = isset($produto["descricao"]) ? htmlspecialchars($produto["descricao"]) : "Produto sem descrição.";
               $categoria = htmlspecialchars($produto["categoria"]);
               $cor = htmlspecialchars($produto["cor"]);
@@ -736,7 +736,7 @@ $(function () {
 
     // PRIMEIRO: verifica limite no backend com tratamento de 403
     $.ajax({
-      url: '/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
+      url: '/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
       method: 'POST',
       data: {
         verificar_limite: 1,
@@ -860,7 +860,7 @@ $(function () {
     // CONFIRMAR ADIÇÃO
     $(".btn-popup.add").on("click", function () {
 
-      $.post('/Fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+      $.post('/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
         id_produto: dados.id,
         quantidade: qtd,
         ajax: 1

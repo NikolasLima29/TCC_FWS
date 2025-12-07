@@ -18,6 +18,6 @@ unset($_SESSION['usuario_nome']);
 // Opcional: mantem a sessão ativa, mas limpa dados - o que dá logout para o usuário
 // session_regenerate_id(true);
 
-header('Location: /Fws/FWS_Cliente/index.php');
+header('Location: /fws/FWS_Cliente/index.php');
 exit;
 ?>

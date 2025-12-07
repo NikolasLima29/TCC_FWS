@@ -443,47 +443,47 @@ if(!$result_movimentacao){
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
 
                         <li class="nav-item">
-                            <a href="/Fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
+                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
                             </a>
                         </li>
 
-                        <li><a href="/Fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fastservice.png">
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/vendaspai.png">
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                        <li><a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
                                 id="cor-fonte">
                                 <img src="../../menu_principal/IMG/estoque.png">
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/produtos/HTML/lista_produtos.php"
+                        <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
+                        <li><a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a></li>
 
-                        <li><a href="/Fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a></li>
@@ -606,7 +606,7 @@ if(!$result_movimentacao){
                                     <tr>
                                         <td style="padding:8px;">
                                             <?php 
-                                                $foto = !empty($row['foto_produto']) ? htmlspecialchars($row['foto_produto']) : '/Fws/IMG_Produtos/sem_imagem.png';
+                                                $foto = !empty($row['foto_produto']) ? htmlspecialchars($row['foto_produto']) : '/fws/IMG_Produtos/sem_imagem.png';
                                             ?>
                                             <img src="<?= $foto ?>" alt="<?= htmlspecialchars($row['nome']) ?>" style="width:75px; height:45px; object-fit:cover; border-radius:4px;">
                                         </td>
@@ -682,7 +682,7 @@ if(!$result_movimentacao){
                                     <tr>
                                         <td style="padding:8px;">
                                             <?php 
-                                                $foto = !empty($row['foto_produto']) ? htmlspecialchars($row['foto_produto']) : '/Fws/IMG_Produtos/sem_imagem.png';
+                                                $foto = !empty($row['foto_produto']) ? htmlspecialchars($row['foto_produto']) : '/fws/IMG_Produtos/sem_imagem.png';
                                             ?>
                                             <img src="<?= $foto ?>" alt="<?= htmlspecialchars($row['nome']) ?>" style="width:75px; height:45px; object-fit:cover; border-radius:4px;">
                                         </td>
@@ -726,7 +726,7 @@ if(!$result_movimentacao){
                                     <tr>
                                         <td style="padding:8px;">
                                             <?php 
-                                                $foto = !empty($row_mov['foto_produto']) ? htmlspecialchars($row_mov['foto_produto']) : '/Fws/IMG_Produtos/sem_imagem.png';
+                                                $foto = !empty($row_mov['foto_produto']) ? htmlspecialchars($row_mov['foto_produto']) : '/fws/IMG_Produtos/sem_imagem.png';
                                             ?>
                                             <img src="<?= $foto ?>" alt="<?= htmlspecialchars($row_mov['produto_nome'] ?? 'Produto') ?>" style="width:75px; height:45px; object-fit:cover; border-radius:4px;">
                                         </td>
