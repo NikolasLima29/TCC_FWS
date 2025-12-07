@@ -164,6 +164,7 @@ session_start();
             <?php endif; ?>
         </div>
     </header>
+
     <main>
         <h1 id="sobre_nos">Sobre Nós</h1>
         <p>
