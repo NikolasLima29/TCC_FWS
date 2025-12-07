@@ -90,310 +90,310 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
 
 
     <style>
-    #header {
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: #c40000;
-        /* vermelho */
-        color: white;
-    }
-
-    .logo {
-        display: flex;
-        align-items: center;
-    }
-
-    nav {
-        margin-left: 40px;
-    }
-
-    nav ul {
-        list-style: none;
-        display: flex;
-        gap: 20px;
-        margin: 0;
-        padding: 0;
-    }
-
-    nav ul li a {
-        text-decoration: none;
-        color: white;
-        font-weight: bold;
-        font-size: 15px;
-    }
-
-    .carrinho {
-        margin-left: auto;
-        margin-right: 20px;
-    }
-
-    .carrinho img {
-        height: 25px;
-    }
-
-    #bem-vindo {
-        font-weight: bold;
-        font-size: 16px;
-        color: white;
-    }
-
-    .btn-acoes {
-        background-color: #f37a27;
-        color: white !important;
-        border-radius: 6px;
-        padding: 6px 10px;
-        border: none;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .btn-acoes:hover {
-        opacity: 0.9;
-    }
-
-    /* Paleta do site */
-    :root {
-        --primary-red: #c40000;
-        --accent-yellow: #FFD100;
-        --accent-orange: #f37a27;
-    }
-
-    /* Estilos para os itens do pedido (restaurado para versão inicial)
-           Mantemos apenas espaçamento simples; removemos regras flex/widths customizadas. */
-    .pedido-box {
-        padding: 0.5rem 0.25rem;
-    }
-
-    .pedido-item {
-        font-size: 1.03rem;
-    }
-
-    .pedido-item>[class*="col-"] {
-        padding: .5rem .75rem;
-    }
-
-    .pedido-item .col-2 {
-        /* volta ao comportamento padrão do grid (quantidade pequena) */
-        text-align: center;
-    }
-
-    .pedido-item .col-7 {
-        /* ocupa o espaço restante via grid; sem regras flex customizadas */
-    }
-
-    .pedido-item .col-3 {
-        text-align: right;
-    }
-
-    .no-underline {
-        text-decoration: none !important;
-    }
-
-    /* Acentos usados nos outros arquivos do site */
-    .accent-text {
-        color: var(--primary-red) !important;
-    }
-
-    .card-accent {
-        border-color: var(--accent-yellow) !important;
-    }
-
-    .btn-accent {
-        background-color: var(--accent-yellow) !important;
-        color: #111 !important;
-        border: none;
-    }
-
-    /* Status style: bottom-right badge-like text */
-    .order-status {
-        margin-top: auto;
-        align-self: flex-end;
-        color: var(--primary-red);
-        font-weight: 700;
-        font-size: 0.95rem;
-        background: rgba(196, 0, 0, 0.06);
-        padding: .25rem .6rem;
-        border-radius: 6px;
-    }
-
-    /* Responsividade: ajustes para mobile */
-    @media (max-width: 767.98px) {
-        .card-body {
-            padding: 1rem !important;
+        #header {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #c40000;
+            /* vermelho */
+            color: white;
         }
 
-        /* Empilha os itens do pedido verticalmente */
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        nav {
+            margin-left: 40px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .carrinho {
+            margin-left: auto;
+            margin-right: 20px;
+        }
+
+        .carrinho img {
+            height: 25px;
+        }
+
+        #bem-vindo {
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+        }
+
+        .btn-acoes {
+            background-color: #f37a27;
+            color: white !important;
+            border-radius: 6px;
+            padding: 6px 10px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-acoes:hover {
+            opacity: 0.9;
+        }
+
+        /* Paleta do site */
+        :root {
+            --primary-red: #c40000;
+            --accent-yellow: #FFD100;
+            --accent-orange: #f37a27;
+        }
+
+        /* Estilos para os itens do pedido (restaurado para versão inicial)
+           Mantemos apenas espaçamento simples; removemos regras flex/widths customizadas. */
+        .pedido-box {
+            padding: 0.5rem 0.25rem;
+        }
+
         .pedido-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: .35rem;
+            font-size: 1.03rem;
         }
 
         .pedido-item>[class*="col-"] {
-            padding: .35rem 0 !important;
+            padding: .5rem .75rem;
         }
 
-        .pedido-item .col-2,
+        .pedido-item .col-2 {
+            /* volta ao comportamento padrão do grid (quantidade pequena) */
+            text-align: center;
+        }
+
+        .pedido-item .col-7 {
+            /* ocupa o espaço restante via grid; sem regras flex customizadas */
+        }
+
         .pedido-item .col-3 {
-            flex: none !important;
-            max-width: none !important;
-            width: auto !important;
+            text-align: right;
         }
 
-        /* Botões e selects ficam em bloco e ocupam toda a largura */
-        .list-inline {
-            flex-direction: column;
-            gap: .5rem;
-            padding-left: 0;
+        .no-underline {
+            text-decoration: none !important;
         }
 
-        .list-inline-item.items-list {
-            width: 100%;
+        /* Acentos usados nos outros arquivos do site */
+        .accent-text {
+            color: var(--primary-red) !important;
         }
 
-        .btn-accent,
-        .no-underline.btn-accent,
-        .btn-acoes {
-            display: block !important;
-            width: 100% !important;
-            text-align: center !important;
+        .card-accent {
+            border-color: var(--accent-yellow) !important;
         }
 
-        /* Ajuste do badge de status para não colidir com conteúdo */
+        .btn-accent {
+            background-color: var(--accent-yellow) !important;
+            color: #111 !important;
+            border: none;
+        }
+
+        /* Status style: bottom-right badge-like text */
         .order-status {
+            margin-top: auto;
             align-self: flex-end;
-            margin-top: .8rem;
+            color: var(--primary-red);
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: rgba(196, 0, 0, 0.06);
+            padding: .25rem .6rem;
+            border-radius: 6px;
         }
 
-        /* Responsividade dos cards de pedidos */
-        .card {
-            margin-bottom: 1.5rem !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        /* Responsividade: ajustes para mobile */
+        @media (max-width: 767.98px) {
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            /* Empilha os itens do pedido verticalmente */
+            .pedido-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: .35rem;
+            }
+
+            .pedido-item>[class*="col-"] {
+                padding: .35rem 0 !important;
+            }
+
+            .pedido-item .col-2,
+            .pedido-item .col-3 {
+                flex: none !important;
+                max-width: none !important;
+                width: auto !important;
+            }
+
+            /* Botões e selects ficam em bloco e ocupam toda a largura */
+            .list-inline {
+                flex-direction: column;
+                gap: .5rem;
+                padding-left: 0;
+            }
+
+            .list-inline-item.items-list {
+                width: 100%;
+            }
+
+            .btn-accent,
+            .no-underline.btn-accent,
+            .btn-acoes {
+                display: block !important;
+                width: 100% !important;
+                text-align: center !important;
+            }
+
+            /* Ajuste do badge de status para não colidir com conteúdo */
+            .order-status {
+                align-self: flex-end;
+                margin-top: .8rem;
+            }
+
+            /* Responsividade dos cards de pedidos */
+            .card {
+                margin-bottom: 1.5rem !important;
+                border-radius: 12px !important;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            }
+
+            .card-body {
+                padding: 1.1rem !important;
+            }
+
+            .d-flex.justify-content-between.align-items-center.mb-2 {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 6px !important;
+            }
+
+            .badge {
+                font-size: 0.95rem !important;
+                padding: 6px 12px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .mb-2 {
+                margin-bottom: 0.7rem !important;
+            }
+
+            .row.align-items-center.mb-2 {
+                flex-direction: row !important;
+                gap: 0 !important;
+            }
+
+            .col-3.text-center img {
+                max-width: 48px !important;
+                max-height: 48px !important;
+            }
+
+            .col-5 {
+                font-size: 0.95rem !important;
+            }
+
+            .col-4.text-end {
+                font-size: 0.9rem !important;
+            }
+
+            .d-flex.justify-content-between.mt-3 {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 4px !important;
+            }
+
+            .btn-success.btn-sm,
+            .btn.btn-accent {
+                width: 100% !important;
+                font-size: 1rem !important;
+                padding: 10px 0 !important;
+                margin-bottom: 8px !important;
+            }
+
+            /* Responsividade dos botões de ação */
+            .d-flex.gap-2.justify-content-end.mt-2 {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
         }
 
-        .card-body {
-            padding: 1.1rem !important;
-        }
+        @media (max-width: 480px) {
+            .card {
+                border-radius: 10px !important;
+                margin-bottom: 1.2rem !important;
+            }
 
-        .d-flex.justify-content-between.align-items-center.mb-2 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 6px !important;
-        }
+            .card-body {
+                padding: 0.7rem !important;
+            }
 
-        .badge {
-            font-size: 0.95rem !important;
-            padding: 6px 12px !important;
-            margin-bottom: 8px !important;
-        }
+            .badge {
+                font-size: 0.85rem !important;
+                padding: 5px 10px !important;
+            }
 
-        .mb-2 {
-            margin-bottom: 0.7rem !important;
-        }
+            .mb-2 {
+                margin-bottom: 0.5rem !important;
+            }
 
-        .row.align-items-center.mb-2 {
-            flex-direction: row !important;
-            gap: 0 !important;
-        }
+            .col-3.text-center img {
+                max-width: 38px !important;
+                max-height: 38px !important;
+            }
 
-        .col-3.text-center img {
-            max-width: 48px !important;
-            max-height: 48px !important;
-        }
+            .col-5 {
+                font-size: 0.9rem !important;
+            }
 
-        .col-5 {
-            font-size: 0.95rem !important;
-        }
+            .col-4.text-end {
+                font-size: 0.85rem !important;
+            }
 
-        .col-4.text-end {
-            font-size: 0.9rem !important;
-        }
+            .btn-success.btn-sm,
+            .btn.btn-accent {
+                font-size: 0.95rem !important;
+                padding: 8px 0 !important;
+                margin-bottom: 6px !important;
+            }
 
-        .d-flex.justify-content-between.mt-3 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 4px !important;
-        }
+            .d-flex.justify-content-between.align-items-center.mb-2 {
+                gap: 4px !important;
+            }
 
-        .btn-success.btn-sm,
-        .btn.btn-accent {
-            width: 100% !important;
-            font-size: 1rem !important;
-            padding: 10px 0 !important;
-            margin-bottom: 8px !important;
-        }
+            .small {
+                font-size: 0.75rem !important;
+            }
 
-        /* Responsividade dos botões de ação */
-        .d-flex.gap-2.justify-content-end.mt-2 {
-            flex-direction: column !important;
-            gap: 0.5rem !important;
-        }
-    }
+            .fw-bold {
+                font-size: 0.9rem !important;
+            }
 
-    @media (max-width: 480px) {
-        .card {
-            border-radius: 10px !important;
-            margin-bottom: 1.2rem !important;
-        }
+            /* Garantir que o container respeita a largura */
+            .row {
+                margin-right: -6px;
+                margin-left: -6px;
+            }
 
-        .card-body {
-            padding: 0.7rem !important;
+            .col-md-6 {
+                padding-right: 6px;
+                padding-left: 6px;
+            }
         }
-
-        .badge {
-            font-size: 0.85rem !important;
-            padding: 5px 10px !important;
-        }
-
-        .mb-2 {
-            margin-bottom: 0.5rem !important;
-        }
-
-        .col-3.text-center img {
-            max-width: 38px !important;
-            max-height: 38px !important;
-        }
-
-        .col-5 {
-            font-size: 0.9rem !important;
-        }
-
-        .col-4.text-end {
-            font-size: 0.85rem !important;
-        }
-
-        .btn-success.btn-sm,
-        .btn.btn-accent {
-            font-size: 0.95rem !important;
-            padding: 8px 0 !important;
-            margin-bottom: 6px !important;
-        }
-
-        .d-flex.justify-content-between.align-items-center.mb-2 {
-            gap: 4px !important;
-        }
-
-        .small {
-            font-size: 0.75rem !important;
-        }
-
-        .fw-bold {
-            font-size: 0.9rem !important;
-        }
-
-        /* Garantir que o container respeita a largura */
-        .row {
-            margin-right: -6px;
-            margin-left: -6px;
-        }
-
-        .col-md-6 {
-            padding-right: 6px;
-            padding-left: 6px;
-        }
-    }
     </style>
 </head>
 
@@ -414,8 +414,8 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
             <ul class="ul align-items-center">
                 <li><a href="/Fws/FWS_Cliente/produto/HTML/produto.php">Produtos</a></li>
                 <li>
-                    <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php"
-                        method="get" style="margin: 0 10px;">
+                    <form class="d-flex" role="search" action="/Fws/FWS_Cliente/produto/HTML/produto.php" method="get"
+                        style="margin: 0 10px;">
                         <input id="search" class="form-control form-control-sm me-2" type="search" name="q"
                             placeholder="Pesquisar..." aria-label="Pesquisar">
                         <button class="btn btn-warning btn-sm" type="submit" style="padding: 0.25rem 0.6rem;">
@@ -454,23 +454,23 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
             </div>
 
             <script>
-            document.getElementById('user-menu-toggle').addEventListener('click', function() {
-                var menu = document.getElementById('user-menu');
-                if (menu.style.display === 'none') {
-                    menu.style.display = 'block';
-                } else {
-                    menu.style.display = 'none';
-                }
-            });
+                document.getElementById('user-menu-toggle').addEventListener('click', function () {
+                    var menu = document.getElementById('user-menu');
+                    if (menu.style.display === 'none') {
+                        menu.style.display = 'block';
+                    } else {
+                        menu.style.display = 'none';
+                    }
+                });
 
-            // Fecha o menu se clicar fora
-            document.addEventListener('click', function(event) {
-                var container = document.getElementById('bem-vindo');
-                var menu = document.getElementById('user-menu');
-                if (!container.contains(event.target)) {
-                    menu.style.display = 'none';
-                }
-            });
+                // Fecha o menu se clicar fora
+                document.addEventListener('click', function (event) {
+                    var container = document.getElementById('bem-vindo');
+                    var menu = document.getElementById('user-menu');
+                    if (!container.contains(event.target)) {
+                        menu.style.display = 'none';
+                    }
+                });
             </script>
             <?php else: ?>
             Bem-vindo(a).
@@ -482,37 +482,37 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
         <script>
-        $(function() {
-            var autocomplete = $("#search").autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: '/Fws/FWS_Cliente/produto/PHP/api-produtos.php',
-                        dataType: 'json',
-                        data: {
-                            q: request.term
-                        },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function(event, ui) {
-                    window.location.href =
-                        'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
-                }
-            }).data('ui-autocomplete') || $("#search").data('autocomplete');
+            $(function () {
+                var autocomplete = $("#search").autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: '/Fws/FWS_Cliente/produto/PHP/api-produtos.php',
+                            dataType: 'json',
+                            data: {
+                                q: request.term
+                            },
+                            success: function (data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    select: function (event, ui) {
+                        window.location.href =
+                            'produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+                    }
+                }).data('ui-autocomplete') || $("#search").data('autocomplete');
 
-            if (autocomplete) {
-                autocomplete._renderItem = function(ul, item) {
-                    return $("<li>")
-                        .append("<div><img src='" + item.foto +
-                            "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" +
-                            item.label + "</div>")
-                        .appendTo(ul);
-                };
-            }
-        });
+                if (autocomplete) {
+                    autocomplete._renderItem = function (ul, item) {
+                        return $("<li>")
+                            .append("<div><img src='" + item.foto +
+                                "' style='width:100px; height:auto; margin-right:5px; vertical-align:middle;  background-color: #FFD100 !important;'/>" +
+                                item.label + "</div>")
+                            .appendTo(ul);
+                    };
+                }
+            });
         </script>
     </header>
 
@@ -697,48 +697,49 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     </footer>
 
     <script>
-    // Contagem regressiva dos timers dos pedidos (igual ao modal do carrinho)
-    function parseTimeToMs(timestr) {
-        // espera formato HH:MM:SS
-        const parts = timestr.split(':').map(Number);
-        if (parts.length !== 3) return 0;
-        return ((parts[0] * 3600) + (parts[1] * 60) + parts[2]) * 1000;
-    }
-
-    function formatRemaining(ms) {
-        if (ms <= 0) return '00:00:00';
-        const totalSec = Math.floor(ms / 1000);
-        const h = Math.floor(totalSec / 3600);
-        const m = Math.floor((totalSec % 3600) / 60);
-        const s = totalSec % 60;
-        return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-    }
-
-    window._timers = window._timers || [];
-    let shouldReload = false;
-    if (window._timers.length) {
-        setInterval(function() {
-            var now = Date.now();
-            window._timers.forEach(function(t) {
-                // Calcula deadline usando data_criacao + tempo_chegada
-                var created = t.data_criacao ? new Date(t.data_criacao.replace(' ', 'T')) : new Date();
-                var msLimit = parseTimeToMs(t.tempo_chegada || '00:30:00');
-                var deadline = new Date(created.getTime() + msLimit);
-                var restante = deadline.getTime() - now;
-                var el = document.getElementById(t.id);
-                if (el) {
-                    el.textContent = formatRemaining(restante);
-                    if (restante <= 0) shouldReload = true;
-                }
-            });
-        }, 500);
-    }
-    // Atualiza a página a cada 30 segundos ou se algum timer zerar
-    setInterval(function() {
-        if (shouldReload) {
-            location.reload();
+        // Contagem regressiva dos timers dos pedidos (igual ao modal do carrinho)
+        function parseTimeToMs(timestr) {
+            // espera formato HH:MM:SS
+            const parts = timestr.split(':').map(Number);
+            if (parts.length !== 3) return 0;
+            return ((parts[0] * 3600) + (parts[1] * 60) + parts[2]) * 1000;
         }
-    }, 30000);
+
+        function formatRemaining(ms) {
+            if (ms <= 0) return '00:00:00';
+            const totalSec = Math.floor(ms / 1000);
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = totalSec % 60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        window._timers = window._timers || [];
+        let shouldReload = false;
+        if (window._timers.length) {
+            setInterval(function () {
+                var now = Date.now();
+                window._timers.forEach(function (t) {
+                    // Calcula deadline usando data_criacao + tempo_chegada
+                    var created = t.data_criacao ? new Date(t.data_criacao.replace(' ', 'T')) :
+                        new Date();
+                    var msLimit = parseTimeToMs(t.tempo_chegada || '00:30:00');
+                    var deadline = new Date(created.getTime() + msLimit);
+                    var restante = deadline.getTime() - now;
+                    var el = document.getElementById(t.id);
+                    if (el) {
+                        el.textContent = formatRemaining(restante);
+                        if (restante <= 0) shouldReload = true;
+                    }
+                });
+            }, 500);
+        }
+        // Atualiza a página a cada 30 segundos ou se algum timer zerar
+        setInterval(function () {
+            if (shouldReload) {
+                location.reload();
+            }
+        }, 30000);
     </script>
 
     <!-- Bootstrap JavaScript Libraries -->
@@ -753,136 +754,136 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     <div id="modal-backdrop" class="custom-backdrop" style="display:none"></div>
     <div id="modal-estoque-falta" class="custom-modal" style="display:none"></div>
     <style>
-    .custom-backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.55);
-        z-index: 2000;
-    }
+        .custom-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 2000;
+        }
 
-    .custom-modal {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        min-width: 340px;
-        max-width: 90vw;
-        background: #fff;
-        border-radius: 16px;
-        padding: 28px 32px 22px 32px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
-        z-index: 2100;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: inherit;
-    }
+        .custom-modal {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 340px;
+            max-width: 90vw;
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 32px 22px 32px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+            z-index: 2100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: inherit;
+        }
 
-    .custom-modal .modal-actions {
-        margin-top: 20px;
-        display: flex;
-        gap: 14px;
-        width: 100%;
-        justify-content: center;
-    }
+        .custom-modal .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 14px;
+            width: 100%;
+            justify-content: center;
+        }
 
-    .custom-modal .btn-popup {
-        border: none;
-        padding: 7px 20px;
-        border-radius: 7px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        background: #c40000;
-        color: #fff;
-    }
+        .custom-modal .btn-popup {
+            border: none;
+            padding: 7px 20px;
+            border-radius: 7px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #c40000;
+            color: #fff;
+        }
     </style>
     <script>
-    $(function() {
-        $('.form-pedir-novamente').on('submit', function(e) {
-            e.preventDefault();
-            var form = $(this);
-            var itens = JSON.parse(form.find('input[name="itens"]').val());
-            // Checar estoque via AJAX
-            $.post('', {
-                checar_estoque: 1,
-                itens: JSON.stringify(itens)
-            }, function(resp) {
-                try {
-                    var data = typeof resp === 'string' ? JSON.parse(resp) : resp;
-                    if (data.ok) {
-                        // Agora faz o pedido via AJAX também
-                        $.ajax({
-                            url: '',
-                            type: 'POST',
-                            data: {
-                                pedir_novamente: 1,
-                                itens: JSON.stringify(itens)
-                            },
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            success: function(resp2) {
-                                try {
-                                    var data2 = typeof resp2 === 'string' ? JSON
-                                        .parse(resp2) : resp2;
-                                    if (data2 && data2.ok) {
+        $(function () {
+            $('.form-pedir-novamente').on('submit', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var itens = JSON.parse(form.find('input[name="itens"]').val());
+                // Checar estoque via AJAX
+                $.post('', {
+                    checar_estoque: 1,
+                    itens: JSON.stringify(itens)
+                }, function (resp) {
+                    try {
+                        var data = typeof resp === 'string' ? JSON.parse(resp) : resp;
+                        if (data.ok) {
+                            // Agora faz o pedido via AJAX também
+                            $.ajax({
+                                url: '',
+                                type: 'POST',
+                                data: {
+                                    pedir_novamente: 1,
+                                    itens: JSON.stringify(itens)
+                                },
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                },
+                                success: function (resp2) {
+                                    try {
+                                        var data2 = typeof resp2 === 'string' ? JSON
+                                            .parse(resp2) : resp2;
+                                        if (data2 && data2.ok) {
+                                            window.location.href =
+                                                '/Fws/FWS_Cliente/carrinho/HTML/carrinho.php';
+                                        } else {
+                                            mostrarToastSucesso('Pedido refeito!');
+                                            setTimeout(function () {
+                                                window.location.reload();
+                                            }, 1200);
+                                        }
+                                    } catch (e) {
                                         window.location.href =
                                             '/Fws/FWS_Cliente/carrinho/HTML/carrinho.php';
-                                    } else {
-                                        mostrarToastSucesso('Pedido refeito!');
-                                        setTimeout(function() {
-                                            window.location.reload();
-                                        }, 1200);
                                     }
-                                } catch (e) {
+                                },
+                                error: function () {
                                     window.location.href =
                                         '/Fws/FWS_Cliente/carrinho/HTML/carrinho.php';
                                 }
-                            },
-                            error: function() {
-                                window.location.href =
-                                    '/Fws/FWS_Cliente/carrinho/HTML/carrinho.php';
-                            }
-                        });
-                    } else if (data.falta_nome) {
-                        mostrarModalEstoqueFalta(data.falta_nome);
+                            });
+                        } else if (data.falta_nome) {
+                            mostrarModalEstoqueFalta(data.falta_nome);
+                        }
+                    } catch (e) {
+                        alert('Erro inesperado.');
                     }
-                } catch (e) {
-                    alert('Erro inesperado.');
-                }
-            });
-        });
-
-        function mostrarToastSucesso(msg) {
-            var toast = $('<div></div>').css({
-                position: 'fixed',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%,-50%)',
-                background: '#11C47E',
-                color: '#fff',
-                padding: '18px 32px',
-                borderRadius: '12px',
-                fontWeight: '700',
-                zIndex: 9999,
-                boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
-                fontSize: '1.1rem',
-                textAlign: 'center',
-                minWidth: '220px'
-            }).text(msg).appendTo('body');
-            setTimeout(function() {
-                toast.fadeOut(300, function() {
-                    toast.remove();
                 });
-            }, 1200);
-        }
+            });
 
-        function mostrarModalEstoqueFalta(nomeProd) {
-            $("#modal-estoque-falta").html(`
+            function mostrarToastSucesso(msg) {
+                var toast = $('<div></div>').css({
+                    position: 'fixed',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%,-50%)',
+                    background: '#11C47E',
+                    color: '#fff',
+                    padding: '18px 32px',
+                    borderRadius: '12px',
+                    fontWeight: '700',
+                    zIndex: 9999,
+                    boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
+                    fontSize: '1.1rem',
+                    textAlign: 'center',
+                    minWidth: '220px'
+                }).text(msg).appendTo('body');
+                setTimeout(function () {
+                    toast.fadeOut(300, function () {
+                        toast.remove();
+                    });
+                }, 1200);
+            }
+
+            function mostrarModalEstoqueFalta(nomeProd) {
+                $("#modal-estoque-falta").html(`
               <div style="color:#b30000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
                   Produto em falta
               </div>
@@ -893,12 +894,12 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                   <button class="btn-popup ok-close">Fechar</button>
               </div>
             `).show();
-            $("#modal-backdrop").show();
-            $(".ok-close").on("click", function() {
-                $("#modal-estoque-falta, #modal-backdrop").hide();
-            });
-        }
-    });
+                $("#modal-backdrop").show();
+                $(".ok-close").on("click", function () {
+                    $("#modal-estoque-falta, #modal-backdrop").hide();
+                });
+            }
+        });
     </script>
 </body>
 
