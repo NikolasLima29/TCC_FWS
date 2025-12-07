@@ -33,6 +33,45 @@ if (isset($_POST['checar_estoque']) && isset($_POST['itens']) && isset($_SESSION
     }
 }
 
+// Lógica para adicionar 15 minutos ao tempo limite
+if (isset($_POST['adicionar_tempo']) && isset($_POST['venda_id']) && isset($_SESSION['usuario_id'])) {
+    $venda_id = (int)$_POST['venda_id'];
+    $usuario_id = (int)$_SESSION['usuario_id'];
+    
+    // Verificar se o pedido pertence ao usuário e se já foi adicionado tempo
+    $check = $conn->query("SELECT tempo_chegada, tempo_adicionado FROM vendas WHERE id = $venda_id AND usuario_id = $usuario_id");
+    if ($check && $row = $check->fetch_assoc()) {
+        // Verificar se já foi adicionado tempo (se for 's', não permite adicionar novamente)
+        if (strtolower(trim($row['tempo_adicionado'])) === 's') {
+            echo json_encode(["ok" => false, "erro" => "Tempo já foi adicionado para este pedido"]);
+            exit;
+        }
+        
+        $tempo_atual = $row['tempo_chegada'];
+        // Converter HH:MM:SS para segundos
+        list($h, $m, $s) = explode(':', $tempo_atual);
+        $segundos = $h * 3600 + $m * 60 + $s;
+        // Adicionar 15 minutos (900 segundos)
+        $segundos += 900;
+        // Converter de volta para HH:MM:SS
+        $horas = floor($segundos / 3600);
+        $minutos = floor(($segundos % 3600) / 60);
+        $segundos_restantes = $segundos % 60;
+        $novo_tempo = sprintf('%02d:%02d:%02d', $horas, $minutos, $segundos_restantes);
+        
+        // Atualizar no banco (tempo_chegada e marcar que tempo foi adicionado)
+        $update = $conn->query("UPDATE vendas SET tempo_chegada = '$novo_tempo', tempo_adicionado = 's' WHERE id = $venda_id");
+        if ($update) {
+            echo json_encode(["ok" => true, "novo_tempo" => $novo_tempo]);
+        } else {
+            echo json_encode(["ok" => false, "erro" => "Erro ao atualizar"]);
+        }
+    } else {
+        echo json_encode(["ok" => false, "erro" => "Pedido não encontrado"]);
+    }
+    exit;
+}
+
 // Lógica do botão "Pedir novamente"
 if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSION['usuario_id'])) {
     $usuario_id = (int)$_SESSION['usuario_id'];
@@ -558,77 +597,101 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                             // Exibir pedidos normalmente
                             foreach ($vendas as $venda) {
                                 // Gerar código: últimos 4 dígitos do telefone
-                                $codigo = $telefone ? substr($telefone, -4) : '0000';
+                                $codigo_tel = $telefone ? substr($telefone, -4) : '0000';
+                                $codigo_ped = substr(strval($venda['id']), -2);
+                                $codigo = $codigo_tel . '-' . $codigo_ped;
 
                                 if ($col_count % 2 == 0) echo '<div class="row mb-4">';
                                 echo '<div class="col-md-6">';
-                                echo '<div class="card mb-4">';
-                                echo '<div class="card-body">';
-                                // Data e método de pagamento
-                                echo '<div class="d-flex justify-content-between align-items-center mb-2">';
-                                echo '<span class="small text-muted">'.date('d/m/Y H:i', strtotime($venda['data_criacao'])).'</span>';
-                                echo '<span class="small">'.ucwords(str_replace('_',' ',$venda['metodo_pagamento'])).'</span>';
-                            echo '</div>';
-                            // Status com cor
-                            $status = $venda['situacao_compra'];
-                            $status_map = [
-                                'em_preparo' => ['Em andamento', '#FFD100', 'black'],
-                                'pronto_para_retirar' => ['Pronto para retirar', '#11C47E', 'white'],
-                                'finalizada' => ['Finalizado', '#0a7c3a', 'white'],
-                                'cancelada' => ['Cancelado', '#E53935', 'white']
-                            ];
-                            $status_label = isset($status_map[$status]) ? $status_map[$status][0] : ucfirst($status);
-                            $status_bg = isset($status_map[$status]) ? $status_map[$status][1] : '#ccc';
-                            $status_color = isset($status_map[$status]) ? $status_map[$status][2] : 'black';
-                            echo '<span class="badge" style="background:'.$status_bg.';color:'.$status_color.';font-size:1rem;padding:7px 16px;margin-bottom:10px;">'.$status_label.'</span>';
-
-                            // Tempo restante (só se em_preparo ou pronto_para_retirar)
-                            if (in_array($status, ['em_preparo','pronto_para_retirar'])) {
-                                // Tempo restante
-                                $tempo_restante = '';
-                                $id_timer = '';
-                                if (!empty($venda['tempo_chegada']) && $status == 'em_preparo') {
-                                    $data_criacao = strtotime($venda['data_criacao']);
-                                    list($h, $m, $s) = explode(':', $venda['tempo_chegada']);
-                                    $tempo_chegada = $h * 3600 + $m * 60 + $s;
-                                    $deadline = $data_criacao + $tempo_chegada;
-                                    $restante = $deadline - time();
-                                    $tempo_restante = ($restante > 0) ? sprintf('%02d:%02d:%02d', floor($restante/3600), floor(($restante%3600)/60), $restante%60) : '00:00:00';
-                                    $id_timer = 'timer_' . $venda['id'];
-                                    echo '<div class="mb-2"><span class="small text-muted">Tempo restante:</span> <span class="fw-bold" id="'.$id_timer.'">'.$tempo_restante.'</span></div>';
-                                    // Passa data_criacao e tempo_chegada para o JS
-                                    echo '<script>window._timers = window._timers || []; window._timers.push({id:"'.$id_timer.'", data_criacao:"'.$venda['data_criacao'].'", tempo_chegada:"'.$venda['tempo_chegada'].'"});</script>';
-                                } else {
-                                    echo '<div class="mb-2"><span class="small text-muted">Tempo restante:</span> <span class="fw-bold">00:00:00</span></div>';
+                                echo '<div class="card mb-4" style="border: 3px solid var(--primary-red); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-radius: 12px; overflow: hidden;">';
+                                // Cabeçalho do Card
+                                echo '<div class="card-header-pedido" style="background: linear-gradient(135deg, var(--primary-red) 0%, #a00000 100%); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center;">';
+                                echo '<div>';
+                                echo '<h2 style="margin: 0; font-size: 1.3rem; font-weight: bold;">Pedido #'.htmlspecialchars($venda['id']).'</h2>';
+                                echo '<p style="margin: 5px 0 0 0; font-size: 0.95rem; opacity: 0.95;">'.date('d/m/Y H:i', strtotime($venda['data_criacao'])).'</p>';
+                                echo '</div>';
+                                echo '<div style="display: flex; gap: 20px; align-items: center;">';
+                                echo '<div style="background: rgba(255, 209, 0, 0.25); padding: 10px 16px; border-radius: 8px; text-align: center;">';
+                                echo '<p style="margin: 0; font-size: 0.85rem; opacity: 0.9;">Código</p>';
+                                echo '<p style="margin: 5px 0 0 0; font-size: 1.1rem; font-weight: bold; color: #FFD100; letter-spacing: 2px;">'.$codigo.'</p>';
+                                echo '</div>';
+                                echo '<div style="background: rgba(255,255,255,0.8); padding: 10px 18px; border-radius: 8px; font-weight: bold; text-align: center; white-space: nowrap;">';
+                                echo '<p style="margin: 0; font-size: 0.85rem; opacity: 0.9; color: var(--primary-red);">Status</p>';
+                                $status = $venda['situacao_compra'];
+                                $status_map = [
+                                    'em_preparo' => ['Em preparação', '#FFD100', 'black'],
+                                    'pronto_para_retirar' => ['Pronto para retirar', '#11C47E', 'white'],
+                                    'finalizada' => ['Finalizado', '#0a7c3a', 'white'],
+                                    'cancelada' => ['Cancelado', '#E53935', 'white']
+                                ];
+                                $status_label = isset($status_map[$status]) ? $status_map[$status][0] : ucfirst($status);
+                                $status_bg = isset($status_map[$status]) ? $status_map[$status][1] : '#ccc';
+                                $status_color = isset($status_map[$status]) ? $status_map[$status][2] : 'black';
+                                echo '<p style="margin: 5px 0 0 0; font-size: 1.1rem; color:'.$status_bg.'; background:'.$status_bg.'; color:'.$status_color.'; border-radius:6px; padding:4px 12px; display:inline-block;">'.$status_label.'</p>';
+                                echo '</div>';
+                                echo '</div>';
+                                echo '</div>';
+                                // Conteúdo do Card
+                                echo '<div class="card-content" style="padding: 20px; background: #f9f9f9;">';
+                                // Tempo restante (só se em_preparo ou pronto_para_retirar)
+                                if (in_array($status, ['em_preparo','pronto_para_retirar'])) {
+                                    $tempo_restante = '';
+                                    $id_timer = '';
+                                    if (!empty($venda['tempo_chegada'])) {
+                                        $data_criacao = strtotime($venda['data_criacao']);
+                                        list($h, $m, $s) = explode(':', $venda['tempo_chegada']);
+                                        $tempo_chegada = $h * 3600 + $m * 60 + $s;
+                                        $deadline = $data_criacao + $tempo_chegada;
+                                        $restante = $deadline - time();
+                                        $tempo_restante = ($restante > 0) ? sprintf('%02d:%02d:%02d', floor($restante/3600), floor(($restante%3600)/60), $restante%60) : '00:00:00';
+                                        $id_timer = 'timer_' . $venda['id'];
+                                        echo '<div class="mb-2"><span class="small text-muted">Tempo restante:</span> <span class="fw-bold" id="'.$id_timer.'">'.$tempo_restante.'</span></div>';
+                                        echo '<script>window._timers = window._timers || []; window._timers.push({id:"'.$id_timer.'", data_criacao:"'.$venda['data_criacao'].'", tempo_chegada:"'.$venda['tempo_chegada'].'"});</script>';
+                                    } else {
+                                        echo '<div class="mb-2"><span class="small text-muted">Tempo restante:</span> <span class="fw-bold">00:00:00</span></div>';
+                                    }
+                                }
+                                // Produtos escolhidos
+                                $venda_id = intval($venda['id']);
+                                $sql_itens = "SELECT iv.*, p.nome, p.foto_produto FROM itens_vendidos iv INNER JOIN produtos p ON iv.produto_id = p.id WHERE iv.venda_id = $venda_id";
+                                $res_itens = mysqli_query($conn, $sql_itens);
+                                echo '<div style="margin-bottom: 18px;">';
+                                while ($item = mysqli_fetch_assoc($res_itens)) {
+                                    echo '<div class="row align-items-center mb-2">';
+                                    echo '<div class="col-3 text-center">';
+                                    echo '<img src="'.htmlspecialchars($item['foto_produto']).'" class="img-fluid rounded" style="max-height:60px;">';
+                                    echo '</div>';
+                                    echo '<div class="col-5">';
+                                    echo '<div style="font-size:1rem;font-weight:500;">'.htmlspecialchars($item['nome']).'</div>';
+                                    echo '<div class="text-muted">Qtd: '.$item['quantidade'].'</div>';
+                                    echo '</div>';
+                                    echo '<div class="col-4 text-end">';
+                                    echo '<div style="font-size:0.85rem; color:#666;">Unit: R$ '.number_format($item['preco_unitario'],2,',','.').'</div>';
+                                    echo '<div style="font-size:1rem;">Total: <b>R$ '.number_format($item['preco_unitario'] * $item['quantidade'],2,',','.').'</b></div>';
+                                    echo '</div>';
+                                    echo '</div>';
+                                }
+                                echo '</div>';
+                                // Preço total
+                                echo '<div class="d-flex justify-content-between mt-3" style="font-size:1.1rem; font-weight:bold; color:var(--primary-red);">';
+                                echo '<span>Total</span>';
+                                echo '<span>R$ '.number_format($venda['total'],2,',','.').'</span>';
+                                echo '</div>';
+                            // Botões de ação
+                            echo '<div class="row mt-3">';
+                            echo '<div class="col text-end">';
+                            echo '<div class="d-flex gap-2 justify-content-end">';
+                            
+                            // Botão Ver Detalhes (sempre visível para pedidos em preparação ou pronto para retirar)
+                            if (in_array($status, ['em_preparo', 'pronto_para_retirar'])) {
+                                echo '<a href="../../pedido_detalhado/HTML/pedido_detalhado.php?id=' . $venda['id'] . '" class="btn btn-accent no-underline" style="background-color: var(--accent-yellow); color: #111; font-weight: bold; border-radius: 6px; min-width:130px; font-size:0.93rem; padding:6px 0; border: none; display: inline-block;">Ver detalhes</a>';
+                                // Botão Adicionar 15 min (apenas se ainda não foi adicionado)
+                                // Verifica se tempo_adicionado NÃO é 's' (case-insensitive, sem espaços)
+                                if (strtolower(trim($venda['tempo_adicionado'])) !== 's') {
+                                    echo '<button class="btn btn-info btn-sm adicionar-tempo" data-venda-id="' . $venda['id'] . '" style="min-width:140px; font-size:0.93rem; font-weight:bold; border-radius:6px; padding:6px 0; color:white; display:inline-block;">Adicionar 15 min</button>';
                                 }
                             }
-                            // Código (em todos os pedidos)
-                            echo '<div class="mb-2"><span class="small text-muted">Código:</span> <span class="fw-bold">'.$codigo.'</span></div>';
-
-                            // Produtos escolhidos
-                            $venda_id = intval($venda['id']);
-                            $sql_itens = "SELECT iv.*, p.nome, p.foto_produto FROM itens_vendidos iv INNER JOIN produtos p ON iv.produto_id = p.id WHERE iv.venda_id = $venda_id";
-                            $res_itens = mysqli_query($conn, $sql_itens);
-                            while ($item = mysqli_fetch_assoc($res_itens)) {
-                                echo '<div class="row align-items-center mb-2">';
-                                echo '<div class="col-3 text-center">';
-                                echo '<img src="'.htmlspecialchars($item['foto_produto']).'" class="img-fluid rounded" style="max-height:60px;">';
-                                echo '</div>';
-                                echo '<div class="col-5">';
-                                echo '<div style="font-size:1rem;font-weight:500;">'.htmlspecialchars($item['nome']).'</div>';
-                                echo '<div class="text-muted">Qtd: '.$item['quantidade'].'</div>';
-                                echo '</div>';
-                                echo '<div class="col-4 text-end">';
-                                echo '<div style="font-size:0.85rem; color:#666;">Unit: R$ '.number_format($item['preco_unitario'],2,',','.').'</div>';
-                                echo '<div style="font-size:1rem;">Total: <b>R$ '.number_format($item['preco_unitario'] * $item['quantidade'],2,',','.').'</b></div>';
-                                echo '</div>';
-                                echo '</div>';
-                            }
-                            // Preço total
-                            echo '<div class="d-flex justify-content-between mt-3">';
-                            echo '<span class="fw-bold">Total</span>';
-                            echo '<span class="fw-bold">R$ '.number_format($venda['total'],2,',','.').'</span>';
-                            echo '</div>';
+                            
                             // Botão Pedir Novamente (apenas para finalizada ou cancelada)
                             if (in_array($status, ['finalizada', 'cancelada'])) {
                                 $sql_itens = "SELECT produto_id, quantidade FROM itens_vendidos WHERE venda_id = $venda_id";
@@ -641,18 +704,16 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                     ];
                                 }
                                 $produtos_json = htmlspecialchars(json_encode($produtos), ENT_QUOTES, 'UTF-8');
-                                echo '<div class="row mt-2">';
-                                echo '<div class="col text-end">';
-                                echo '<div class="d-flex gap-2 justify-content-end mt-2">';
                                 echo '<form method="post" class="form-pedir-novamente" style="margin:0;">';
                                 echo '<input type="hidden" name="itens" value=\''.$produtos_json.'\' />';
                                 echo '<button type="submit" name="pedir_novamente" class="btn btn-success btn-sm" style="min-width:140px; font-size:0.93rem; font-weight:bold; border-radius:6px; padding:6px 0;">Pedir novamente</button>';
                                 echo '</form>';
-                                echo '<a href="../../pedido_detalhado/HTML/pedido_detalhado.php?id=' . $venda['id'] . '" class="btn btn-accent no-underline" style="background-color: var(--accent-yellow); color: #111; font-weight: bold; border-radius: 6px; min-width:120px; font-size:0.93rem; padding:6px 0; border: none; display: inline-block; transition: all 0.3s;">Ver detalhes</a>';
-                                echo '</div>';
-                                echo '</div>';
-                                echo '</div>';
+                                echo '<a href="../../pedido_detalhado/HTML/pedido_detalhado.php?id=' . $venda['id'] . '" class="btn btn-accent no-underline" style="background-color: var(--accent-yellow); color: #111; font-weight: bold; border-radius: 6px; min-width:120px; font-size:0.93rem; padding:6px 0; border: none; display: inline-block;">Ver detalhes</a>';
                             }
+                            
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
                             echo '</div>';
                             echo '</div>';
                             echo '</div>';
@@ -898,6 +959,147 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                 $("#modal-estoque-falta, #modal-backdrop").hide();
             });
         }
+
+        // Evento para adicionar 15 minutos ao tempo limite
+        $(document).on('click', '.adicionar-tempo', function(e) {
+            e.preventDefault();
+            var btn = $(this);
+            var venda_id = btn.data('venda-id');
+            
+            // Desabilitar o botão para evitar múltiplos cliques
+            btn.prop('disabled', true);
+            btn.css('opacity', '0.5');
+            btn.css('cursor', 'not-allowed');
+            
+            $.ajax({
+                url: '',
+                method: 'POST',
+                data: {
+                    adicionar_tempo: 1,
+                    venda_id: venda_id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.ok) {
+                        // Ocultar o botão
+                        btn.hide();
+                        
+                        var toast = $('<div></div>').css({
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%,-50%)',
+                            background: '#11C47E',
+                            color: '#fff',
+                            padding: '18px 32px',
+                            borderRadius: '12px',
+                            fontWeight: '700',
+                            zIndex: 9999,
+                            boxShadow: '0 8px 25px rgba(0,0,0,0.4)',
+                            fontSize: '1.1rem',
+                            textAlign: 'center',
+                            minWidth: '220px'
+                        }).text('15 minutos adicionados!').appendTo('body');
+                        setTimeout(function() {
+                            toast.fadeOut(300, function() {
+                                toast.remove();
+                            });
+                        }, 1200);
+                        
+                        // Esperar 2 segundos e atualizar a página
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        btn.prop('disabled', false);
+                        btn.css('opacity', '1');
+                        btn.css('cursor', 'pointer');
+                        alert('Erro ao adicionar tempo: ' + response.erro);
+                    }
+                },
+                error: function() {
+                    btn.prop('disabled', false);
+                    btn.css('opacity', '1');
+                    btn.css('cursor', 'pointer');
+                    alert('Erro ao processar requisição.');
+                }
+            });
+        });
+
+        // Chama o script de verificação/cancelamento a cada 30 segundos
+
+
+        // Adiciona mensagem fixa de atualização
+
+        // Adiciona mensagem fixa de atualização logo abaixo do header
+        var $atualizando = $('<div id="atualizando-pedidos"></div>').css({
+            position: 'absolute',
+            top: $('#header').outerHeight() + 'px',
+            left: '0',
+            width: '100%',
+            background: '#11C47E',
+            color: '#fff',
+            padding: '10px 0',
+            fontWeight: '700',
+            fontSize: '1.1rem',
+            textAlign: 'center',
+            zIndex: 1000,
+            display: 'none'
+        }).text('Atualizando pedidos...');
+        // Insere após o header
+        $('#header').after($atualizando);
+
+        function mostrarAtualizando() {
+            $atualizando.stop(true, true).fadeIn(200);
+        }
+        function esconderAtualizando() {
+            $atualizando.stop(true, true).delay(3000).fadeOut(400); // 3 segundos
+        }
+
+        // Mostra ao abrir a página
+        mostrarAtualizando();
+        $.ajax({
+            url: '/fws/FWS_ADM/PHP/verificar_tempo_limite.php',
+            method: 'GET',
+            data: { action: 'verificar_todos' },
+            dataType: 'json',
+            complete: function() {
+                esconderAtualizando();
+            }
+        });
+
+        // Só executa a verificação se houver pedidos em andamento
+        function temPedidoEmAndamento() {
+            var existe = false;
+            $('.badge').each(function() {
+                var txt = $(this).text().trim().toLowerCase();
+                if (txt === 'em preparação') {
+                    existe = true;
+                    return false;
+                }
+            });
+            return existe;
+        }
+
+        setInterval(function() {
+            if (temPedidoEmAndamento()) {
+                mostrarAtualizando();
+                $.ajax({
+                    url: '/fws/FWS_ADM/PHP/verificar_tempo_limite.php',
+                    method: 'GET',
+                    data: { action: 'verificar_todos' },
+                    dataType: 'json',
+                    complete: function() {
+                        esconderAtualizando();
+                    }
+                });
+            }
+        }, 20000); // 20 segundos
+
+        // Recarrega a página a cada 20 segundos
+        setInterval(function() {
+            location.reload();
+        }, 20000);
     });
     </script>
 </body>

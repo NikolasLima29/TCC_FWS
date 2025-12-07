@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `carrinho_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `carrinho_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Copiando dados para a tabela fws.carrinho: ~1 rows (aproximadamente)
 INSERT INTO `carrinho` (`id`, `usuario_id`, `produto_id`, `quantidade`, `preco_unitario`, `codigo_cupom`, `data_criacao`) VALUES
@@ -85,60 +85,13 @@ CREATE TABLE IF NOT EXISTS `despesas` (
   PRIMARY KEY (`id`),
   KEY `categoria_id` (`categoria_id`),
   CONSTRAINT `despesas_ibfk_1` FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.despesas: ~0 rows (aproximadamente)
-
--- Copiando estrutura para evento fws.ev_expirar_pre_compras
-DELIMITER //
-CREATE EVENT `ev_expirar_pre_compras` ON SCHEDULE EVERY 10 SECOND STARTS '2025-12-01 20:51:14' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
-
-    INSERT INTO expiracoes_pre_compras (usuario_id, venda_id, data_expiracao)
-    SELECT usuario_id, id, NOW()
-    FROM vendas
-    WHERE situacao_compra = 'em_preparo'
-      AND TIMESTAMPDIFF(SECOND, data_criacao, NOW()) > TIME_TO_SEC(tempo_chegada);
-
-
-    UPDATE vendas
-    SET situacao_compra = 'cancelada'
-    WHERE situacao_compra = 'em_preparo'
-      AND TIMESTAMPDIFF(SECOND, data_criacao, NOW()) > TIME_TO_SEC(tempo_chegada);
-END//
-DELIMITER ;
-
--- Copiando estrutura para evento fws.ev_limpar_lotes_zerados
-DELIMITER //
-CREATE EVENT `ev_limpar_lotes_zerados` ON SCHEDULE EVERY 1 MINUTE STARTS '2025-12-05 11:30:06' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM lotes_produtos 
-  WHERE quantidade = 0//
-DELIMITER ;
-
--- Copiando estrutura para evento fws.ev_usuarios_7d
-DELIMITER //
-CREATE EVENT `ev_usuarios_7d` ON SCHEDULE EVERY 1 MINUTE STARTS '2025-10-19 21:09:20' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
-
-    UPDATE usuarios u
-    LEFT JOIN (
-        SELECT usuario_id, COUNT(*) AS expiracoes_7d
-        FROM expiracoes_pre_compras
-        WHERE data_expiracao >= NOW() - INTERVAL 7 DAY
-        GROUP BY usuario_id
-    ) e ON u.id = e.usuario_id
-    SET u.ativo = 1
-    WHERE COALESCE(e.expiracoes_7d, 0) <= 1;
-
-
-    UPDATE usuarios u
-    JOIN (
-        SELECT usuario_id, COUNT(*) AS expiracoes_7d
-        FROM expiracoes_pre_compras
-        WHERE data_expiracao >= NOW() - INTERVAL 7 DAY
-        GROUP BY usuario_id
-        HAVING expiracoes_7d >= 2
-    ) e ON u.id = e.usuario_id
-    SET u.ativo = 0;
-END//
-DELIMITER ;
+-- Copiando dados para a tabela fws.despesas: ~3 rows (aproximadamente)
+INSERT INTO `despesas` (`id`, `descricao`, `valor`, `data_despesa`, `tipo`, `categoria_id`) VALUES
+	(1, '', 100.00, '2025-12-05', 'internet', NULL),
+	(2, '', 700.00, '2025-12-02', 'luz', NULL),
+	(3, 'Refrigerador qubrou e necessitamos realizar uma manutenção.', 300.00, '2025-12-03', 'manutencao', NULL);
 
 -- Copiando estrutura para tabela fws.expiracoes_pre_compras
 CREATE TABLE IF NOT EXISTS `expiracoes_pre_compras` (
@@ -151,9 +104,9 @@ CREATE TABLE IF NOT EXISTS `expiracoes_pre_compras` (
   KEY `fk_exp_venda` (`venda_id`),
   CONSTRAINT `fk_exp_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `fk_exp_venda` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.expiracoes_pre_compras: ~17 rows (aproximadamente)
+-- Copiando dados para a tabela fws.expiracoes_pre_compras: ~22 rows (aproximadamente)
 INSERT INTO `expiracoes_pre_compras` (`id`, `usuario_id`, `venda_id`, `data_expiracao`) VALUES
 	(8, 4, 11, '2025-10-30 14:06:14'),
 	(9, 4, 12, '2025-11-26 21:40:14'),
@@ -171,7 +124,12 @@ INSERT INTO `expiracoes_pre_compras` (`id`, `usuario_id`, `venda_id`, `data_expi
 	(21, 4, 15, '2025-12-04 09:02:34'),
 	(22, 4, 15, '2025-12-04 09:02:44'),
 	(23, 4, 25, '2025-12-04 11:52:54'),
-	(24, 4, 27, '2025-12-05 12:11:40');
+	(24, 4, 27, '2025-12-05 12:11:40'),
+	(25, 4, 30, '2025-12-05 14:59:14'),
+	(27, 10, 32, '2025-12-05 20:54:04'),
+	(28, 10, 33, '2025-12-06 00:44:44'),
+	(29, 10, 34, '2025-12-06 18:37:04'),
+	(30, 10, 35, '2025-12-06 18:57:14');
 
 -- Copiando estrutura para tabela fws.fornecedores
 CREATE TABLE IF NOT EXISTS `fornecedores` (
@@ -242,9 +200,9 @@ CREATE TABLE IF NOT EXISTS `itens_vendidos` (
   KEY `produto_id` (`produto_id`),
   CONSTRAINT `itens_vendidos_ibfk_1` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`),
   CONSTRAINT `itens_vendidos_ibfk_2` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=68 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.itens_vendidos: ~33 rows (aproximadamente)
+-- Copiando dados para a tabela fws.itens_vendidos: ~47 rows (aproximadamente)
 INSERT INTO `itens_vendidos` (`id`, `venda_id`, `produto_id`, `quantidade`, `preco_unitario`) VALUES
 	(2, 11, 15, 3, 3.50),
 	(3, 12, 18, 2, 9.99),
@@ -278,7 +236,21 @@ INSERT INTO `itens_vendidos` (`id`, `venda_id`, `produto_id`, `quantidade`, `pre
 	(31, 29, 5, 3, 6.90),
 	(32, 29, 9, 1, 6.50),
 	(33, 29, 18, 3, 9.99),
-	(34, 29, 28, 1, 13.50);
+	(34, 29, 28, 1, 13.50),
+	(35, 30, 2, 1, 69.90),
+	(55, 50, 4, 1, 14.50),
+	(56, 51, 50, 10, 6.99),
+	(57, 52, 3, 10, 31.99),
+	(58, 53, 1, 10, 69.90),
+	(59, 53, 2, 10, 69.90),
+	(60, 54, 40, 10, 25.90),
+	(61, 54, 41, 10, 25.90),
+	(62, 55, 1, 10, 69.90),
+	(63, 55, 2, 10, 69.90),
+	(64, 56, 40, 10, 25.90),
+	(65, 56, 41, 10, 25.90),
+	(66, 57, 26, 10, 17.99),
+	(67, 57, 36, 10, 22.99);
 
 -- Copiando estrutura para tabela fws.lotes_produtos
 CREATE TABLE IF NOT EXISTS `lotes_produtos` (
@@ -287,166 +259,173 @@ CREATE TABLE IF NOT EXISTS `lotes_produtos` (
   `validade` date DEFAULT NULL,
   `quantidade` int NOT NULL,
   `fornecedor_id` int NOT NULL,
+  `chegada` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `produto_id` (`produto_id`),
   KEY `fk_lote_fornecedor` (`fornecedor_id`),
   CONSTRAINT `fk_lote_fornecedor` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedores` (`id`),
   CONSTRAINT `fk_lote_produto` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=169 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=178 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.lotes_produtos: ~151 rows (aproximadamente)
-INSERT INTO `lotes_produtos` (`id`, `produto_id`, `validade`, `quantidade`, `fornecedor_id`) VALUES
-	(17, 2, '2028-11-26', 2, 1),
-	(18, 3, '2026-11-26', 5, 3),
-	(19, 4, '2026-11-26', 16, 3),
-	(20, 5, '2026-11-26', 9, 3),
-	(21, 6, '2026-11-26', 1, 4),
-	(22, 7, '2026-11-26', 13, 5),
-	(23, 8, '2026-11-26', 54, 6),
-	(24, 9, '2026-11-26', 58, 6),
-	(25, 10, '2026-11-26', 7, 7),
-	(26, 11, '2026-11-26', 10, 7),
-	(27, 12, NULL, 8, 2),
-	(28, 13, '2026-11-26', 22, 8),
-	(29, 14, '2026-11-26', 47, 8),
-	(30, 15, '2026-11-26', 12, 8),
-	(31, 16, '2026-11-26', 34, 8),
-	(32, 17, '2026-11-26', 28, 8),
-	(34, 19, '2026-11-26', 5, 9),
-	(35, 20, '2026-11-26', 13, 9),
-	(36, 21, '2026-11-26', 21, 9),
-	(37, 22, '2026-11-26', 11, 9),
-	(38, 23, '2026-11-26', 4, 10),
-	(39, 24, '2026-11-26', 9, 10),
-	(40, 25, '2026-11-26', 10, 10),
-	(41, 26, '2026-11-26', 3, 10),
-	(42, 27, '2026-11-26', 14, 6),
-	(43, 28, '2026-11-26', 6, 11),
-	(44, 29, '2026-11-26', 2, 11),
-	(45, 30, '2026-11-26', 3, 10),
-	(46, 31, '2026-11-26', 13, 9),
-	(47, 32, '2026-11-26', 6, 9),
-	(48, 33, '2026-11-26', 5, 9),
-	(49, 34, '2026-11-26', 3, 9),
-	(50, 35, '2026-11-26', 10, 11),
-	(51, 36, '2026-11-26', 8, 11),
-	(52, 37, '2026-11-26', 10, 11),
-	(53, 38, '2026-11-26', 12, 11),
-	(54, 39, '2026-11-26', 15, 11),
-	(55, 40, '2026-11-26', 11, 11),
-	(56, 41, '2026-11-26', 7, 11),
-	(57, 42, '2026-11-26', 3, 11),
-	(58, 43, '2026-11-26', 1, 12),
-	(59, 45, '2026-11-26', 18, 12),
-	(60, 46, '2026-11-26', 8, 13),
-	(61, 47, '2026-11-26', 15, 13),
-	(62, 48, '2026-11-26', 8, 3),
-	(63, 49, '2026-11-26', 28, 3),
-	(64, 50, '2026-11-26', 415, 12),
-	(65, 51, '2026-11-26', 5, 10),
-	(66, 52, '2026-11-26', 1, 10),
-	(67, 53, '2026-11-26', 4, 10),
-	(68, 54, '2026-11-26', 5, 10),
-	(69, 55, '2026-11-26', 7, 10),
-	(70, 56, '2026-11-26', 8, 10),
-	(71, 57, '2026-11-26', 3, 10),
-	(72, 58, '2026-11-26', 6, 10),
-	(73, 59, '2026-11-26', 3, 10),
-	(74, 60, '2026-11-26', 15, 9),
-	(75, 61, '2026-11-26', 4, 8),
-	(76, 62, '2026-11-26', 3, 8),
-	(77, 63, '2026-11-26', 6, 8),
-	(78, 64, '2026-11-26', 6, 13),
-	(79, 65, '2026-11-26', 4, 13),
-	(80, 66, '2026-11-26', 5, 13),
-	(81, 67, '2026-11-26', 5, 13),
-	(82, 68, '2026-11-26', 3, 13),
-	(83, 69, '2026-11-26', 7, 13),
-	(84, 70, '2026-11-26', 6, 13),
-	(85, 71, '2026-11-26', 6, 13),
-	(86, 72, '2026-11-26', 1, 14),
-	(87, 73, '2026-11-26', 4, 14),
-	(88, 74, '2026-11-26', 4, 14),
-	(89, 75, '2026-11-26', 6, 13),
-	(90, 76, '2026-11-26', 3, 14),
-	(91, 77, '2026-11-26', 8, 13),
-	(92, 78, '2026-11-26', 5, 13),
-	(93, 79, '2026-11-26', 4, 13),
-	(94, 80, '2026-11-26', 4, 13),
-	(95, 1, '2028-12-04', 17, 1),
-	(96, 3, '2026-12-04', 24, 3),
-	(97, 6, '2026-12-04', 24, 4),
-	(98, 80, '2026-12-05', 24, 13),
-	(99, 79, '2026-12-05', 24, 13),
-	(100, 7, '2026-12-05', 24, 5),
-	(101, 10, '2026-12-05', 24, 7),
-	(102, 12, NULL, 24, 2),
-	(103, 11, '2026-12-05', 5, 7),
-	(104, 78, '2026-12-05', 24, 13),
-	(105, 1, '2028-12-05', 1, 1),
-	(106, 15, '2026-12-05', 24, 8),
-	(107, 23, '2026-12-05', 24, 10),
-	(108, 24, '2026-12-05', 24, 10),
-	(109, 25, '2026-12-05', 24, 10),
-	(110, 26, '2026-12-05', 24, 10),
-	(111, 30, '2026-12-05', 24, 10),
-	(112, 51, '2026-12-05', 24, 10),
-	(113, 52, '2026-12-05', 24, 10),
-	(114, 53, '2026-12-05', 24, 10),
-	(115, 54, '2026-12-05', 24, 10),
-	(116, 55, '2026-12-05', 24, 10),
-	(117, 56, '2026-12-05', 24, 10),
-	(118, 57, '2026-12-05', 24, 10),
-	(119, 58, '2026-12-05', 24, 10),
-	(120, 59, '2026-12-05', 24, 10),
-	(121, 23, '2026-12-05', 24, 10),
-	(122, 23, '2026-12-05', 24, 10),
-	(123, 40, '2026-12-05', 24, 11),
-	(124, 28, '2026-12-05', 24, 11),
-	(125, 29, '2026-12-05', 24, 11),
-	(126, 35, '2026-12-05', 24, 11),
-	(127, 36, '2026-12-05', 24, 11),
-	(128, 37, '2026-12-06', 24, 11),
-	(129, 38, '2026-12-05', 24, 11),
-	(130, 39, '2025-12-06', 24, 11),
-	(131, 40, '2026-12-05', 24, 11),
-	(132, 41, '2026-12-05', 24, 11),
-	(133, 42, '2026-12-05', 24, 11),
-	(134, 46, '2026-12-05', 20, 13),
-	(135, 47, '2026-12-05', 20, 13),
-	(136, 64, '2026-12-05', 20, 13),
-	(137, 65, '2026-12-05', 20, 13),
-	(138, 66, '2026-12-05', 20, 13),
-	(139, 67, '2026-12-05', 20, 13),
-	(140, 68, '2026-12-05', 20, 13),
-	(141, 69, '2026-12-05', 20, 13),
-	(142, 70, '2026-12-05', 20, 13),
-	(143, 71, '2026-12-05', 20, 13),
-	(144, 75, '2026-12-05', 20, 13),
-	(145, 77, '2026-12-05', 20, 13),
-	(146, 78, '2026-12-05', 20, 13),
-	(147, 79, '2026-12-05', 20, 13),
-	(148, 80, '2026-12-05', 20, 13),
-	(149, 18, '2026-12-05', 20, 9),
-	(150, 19, '2026-12-05', 24, 9),
-	(151, 20, '2026-12-05', 24, 9),
-	(152, 21, '2026-12-05', 24, 9),
-	(153, 22, '2026-12-05', 24, 9),
-	(154, 31, '2026-12-05', 24, 9),
-	(155, 32, '2026-12-05', 24, 9),
-	(156, 33, '2026-12-05', 24, 9),
-	(157, 34, '2026-12-05', 24, 9),
-	(158, 60, '2026-12-05', 24, 9),
-	(159, 43, '2026-12-05', 24, 12),
-	(160, 27, '2026-12-05', 24, 6),
-	(161, 48, '2026-12-05', 24, 3),
-	(162, 61, '2026-12-05', 24, 8),
-	(163, 62, '2026-12-05', 24, 8),
-	(164, 76, '2026-12-05', 24, 14),
-	(165, 72, '2026-12-05', 24, 14),
-	(166, 73, '2026-12-05', 24, 14),
-	(167, 1, '2028-12-05', 24, 1),
-	(168, 5, '2026-12-05', 15, 3);
+-- Copiando dados para a tabela fws.lotes_produtos: ~157 rows (aproximadamente)
+INSERT INTO `lotes_produtos` (`id`, `produto_id`, `validade`, `quantidade`, `fornecedor_id`, `chegada`) VALUES
+	(17, 2, '2028-11-26', 0, 1, '2025-11-26'),
+	(18, 3, '2025-12-14', 0, 3, '2025-11-26'),
+	(19, 4, '2026-11-26', 15, 3, '2025-11-26'),
+	(20, 5, '2026-11-26', 9, 3, '2025-11-26'),
+	(21, 6, '2026-11-26', 1, 4, '2025-11-26'),
+	(22, 7, '2026-11-26', 13, 5, '2025-11-26'),
+	(23, 8, '2026-11-26', 54, 6, '2025-11-26'),
+	(24, 9, '2026-11-26', 58, 6, '2025-11-26'),
+	(25, 10, '2026-11-26', 7, 7, '2025-11-26'),
+	(26, 11, '2026-11-26', 10, 7, '2025-11-26'),
+	(27, 12, NULL, 8, 2, NULL),
+	(28, 13, '2026-11-26', 22, 8, '2025-11-26'),
+	(29, 14, '2026-11-26', 47, 8, '2025-11-26'),
+	(30, 15, '2026-11-26', 12, 8, '2025-11-26'),
+	(31, 16, '2026-11-26', 34, 8, '2025-11-26'),
+	(32, 17, '2026-11-26', 28, 8, '2025-11-26'),
+	(34, 19, '2026-11-26', 5, 9, '2025-11-26'),
+	(35, 20, '2026-11-26', 13, 9, '2025-11-26'),
+	(36, 21, '2026-11-26', 21, 9, '2025-11-26'),
+	(37, 22, '2026-11-26', 11, 9, '2025-11-26'),
+	(38, 23, '2026-11-26', 4, 10, '2025-11-26'),
+	(40, 25, '2026-11-26', 10, 10, '2025-11-26'),
+	(41, 26, '2026-11-26', 0, 10, '2025-11-26'),
+	(42, 27, '2026-11-26', 14, 6, '2025-11-26'),
+	(43, 28, '2026-11-26', 6, 11, '2025-11-26'),
+	(44, 29, '2026-11-26', 2, 11, '2025-11-26'),
+	(45, 30, '2026-11-26', 3, 10, '2025-11-26'),
+	(46, 31, '2026-11-26', 13, 9, '2025-11-26'),
+	(47, 32, '2026-11-26', 6, 9, '2025-11-26'),
+	(48, 33, '2026-11-26', 5, 9, '2025-11-26'),
+	(49, 34, '2026-11-26', 3, 9, '2025-11-26'),
+	(50, 35, '2026-11-26', 10, 11, '2025-11-26'),
+	(51, 36, '2026-11-26', 0, 11, '2025-11-26'),
+	(52, 37, '2026-11-26', 10, 11, '2025-11-26'),
+	(53, 38, '2026-11-26', 12, 11, '2025-11-26'),
+	(54, 39, '2026-11-26', 15, 11, '2025-11-26'),
+	(55, 40, '2026-11-26', 0, 11, '2025-11-26'),
+	(56, 41, '2026-11-26', 0, 11, '2025-11-26'),
+	(57, 42, '2026-11-26', 3, 11, '2025-11-26'),
+	(58, 43, '2026-11-26', 1, 12, '2025-11-26'),
+	(59, 45, '2026-11-26', 18, 12, '2025-11-26'),
+	(60, 46, '2026-11-26', 8, 13, '2025-11-26'),
+	(61, 47, '2026-11-26', 15, 13, '2025-11-26'),
+	(62, 48, '2026-11-26', 8, 3, '2025-11-26'),
+	(63, 49, '2026-11-26', 28, 3, '2025-11-26'),
+	(64, 50, '2026-11-26', 405, 12, '2025-11-26'),
+	(65, 51, '2026-11-26', 5, 10, '2025-11-26'),
+	(66, 52, '2026-11-26', 1, 10, '2025-11-26'),
+	(67, 53, '2026-11-26', 4, 10, '2025-11-26'),
+	(68, 54, '2026-11-26', 5, 10, '2025-11-26'),
+	(69, 55, '2026-11-26', 7, 10, '2025-11-26'),
+	(70, 56, '2026-11-26', 8, 10, '2025-11-26'),
+	(71, 57, '2026-11-26', 3, 10, '2025-11-26'),
+	(72, 58, '2026-11-26', 6, 10, '2025-11-26'),
+	(73, 59, '2026-11-26', 3, 10, '2025-11-26'),
+	(74, 60, '2026-11-26', 15, 9, '2025-11-26'),
+	(75, 61, '2026-11-26', 4, 8, '2025-11-26'),
+	(76, 62, '2026-11-26', 3, 8, '2025-11-26'),
+	(77, 63, '2026-11-26', 6, 8, '2025-11-26'),
+	(78, 64, '2026-11-26', 6, 13, '2025-11-26'),
+	(79, 65, '2026-11-26', 4, 13, '2025-11-26'),
+	(80, 66, '2026-11-26', 5, 13, '2025-11-26'),
+	(81, 67, '2026-11-26', 5, 13, '2025-11-26'),
+	(82, 68, '2026-11-26', 3, 13, '2025-11-26'),
+	(83, 69, '2026-11-26', 7, 13, '2025-11-26'),
+	(84, 70, '2026-11-26', 6, 13, '2025-11-26'),
+	(85, 71, '2026-11-26', 6, 13, '2025-11-26'),
+	(86, 72, '2026-11-26', 1, 14, '2025-11-26'),
+	(87, 73, '2026-11-26', 4, 14, '2025-11-26'),
+	(88, 74, '2026-11-26', 4, 14, '2025-11-26'),
+	(89, 75, '2026-11-26', 6, 13, '2025-11-26'),
+	(90, 76, '2026-11-26', 3, 14, '2025-11-26'),
+	(91, 77, '2026-11-26', 8, 13, '2025-11-26'),
+	(92, 78, '2026-11-26', 5, 13, '2025-11-26'),
+	(93, 79, '2026-11-26', 4, 13, '2025-11-26'),
+	(94, 80, '2026-11-26', 4, 13, '2025-11-26'),
+	(95, 1, '2028-12-04', 0, 1, '2025-12-04'),
+	(96, 3, '2026-12-04', 19, 3, '2025-12-04'),
+	(97, 6, '2026-12-04', 24, 4, '2025-12-04'),
+	(98, 80, '2026-12-05', 24, 13, '2025-12-05'),
+	(99, 79, '2026-12-05', 24, 13, '2025-12-05'),
+	(100, 7, '2026-12-05', 24, 5, '2025-12-05'),
+	(101, 10, '2026-12-05', 24, 7, '2025-12-05'),
+	(102, 12, NULL, 24, 2, NULL),
+	(103, 11, '2026-12-05', 5, 7, '2025-12-05'),
+	(104, 78, '2026-12-05', 24, 13, '2025-12-05'),
+	(105, 1, '2028-12-05', 0, 1, '2025-12-05'),
+	(106, 15, '2026-12-05', 24, 8, '2025-12-05'),
+	(107, 23, '2026-12-05', 24, 10, '2025-12-05'),
+	(108, 24, '2026-12-05', 24, 10, '2025-12-05'),
+	(109, 25, '2026-12-05', 24, 10, '2025-12-05'),
+	(110, 26, '2026-12-05', 17, 10, '2025-12-05'),
+	(111, 30, '2026-12-05', 24, 10, '2025-12-05'),
+	(112, 51, '2026-12-05', 24, 10, '2025-12-05'),
+	(113, 52, '2026-12-05', 24, 10, '2025-12-05'),
+	(114, 53, '2026-12-05', 24, 10, '2025-12-05'),
+	(115, 54, '2026-12-05', 24, 10, '2025-12-05'),
+	(116, 55, '2026-12-05', 24, 10, '2025-12-05'),
+	(117, 56, '2026-12-05', 24, 10, '2025-12-05'),
+	(118, 57, '2026-12-05', 24, 10, '2025-12-05'),
+	(119, 58, '2026-12-05', 24, 10, '2025-12-05'),
+	(120, 59, '2026-12-05', 24, 10, '2025-12-05'),
+	(121, 23, '2026-12-05', 24, 10, '2025-12-05'),
+	(122, 23, '2026-12-05', 24, 10, '2025-12-05'),
+	(123, 40, '2026-12-05', 15, 11, '2025-12-05'),
+	(124, 28, '2026-12-05', 24, 11, '2025-12-05'),
+	(125, 29, '2026-12-05', 24, 11, '2025-12-05'),
+	(126, 35, '2026-12-05', 24, 11, '2025-12-05'),
+	(127, 36, '2026-12-05', 22, 11, '2025-12-05'),
+	(128, 37, '2026-12-06', 24, 11, '2025-12-06'),
+	(129, 38, '2026-12-05', 24, 11, '2025-12-05'),
+	(131, 40, '2026-12-05', 24, 11, '2025-12-05'),
+	(132, 41, '2026-12-05', 11, 11, '2025-12-05'),
+	(133, 42, '2026-12-05', 24, 11, '2025-12-05'),
+	(134, 46, '2026-12-05', 20, 13, '2025-12-05'),
+	(135, 47, '2026-12-05', 20, 13, '2025-12-05'),
+	(136, 64, '2026-12-05', 20, 13, '2025-12-05'),
+	(137, 65, '2026-12-05', 20, 13, '2025-12-05'),
+	(138, 66, '2026-12-05', 20, 13, '2025-12-05'),
+	(139, 67, '2026-12-05', 20, 13, '2025-12-05'),
+	(140, 68, '2026-12-05', 20, 13, '2025-12-05'),
+	(141, 69, '2026-12-05', 20, 13, '2025-12-05'),
+	(142, 70, '2026-12-05', 20, 13, '2025-12-05'),
+	(143, 71, '2026-12-05', 20, 13, '2025-12-05'),
+	(144, 75, '2026-12-05', 20, 13, '2025-12-05'),
+	(145, 77, '2026-12-05', 20, 13, '2025-12-05'),
+	(146, 78, '2026-12-05', 20, 13, '2025-12-05'),
+	(147, 79, '2026-12-05', 20, 13, '2025-12-05'),
+	(148, 80, '2026-12-05', 20, 13, '2025-12-05'),
+	(149, 18, '2026-12-05', 20, 9, '2025-12-05'),
+	(150, 19, '2026-12-05', 24, 9, '2025-12-05'),
+	(151, 20, '2026-12-05', 24, 9, '2025-12-05'),
+	(152, 21, '2026-12-05', 24, 9, '2025-12-05'),
+	(153, 22, '2026-12-05', 24, 9, '2025-12-05'),
+	(154, 31, '2026-12-05', 24, 9, '2025-12-05'),
+	(155, 32, '2026-12-05', 24, 9, '2025-12-05'),
+	(156, 33, '2026-12-05', 24, 9, '2025-12-05'),
+	(157, 34, '2026-12-05', 24, 9, '2025-12-05'),
+	(158, 60, '2026-12-05', 24, 9, '2025-12-05'),
+	(159, 43, '2026-12-05', 24, 12, '2025-12-05'),
+	(160, 27, '2026-12-05', 24, 6, '2025-12-05'),
+	(161, 48, '2026-12-05', 24, 3, '2025-12-05'),
+	(162, 61, '2026-12-05', 24, 8, '2025-12-05'),
+	(163, 62, '2026-12-05', 24, 8, '2025-12-05'),
+	(164, 76, '2026-12-05', 24, 14, '2025-12-05'),
+	(165, 72, '2026-12-05', 24, 14, '2025-12-05'),
+	(166, 73, '2026-12-05', 24, 14, '2025-12-05'),
+	(167, 1, '2028-12-05', 22, 1, '2025-12-05'),
+	(168, 5, '2026-12-05', 15, 3, '2025-12-05'),
+	(169, 74, '2026-12-06', 13, 14, '2025-12-06'),
+	(170, 63, '2026-12-07', 3, 8, '2025-12-07'),
+	(171, 63, '2026-12-07', 1, 8, '2025-12-07'),
+	(172, 63, '2026-12-06', 1, 8, '2025-12-06'),
+	(173, 63, '2026-12-06', 1, 8, '2025-12-06'),
+	(174, 39, '2026-12-06', 7, 11, '2025-12-06'),
+	(175, 39, '2026-12-06', 6, 11, '2025-12-06'),
+	(177, 1, '2028-12-07', 2, 1, NULL);
 
 -- Copiando estrutura para tabela fws.movimentacao_estoque
 CREATE TABLE IF NOT EXISTS `movimentacao_estoque` (
@@ -462,11 +441,11 @@ CREATE TABLE IF NOT EXISTS `movimentacao_estoque` (
   KEY `venda_id` (`venda_id`),
   CONSTRAINT `movimentacao_estoque_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `movimentacao_estoque_ibfk_2` FOREIGN KEY (`venda_id`) REFERENCES `vendas` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.movimentacao_estoque: ~85 rows (aproximadamente)
+-- Copiando dados para a tabela fws.movimentacao_estoque: ~117 rows (aproximadamente)
 INSERT INTO `movimentacao_estoque` (`id`, `produto_id`, `quantidade`, `tipo_movimentacao`, `data_movimentacao`, `descricao`, `venda_id`) VALUES
-	(1, 2, 24, 'entrada', '2025-12-04 10:53:42', NULL, NULL),
+	(1, 2, 15, 'entrada', '2025-11-23 10:53:42', NULL, NULL),
 	(2, 2, 24, 'entrada', '2025-12-04 10:56:10', NULL, NULL),
 	(3, 1, 24, 'entrada', '2025-12-04 11:14:28', NULL, NULL),
 	(4, 3, 24, 'entrada', '2025-12-04 11:14:45', NULL, NULL),
@@ -550,7 +529,39 @@ INSERT INTO `movimentacao_estoque` (`id`, `produto_id`, `quantidade`, `tipo_movi
 	(85, 5, 3, 'saida', '2025-12-05 12:50:21', NULL, 29),
 	(86, 9, 1, 'saida', '2025-12-05 12:50:21', NULL, 29),
 	(87, 18, 3, 'saida', '2025-12-05 12:50:21', NULL, 29),
-	(88, 28, 1, 'saida', '2025-12-05 12:50:21', NULL, 29);
+	(88, 28, 1, 'saida', '2025-12-05 12:50:21', NULL, 29),
+	(89, 39, 24, 'saida', '2025-12-06 00:33:37', NULL, NULL),
+	(90, 39, 1, 'saida', '2025-12-06 00:34:04', NULL, NULL),
+	(91, 39, 1, 'saida', '2025-12-06 00:34:39', NULL, NULL),
+	(92, 74, 13, 'entrada', '2025-11-19 00:36:02', NULL, NULL),
+	(93, 74, 1, 'saida', '2025-12-06 00:36:32', NULL, NULL),
+	(94, 63, 3, 'entrada', '2025-12-06 21:46:38', NULL, NULL),
+	(95, 63, 1, 'entrada', '2025-12-06 21:58:03', NULL, NULL),
+	(96, 63, 1, 'entrada', '2025-12-06 22:08:15', NULL, NULL),
+	(97, 63, 1, 'entrada', '2025-12-06 22:08:38', NULL, NULL),
+	(98, 39, 7, 'entrada', '2025-12-06 22:33:20', NULL, NULL),
+	(99, 24, 9, 'saida', '2025-12-06 23:11:56', NULL, NULL),
+	(100, 39, 24, 'saida', '2025-12-06 23:24:02', NULL, NULL),
+	(101, 39, 6, 'entrada', '2025-12-06 23:31:46', NULL, NULL),
+	(102, 39, 2, 'entrada', '2025-12-06 23:35:43', NULL, NULL),
+	(103, 39, 2, 'saida', '2025-12-06 23:57:38', NULL, NULL),
+	(104, 39, 1, 'saida', '2025-12-07 00:08:24', NULL, NULL),
+	(105, 1, 2, 'entrada', '2025-12-07 00:14:22', NULL, NULL),
+	(106, 4, 1, 'saida', '2025-12-07 12:39:54', NULL, 50),
+	(107, 3, 10, 'saida', '2025-12-07 12:45:30', NULL, 52),
+	(108, 50, 10, 'saida', '2025-12-07 12:45:33', NULL, 51),
+	(109, 40, 10, 'saida', '2025-12-07 12:48:56', NULL, 54),
+	(110, 41, 10, 'saida', '2025-12-07 12:48:56', NULL, 54),
+	(111, 1, 10, 'saida', '2025-12-07 12:48:59', NULL, 53),
+	(112, 2, 10, 'saida', '2025-12-07 12:48:59', NULL, 53),
+	(113, 26, 10, 'saida', '2025-12-07 12:52:54', NULL, 57),
+	(114, 36, 10, 'saida', '2025-12-07 12:52:54', NULL, 57),
+	(115, 40, 10, 'saida', '2025-11-02 12:52:57', NULL, 56),
+	(116, 41, 10, 'saida', '2025-11-11 12:52:57', NULL, 56),
+	(117, 1, 10, 'saida', '2025-11-17 12:53:01', NULL, 55),
+	(118, 2, 10, 'saida', '2025-11-27 12:53:01', NULL, 55),
+	(119, 2, 20, 'saida', '2025-11-27 13:11:58', NULL, NULL),
+	(120, 2, 10, 'entrada', '2025-11-07 13:12:55', NULL, NULL);
 
 -- Copiando estrutura para tabela fws.produtos
 CREATE TABLE IF NOT EXISTS `produtos` (
@@ -576,85 +587,85 @@ CREATE TABLE IF NOT EXISTS `produtos` (
 
 -- Copiando dados para a tabela fws.produtos: ~79 rows (aproximadamente)
 INSERT INTO `produtos` (`id`, `nome`, `categoria_id`, `fornecedor_id`, `descricao`, `foto_produto`, `preco_venda`, `preco_compra`, `estoque`, `validade_padrao_meses`, `status`, `criado_em`) VALUES
-	(1, 'VINHO MALBEC 750ML', 1, 1, 'Um vinho Malbec elegante, produzido com uvas selecionadas que garantem sabor intenso, aromas frutados e taninos suaves. Ideal para acompanhar carnes vermelhas e momentos especiais.', '/TCC_FWS/IMG_Produtos/1.png', 69.90, 54.90, 38, 36, 'ativo', '2025-10-20 17:54:49'),
-	(2, 'VINHO DE LOS MAN CABERNET SAUVIGNON BRANCO 750ML', 1, 1, 'Vinho Cabernet Sauvignon, disponível nas versões branco ou tinto, feito com uvas premium que trazem equilíbrio entre acidez e corpo, perfeito para harmonizar com queijos e pratos sofisticados.', '/TCC_FWS/IMG_Produtos/2.png', 69.90, 54.90, 50, 36, 'ativo', '2025-10-20 17:54:49'),
-	(3, 'ÁGUA DE COCO KERO COCO 1L', 2, 3, 'Água de coco 100% natural, rica em eletrólitos essenciais para hidratação rápida e renovação de energia, perfeita para o dia a dia e práticas esportivas.', '/TCC_FWS/IMG_Produtos/3.png', 31.99, 15.87, 30, 12, 'ativo', '2025-10-20 17:54:49'),
-	(4, 'ÁGUA DE COCO KERO COCO 330ML', 2, 3, 'Em embalagem prática, essa água de coco natural é fonte de potássio e minerais, ideal para refrescar e manter a hidratação em qualquer momento.', '/TCC_FWS/IMG_Produtos/4.png', 14.50, 6.56, 16, 12, 'ativo', '2025-10-20 17:54:49'),
-	(5, 'ÁGUA DE COCO KERO COCO CX 200ML', 2, 3, 'Compacta e nutritiva, essa água de coco oferece hidratação natural e energia, com sabor refrescante e leve, ótima para levar na bolsa ou lancheira.', '/TCC_FWS/IMG_Produtos/5.png', 6.90, 3.20, 18, 12, 'ativo', '2025-10-20 17:54:49'),
-	(6, 'ÁGUA MINERAL CRYSTAL COM GÁS PET 500ML', 2, 4, 'Água mineral com gás Crystal, puro frescor e efervescência suave que revitalizam seu paladar a qualquer hora do dia.', '/TCC_FWS/IMG_Produtos/6.png', 6.50, 2.24, 25, 12, 'ativo', '2025-10-20 17:54:49'),
-	(7, 'ÁGUA MINERAL MINALBA COM GÁS PET 1,5L', 2, 5, 'Água mineral com gás Minalba em embalagem econômica, leve e refrescante, perfeita para acompanhar suas refeições ou momentos de lazer.', '/TCC_FWS/IMG_Produtos/7.png', 8.99, 3.17, 37, 12, 'ativo', '2025-10-20 17:54:49'),
-	(8, 'ÁGUA MINERAL PRATA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Prata, naturalmente equilibrada em minerais essenciais para uma hidratação pura e saudável.', '/TCC_FWS/IMG_Produtos/8.png', 7.00, 2.85, 54, 12, 'ativo', '2025-10-20 17:54:49'),
-	(9, 'ÁGUA MINERAL MINALBA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Minalba, de sabor leve e refrescante, ideal para manter seu corpo hidratado com qualidade e naturalidade.', '/TCC_FWS/IMG_Produtos/9.png', 6.50, 2.75, 56, 12, 'ativo', '2025-10-20 17:54:49'),
-	(10, 'ÁGUA TONICA ANTARCTICA DIET LT 350ML', 2, 7, 'Água tônica dietética Antarctica, com sabor marcante e refrescante, adoçada artificialmente para quem busca sabor sem calorias.', '/TCC_FWS/IMG_Produtos/10.png', 8.00, 2.60, 31, 12, 'ativo', '2025-10-20 17:54:49'),
-	(11, 'ÁGUA TONICA ANTARCTICA LT 350ML', 2, 7, 'Água tônica Antarctica clássica, com mistura perfeita de quinino e gás que proporciona um sabor único e refrescante para seus drinks ou momentos de relaxamento.', '/TCC_FWS/IMG_Produtos/11.png', 8.00, 2.52, 15, 12, 'ativo', '2025-10-20 17:54:49'),
-	(12, 'AP BARBEAR BIC CONF3 NORMAL', 11, 2, 'Kit de aparelhos de barbear BIC com 3 lâminas, oferecendo precisão e conforto para um barbear eficiente e seguro, ideal para o cuidado diário da pele.', '/TCC_FWS/IMG_Produtos/12.png', 8.50, 4.11, 32, 0, 'ativo', '2025-10-20 17:54:49'),
-	(13, 'BALA DROPS HALLS MENTA PCT 28G', 4, 8, 'Bala Drops Halls sabor menta, proporciona frescor imediato para a garganta, ajudando a aliviar desconfortos e refrescar o hálito.', '/TCC_FWS/IMG_Produtos/13.png', 3.50, 1.19, 22, 12, 'ativo', '2025-10-20 17:54:49'),
-	(14, 'BALA DROPS HALLS MENTA PRATA PCT 28G', 4, 8, 'Bala Drops Halls Menta Prata com sabor intenso e refrescante, formulada para aliviar irritações na garganta e manter o hálito puro.', '/TCC_FWS/IMG_Produtos/14.png', 3.50, 1.14, 47, 12, 'ativo', '2025-10-20 17:54:49'),
-	(15, 'BALA DROPS HALLS MENTOL PCT 28G', 4, 8, 'Bala Drops Halls Mentol, combinando frescor e alívio imediato para a garganta, ideal para dias frios ou ambientes secos.', '/TCC_FWS/IMG_Produtos/15.png', 3.50, 1.19, 36, 12, 'ativo', '2025-10-20 17:54:49'),
-	(16, 'BALA DROPS HALLS MORANGO PCT 28G', 4, 8, 'Bala Drops Halls sabor morango, doce e refrescante, que suaviza a garganta enquanto oferece um gostinho frutado irresistível.', '/TCC_FWS/IMG_Produtos/16.png', 3.50, 1.19, 34, 12, 'ativo', '2025-10-20 17:54:49'),
-	(17, 'BALA DROPS HALLS UVA VERDE PCT 28G', 4, 8, 'Bala Drops Halls sabor uva verde, mistura um sabor frutado com efeito refrescante, perfeita para quem busca alívio e sabor juntos.', '/TCC_FWS/IMG_Produtos/17.png', 3.50, 1.19, 28, 12, 'ativo', '2025-10-20 17:54:49'),
-	(18, 'BALA FINI BEIJOS MORANGO DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini formato beijo sabor morango, macia e saborosa, perfeita para adoçar o dia com uma explosão de sabor frutado.', '/TCC_FWS/IMG_Produtos/18.png', 9.99, 4.99, 14, 12, 'ativo', '2025-10-20 17:54:49'),
-	(19, 'BALA FINI DENTADURA DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini dentadura sabor doce, divertida e saborosa, ideal para crianças e adultos que gostam de doces macios e divertidos.', '/TCC_FWS/IMG_Produtos/19.png', 10.99, 4.99, 29, 12, 'ativo', '2025-10-20 17:54:49'),
-	(20, 'BALA FINI TUBES MORANGO DE GOMA PCT 80G', 4, 9, 'Bala de goma Fini sabor morango, em formato de tubo, macia e saborosa, proporciona uma experiência divertida e deliciosa para qualquer hora.', '/TCC_FWS/IMG_Produtos/20.png', 9.99, 4.99, 37, 12, 'ativo', '2025-10-20 17:54:49'),
-	(21, 'BALA FRUITTELLA MASTIGAVEL BLUEBERRY PCT 40G', 4, 9, 'Bala mastigável sabor blueberry, deliciosa e prática para qualquer momento do dia.', '/TCC_FWS/IMG_Produtos/21.png', 6.99, 1.96, 45, 12, 'ativo', '2025-10-30 12:59:48'),
-	(22, 'BALA FRUITTELLA MORANGO C CREME LEITE PCT 45G', 4, 9, 'Bala sabor morango com creme de leite, combinação irresistível de sabor e suavidade.', '/TCC_FWS/IMG_Produtos/22.png', 3.99, 1.96, 35, 12, 'ativo', '2025-10-30 12:59:48'),
-	(23, 'BALA MENTOS FANTA LARANJA PCT 37,5G', 4, 10, 'Bala Mentos sabor Fanta Laranja, refrescante e divertida, perfeita para qualquer hora.', '/TCC_FWS/IMG_Produtos/23.png', 4.00, 1.89, 76, 12, 'ativo', '2025-10-30 12:59:48'),
-	(24, 'BALA MENTOS KISS MENTA FORTE 35G', 4, 10, 'Bala Mentos sabor menta forte, oferece refrescância intensa e duradoura.', '/TCC_FWS/IMG_Produtos/24.png', 17.99, 8.60, 33, 12, 'ativo', '2025-10-30 12:59:48'),
-	(25, 'BALA MENTOS KISS MENTA LT 35G 50UN', 4, 10, 'Bala Mentos Kiss sabor menta em embalagem lata, ideal para compartilhar e manter o hálito fresco.', '/TCC_FWS/IMG_Produtos/25.png', 17.99, 8.60, 34, 12, 'ativo', '2025-10-30 12:59:48'),
-	(26, 'BALA MENTOS KISS MORANGO LT 35G', 4, 10, 'Bala Mentos Kiss sabor morango, refrescante e saborosa, perfeita para o dia a dia.', '/TCC_FWS/IMG_Produtos/26.png', 17.99, 8.60, 27, 12, 'ativo', '2025-10-30 12:59:48'),
-	(27, 'BALA TIC TAC PASTILHA LARANJA CX 15G', 4, 6, 'Pastilhas Tic Tac sabor laranja, pequenas e refrescantes, ideais para levar no bolso.', '/TCC_FWS/IMG_Produtos/27.png', 5.50, 1.93, 38, 12, 'ativo', '2025-10-30 12:59:48'),
-	(28, 'BARRA PROTEICA INTEGRAL MEDICA CRISP BROWNIE EMB 45G', 5, 11, 'Barra proteica sabor brownie crocante, ideal para recuperação muscular e nutrição prática.', '/TCC_FWS/IMG_Produtos/28.png', 13.50, 7.05, 28, 12, 'ativo', '2025-10-30 12:59:48'),
-	(29, 'BARRA PROTEICA NUTRATA CARAMELO EMB 45G', 5, 11, 'Barra proteica sabor caramelo, com alto teor de proteínas e textura cremosa.', '/TCC_FWS/IMG_Produtos/29.png', 15.99, 0.00, 26, 12, 'ativo', '2025-10-30 12:59:48'),
-	(30, 'BARRA DE CEREAL BAUDUCCO MAXI CHOCOLATE PCT 25G', 6, 10, 'Barra de cereal Bauducco sabor chocolate, deliciosa opção de lanche rápido e nutritivo.', '/TCC_FWS/IMG_Produtos/30.png', 3.50, 1.13, 27, 12, 'ativo', '2025-10-30 12:59:48'),
-	(31, 'BARRA DE CEREAL NUTS BAR CASTANHAS CHOCOLATE PCT 25G', 6, 9, 'Barra de cereal com castanhas e chocolate, fonte de energia e sabor para o dia a dia.', '/TCC_FWS/IMG_Produtos/31.png', 5.99, 2.93, 37, 12, 'ativo', '2025-10-30 13:02:47'),
-	(32, 'BARRA DE CEREAL NUTS CASTANHA E SEMENTES PCT 25G', 6, 9, 'Barra de cereal com castanhas e sementes, perfeita para lanches nutritivos e saudáveis.', '/TCC_FWS/IMG_Produtos/32.png', 5.99, 2.93, 30, 12, 'ativo', '2025-10-30 13:02:47'),
-	(33, 'BARRA DE CEREAL SUPINO PROTEIN CAPPUCCINO PCT 30G', 5, 9, 'Barra proteica sabor cappuccino, ideal para recuperação muscular e energia extra.', '/TCC_FWS/IMG_Produtos/33.png', 8.50, 3.64, 29, 12, 'ativo', '2025-10-30 13:02:47'),
-	(34, 'BARRA DE PROTEINA SUPINO COCO C CHOCOLATE 30G', 5, 9, 'Barra proteica sabor coco com chocolate, deliciosa e rica em proteínas.', '/TCC_FWS/IMG_Produtos/34.png', 8.50, 3.86, 27, 12, 'ativo', '2025-10-30 13:02:47'),
-	(35, 'BARRA NUTRATA PROTOBAR AVELA WHEY PCT 70G', 5, 11, 'Barra de proteína sabor avelã com whey, ideal para atletas e quem busca nutrição equilibrada.', '/TCC_FWS/IMG_Produtos/35.png', 22.99, 12.22, 34, 12, 'ativo', '2025-10-30 13:02:47'),
-	(36, 'BARRA NUTRATA PROTOBAR COCONUT PCT 70G', 5, 11, 'Barra de proteína sabor coco, combina alto teor proteico com sabor irresistível.', '/TCC_FWS/IMG_Produtos/36.png', 22.99, 12.22, 32, 12, 'ativo', '2025-10-30 13:02:47'),
-	(37, 'BARRA NUTRATA YOPRO PROTEICA MORANGO 55G', 5, 11, 'Barra proteica Yopro sabor morango, perfeita para suplementar proteínas com sabor.', '/TCC_FWS/IMG_Produtos/37.png', 19.99, 10.47, 34, 12, 'ativo', '2025-10-30 13:02:47'),
-	(38, 'BARRA PROTEICA INTEGRAL MEDICA TRUFA AVELA CHOC 45G', 5, 11, 'Barra proteica sabor trufa de avelã com chocolate, rica em proteínas e muito saborosa.', '/TCC_FWS/IMG_Produtos/38.png', 13.50, 7.05, 36, 12, 'ativo', '2025-10-30 13:02:47'),
-	(39, 'BARRA PROTEICA INTEGRAL MEDICA BAR NINHO CREME DE AVELA 45G', 5, 11, 'Barra proteica sabor Ninho com creme de avelã, deliciosa opção pós-treino.', '/TCC_FWS/IMG_Produtos/39.png', 13.50, 6.63, 39, 12, 'ativo', '2025-10-30 13:02:47'),
-	(40, 'BARRA PROTOBAR BROWNIE C DOCE DE LEITE HAVANNA PCT 70G', 5, 11, 'Barra proteica sabor brownie com doce de leite Havanna, indulgente e nutritiva.', '/TCC_FWS/IMG_Produtos/40.png', 25.90, 13.09, 59, 12, 'ativo', '2025-10-30 13:02:47'),
-	(41, 'BARRA PROTOBAR NUTRATA HAVANNA 70G', 5, 11, 'Barra proteica Nutrata sabor Havanna, perfeita para um lanche nutritivo e saboroso.', '/TCC_FWS/IMG_Produtos/41.png', 25.90, 13.86, 31, 12, 'ativo', '2025-10-30 13:04:29'),
-	(42, 'BARRA PROTOBAR NUTRATA SENSATIONS WHEY PCT 70G', 5, 11, 'Barra proteica Sensations Whey, ideal para complementar proteínas com praticidade e sabor.', '/TCC_FWS/IMG_Produtos/42.png', 23.99, 12.22, 27, 12, 'ativo', '2025-10-30 13:04:29'),
-	(43, 'BEB LACTEA 3 CORACOES CAPPUCCINO CHOCOLATE CX 260ML', 7, 12, 'Bebida láctea sabor cappuccino com chocolate, cremosa e nutritiva, perfeita para qualquer momento.', '/TCC_FWS/IMG_Produtos/43.png', 12.50, 5.72, 25, 12, 'ativo', '2025-10-30 13:04:29'),
-	(45, 'BEB LACTEA 3 CORACOES POWER WHEY CAPPUCCINO CLASSICO 250ML', 7, 12, 'Bebida láctea Power Whey sabor cappuccino, fonte de proteínas para energia e recuperação.', '/TCC_FWS/IMG_Produtos/45.png', 13.99, 6.67, 18, 12, 'ativo', '2025-10-30 13:04:29'),
-	(46, 'BEB LACTEA NESTLE NESCAU FAST 270ML', 7, 13, 'Bebida láctea Nesquik Fast, prática e saborosa, ideal para complementar sua nutrição diária.', '/TCC_FWS/IMG_Produtos/46.png', 12.50, 5.14, 28, 12, 'ativo', '2025-10-30 13:04:29'),
-	(47, 'BEB LACTEA NESTON FAST VITAMINA C CEREAL 280ML', 7, 13, 'Bebida láctea Neston Fast com vitamina C e cereal, perfeita para um lanche nutritivo.', '/TCC_FWS/IMG_Produtos/47.png', 12.50, 5.00, 35, 12, 'ativo', '2025-10-30 13:04:29'),
-	(48, 'BEB LACTEA TODDYNHO LEVINHO CX 200ML', 7, 3, 'Bebida láctea Toddy Leve, sabor chocolate suave, ideal para lanches rápidos e deliciosos.', '/TCC_FWS/IMG_Produtos/48.png', 6.50, 2.35, 32, 12, 'ativo', '2025-10-30 13:04:29'),
-	(49, 'BEB LACTEA TODDYNHO TRADICIONAL CX 200ML', 7, 3, 'Bebida láctea Toddy Tradicional, sabor clássico de chocolate, perfeita para crianças e adultos.', '/TCC_FWS/IMG_Produtos/49.png', 6.50, 3.14, 28, 12, 'ativo', '2025-10-30 13:04:29'),
-	(50, 'BEBIDA DA CAFETEIRA CAPUCCINO 3 CORACOES 200ML', 2, 12, 'Bebida de cappuccino pronta para consumo, prática, cremosa e perfeita para qualquer hora.', '/TCC_FWS/IMG_Produtos/50.png', 6.99, 1.72, 415, 12, 'ativo', '2025-10-30 13:04:29'),
-	(51, 'BISC BAUDUCCO BISCUIT CHOCOLATE MEIO AMARGO PCT 80G', 8, 10, 'Biscoito Bauducco sabor chocolate meio amargo, crocante e delicioso para lanches e cafés.', '/TCC_FWS/IMG_Produtos/51.png', 12.90, 6.01, 29, 12, 'ativo', '2025-10-30 13:07:21'),
-	(52, 'BISC BAUDUCCO CEREALE CACAU AVEIA E MEL PCT 170G', 8, 10, 'Biscoito Bauducco Cereal com cacau, aveia e mel, nutritivo e saboroso para qualquer hora do dia.', '/TCC_FWS/IMG_Produtos/52.png', 7.50, 3.58, 25, 12, 'ativo', '2025-10-30 13:07:21'),
-	(53, 'BISC BAUDUCCO CHOCO BISCUIT CHOCOLATE AO LEITE 80G', 8, 10, 'Biscoito Bauducco Choco Biscuit com chocolate ao leite, perfeito para lanches rápidos e doces.', '/TCC_FWS/IMG_Produtos/53.png', 12.90, 6.01, 28, 12, 'ativo', '2025-10-30 13:07:21'),
-	(54, 'BISC BAUDUCCO COOKIE CHOCOLATE PCT 100G', 8, 10, 'Cookie Bauducco sabor chocolate, macio por dentro e crocante por fora, ideal para acompanhar café ou lanche.', '/TCC_FWS/IMG_Produtos/54.png', 8.99, 3.32, 29, 12, 'ativo', '2025-10-30 13:07:21'),
-	(55, 'BISC BAUDUCCO COOKIE ORIGINAL PCT 100G', 8, 10, 'Cookie Bauducco original, sabor clássico e textura irresistível para qualquer hora do dia.', '/TCC_FWS/IMG_Produtos/55.png', 8.99, 3.32, 31, 12, 'ativo', '2025-10-30 13:07:21'),
-	(56, 'BISC BAUDUCCO WAFER CHOCOLATE PCT 140G', 8, 10, 'Wafer Bauducco sabor chocolate, crocante e recheado, perfeito para lanches rápidos.', '/TCC_FWS/IMG_Produtos/56.png', 7.50, 3.45, 32, 12, 'ativo', '2025-10-30 13:07:21'),
-	(57, 'BISC BAUDUCCO WAFER MAXI CHOCOLATE PCT 104G', 8, 10, 'Wafer Bauducco Maxi chocolate, sabor intenso e textura crocante, ideal para crianças e adultos.', '/TCC_FWS/IMG_Produtos/57.png', 7.50, 3.45, 27, 12, 'ativo', '2025-10-30 13:07:21'),
-	(58, 'BISC BAUDUCCO WAFER MORANGO PCT 140G', 8, 10, 'Wafer Bauducco sabor morango, crocante e delicioso, perfeito para lanches e cafés.', '/TCC_FWS/IMG_Produtos/58.png', 7.50, 3.45, 30, 12, 'ativo', '2025-10-30 13:07:21'),
-	(59, 'BISC BAUDUCCO WAFER TRIPLO CHOCOLATE PCT 140G', 8, 10, 'Wafer Bauducco Triplo Chocolate, crocante e recheado, ideal para quem ama chocolate.', '/TCC_FWS/IMG_Produtos/59.png', 7.50, 3.45, 27, 12, 'ativo', '2025-10-30 13:07:21'),
-	(60, 'BISC CASSINI POLVILHO SALGADO PCT 100G', 8, 9, 'Biscoito de polvilho Cassini, crocante e levemente salgado, ótimo para lanches e aperitivos.', '/TCC_FWS/IMG_Produtos/60.png', 8.50, 3.19, 39, 12, 'ativo', '2025-10-30 13:07:21'),
-	(61, 'BISC CLUB SOCIAL CROSTINI QUEIJO PARMESAO E VEGETAIS PCT 80G', 8, 8, 'Biscoito Club Social Crostini com queijo parmesão e vegetais, leve e crocante, ideal para lanches saudáveis.', '/TCC_FWS/IMG_Produtos/61.png', 10.90, 5.03, 28, 12, 'ativo', '2025-10-30 13:07:42'),
-	(62, 'BISC CLUB SOCIAL INTEGRAL PCT 144G', 8, 8, 'Biscoito Club Social Integral, nutritivo e crocante, perfeito para quem busca opções mais saudáveis.', '/TCC_FWS/IMG_Produtos/62.png', 11.50, 5.03, 27, 12, 'ativo', '2025-10-30 13:07:42'),
-	(63, 'BISC CLUB SOCIAL ORIGINAL 141G', 8, 8, 'Biscoito Club Social Original, sabor clássico e textura crocante, ideal para lanches rápidos.', '/TCC_FWS/IMG_Produtos/63.png', 11.50, 5.03, 6, 12, 'ativo', '2025-10-30 13:07:42'),
-	(64, 'BISC NESTLE CALIPSO RECH ORIGINAL PCT 130G', 8, 13, 'Biscoito Nestlé Calipso recheado original, sabor delicioso e perfeito para sobremesas e lanches.', '/TCC_FWS/IMG_Produtos/64.png', 13.90, 6.53, 26, 12, 'ativo', '2025-10-30 13:07:42'),
-	(65, 'BISC NESTLE CLASSIC RECH CHOCOLATE PCT 140G', 8, 13, 'Biscoito Nestlé Classic recheado com chocolate, crocante e irresistível, ideal para qualquer hora.', '/TCC_FWS/IMG_Produtos/65.png', 7.50, 3.92, 24, 12, 'ativo', '2025-10-30 13:07:42'),
-	(66, 'BISC NESTLE MOCA RECH PCT 140G', 8, 13, 'Biscoito Nestlé Moça recheado, sabor clássico e delicioso, perfeito para café ou lanche.', '/TCC_FWS/IMG_Produtos/66.png', 7.50, 3.75, 25, 12, 'ativo', '2025-10-30 13:07:42'),
-	(67, 'BISC NESTLE NESFIT INTEGRAL CACAU E CEREAIS PCT 160G', 8, 13, 'Biscoito Nestlé Nesfit integral com cacau e cereais, nutritivo e crocante, ideal para lanches saudáveis.', '/TCC_FWS/IMG_Produtos/67.png', 7.50, 3.03, 25, 12, 'ativo', '2025-10-30 13:07:42'),
-	(68, 'BISC NESTLE NESFIT INTEGRAL MORANGO E CEREAIS PCT 160G', 8, 13, 'Biscoito Nestlé Nesfit integral sabor morango com cereais, saudável e delicioso para qualquer momento.', '/TCC_FWS/IMG_Produtos/68.png', 7.50, 3.58, 23, 12, 'ativo', '2025-10-30 13:07:42'),
-	(69, 'BISC NESTLE PASSATEMPO RECHEADO CHOCOLATE 130G', 8, 13, 'Biscoito Passatempo recheado com chocolate, macio e saboroso, perfeito para lanches infantis.', '/TCC_FWS/IMG_Produtos/69.png', 6.90, 2.63, 27, 12, 'ativo', '2025-10-30 13:07:42'),
-	(70, 'BISC NESTLE PASSATEMPO RECHEADO MORANGO PCT 130G', 8, 13, 'Biscoito Passatempo recheado com morango, macio e doce, ideal para crianças e lanches rápidos.', '/TCC_FWS/IMG_Produtos/70.png', 6.90, 2.63, 26, 12, 'ativo', '2025-10-30 13:07:42'),
-	(71, 'BISC NESTLE RECHEADO NESCAU PCT 140G', 8, 13, 'Biscoito Nestlé recheado com Nesquik, crocante e doce, ideal para lanches e sobremesas.', '/TCC_FWS/IMG_Produtos/71.png', 7.50, 3.92, 26, 12, 'ativo', '2025-10-30 13:08:18'),
-	(72, 'BISC OREO ORIGINAL 90G', 8, 14, 'Biscoito Oreo Original, recheio cremoso e sabor icônico, perfeito para qualquer lanche ou sobremesa.', '/TCC_FWS/IMG_Produtos/72.png', 7.50, 3.40, 25, 12, 'ativo', '2025-10-30 13:08:18'),
-	(73, 'BISC OREO RECHEADO CHOCOLATE 90G', 8, 14, 'Biscoito Oreo recheado com chocolate, crocante e irresistível, ótimo para lanches rápidos.', '/TCC_FWS/IMG_Produtos/73.png', 7.50, 3.46, 28, 12, 'ativo', '2025-10-30 13:08:18'),
-	(74, 'BISC OREO RECHEADO MILKSHAKE MORANGO 90G', 8, 14, 'Biscoito Oreo recheado sabor milkshake de morango, doce e cremoso, perfeito para sobremesas ou lanches.', '/TCC_FWS/IMG_Produtos/74.png', 7.50, 3.46, 4, 12, 'ativo', '2025-10-30 13:08:18'),
-	(75, 'BISC RECHEADO BONO LIMAO PCT 90G', 8, 13, 'Biscoito Bono recheado sabor limão, macio e refrescante, ideal para lanche da tarde.', '/TCC_FWS/IMG_Produtos/75.png', 6.50, 2.27, 26, 12, 'ativo', '2025-10-30 13:08:18'),
-	(76, 'BISC RECHEADO NABISCO CHOCOLICIA CHOCOLATE PCT 132G', 8, 14, 'Biscoito Chocólicia recheado com chocolate, sabor intenso e irresistível, perfeito para momentos doces.', '/TCC_FWS/IMG_Produtos/76.png', 12.00, 5.30, 27, 12, 'ativo', '2025-10-30 13:08:18'),
-	(77, 'BISC RECHEADO NESTLE BONO CHOCOLATE PCT 90G', 8, 13, 'Biscoito Nestlé Bono recheado com chocolate, sabor clássico e macio, ideal para lanches rápidos.', '/TCC_FWS/IMG_Produtos/77.png', 6.50, 2.27, 28, 12, 'ativo', '2025-10-30 13:08:18'),
-	(78, 'BISC RECHEADO NESTLE NEGRESCO CHOCOLATE PCT 90G', 8, 13, 'Biscoito Nestlé Negresco recheado com chocolate, crocante e sabor intenso, perfeito para sobremesas.', '/TCC_FWS/IMG_Produtos/78.png', 6.50, 2.14, 49, 12, 'ativo', '2025-10-30 13:08:18'),
-	(79, 'BISC RECHEADO NESTLE NEGRESCO MORANGO PCT 90G', 8, 13, 'Biscoito Nestlé Negresco recheado sabor morango, doce e crocante, ótimo para lanches infantis.', '/TCC_FWS/IMG_Produtos/79.png', 6.50, 2.27, 48, 12, 'ativo', '2025-10-30 13:08:18'),
-	(80, 'BISC TOSTINES NESTLE MACA E CANELA PCT 160G', 8, 13, 'Biscoito Tostines Nestlé sabor maçã e canela, crocante e aromático, perfeito para cafés e lanches.', '/TCC_FWS/IMG_Produtos/80.png', 7.50, 3.34, 48, 12, 'ativo', '2025-10-30 13:08:18');
+	(1, 'VINHO MALBEC 750ML', 1, 1, 'Um vinho Malbec elegante, produzido com uvas selecionadas que garantem sabor intenso, aromas frutados e taninos suaves. Ideal para acompanhar carnes vermelhas e momentos especiais.', '/fws/IMG_Produtos/1.png', 69.90, 54.90, 20, 36, 'ativo', '2025-10-20 17:54:49'),
+	(2, 'VINHO DE LOS MAN CABERNET SAUVIGNON BRANCO 750ML', 1, 1, 'Vinho Cabernet Sauvignon, disponível nas versões branco ou tinto, feito com uvas premium que trazem equilíbrio entre acidez e corpo, perfeito para harmonizar com queijos e pratos sofisticados.', '/fws/IMG_Produtos/2.png', 69.90, 54.90, 30, 36, 'ativo', '2025-10-20 17:54:49'),
+	(3, 'ÁGUA DE COCO KERO COCO 1L', 2, 3, 'Água de coco 100% natural, rica em eletrólitos essenciais para hidratação rápida e renovação de energia, perfeita para o dia a dia e práticas esportivas.', '/fws/IMG_Produtos/3.png', 31.99, 15.87, 20, 12, 'ativo', '2025-10-20 17:54:49'),
+	(4, 'ÁGUA DE COCO KERO COCO 330ML', 2, 3, 'Em embalagem prática, essa água de coco natural é fonte de potássio e minerais, ideal para refrescar e manter a hidratação em qualquer momento.', '/fws/IMG_Produtos/4.png', 14.50, 6.56, 15, 12, 'ativo', '2025-10-20 17:54:49'),
+	(5, 'ÁGUA DE COCO KERO COCO CX 200ML', 2, 3, 'Compacta e nutritiva, essa água de coco oferece hidratação natural e energia, com sabor refrescante e leve, ótima para levar na bolsa ou lancheira.', '/fws/IMG_Produtos/5.png', 6.90, 3.20, 18, 12, 'ativo', '2025-10-20 17:54:49'),
+	(6, 'ÁGUA MINERAL CRYSTAL COM GÁS PET 500ML', 2, 4, 'Água mineral com gás Crystal, puro frescor e efervescência suave que revitalizam seu paladar a qualquer hora do dia.', '/fws/IMG_Produtos/6.png', 6.50, 2.24, 25, 12, 'ativo', '2025-10-20 17:54:49'),
+	(7, 'ÁGUA MINERAL MINALBA COM GÁS PET 1,5L', 2, 5, 'Água mineral com gás Minalba em embalagem econômica, leve e refrescante, perfeita para acompanhar suas refeições ou momentos de lazer.', '/fws/IMG_Produtos/7.png', 8.99, 3.17, 37, 12, 'ativo', '2025-10-20 17:54:49'),
+	(8, 'ÁGUA MINERAL PRATA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Prata, naturalmente equilibrada em minerais essenciais para uma hidratação pura e saudável.', '/fws/IMG_Produtos/8.png', 7.00, 2.85, 54, 12, 'ativo', '2025-10-20 17:54:49'),
+	(9, 'ÁGUA MINERAL MINALBA SEM GÁS PET 510ML', 2, 6, 'Água mineral sem gás Minalba, de sabor leve e refrescante, ideal para manter seu corpo hidratado com qualidade e naturalidade.', '/fws/IMG_Produtos/9.png', 6.50, 2.75, 56, 12, 'ativo', '2025-10-20 17:54:49'),
+	(10, 'ÁGUA TONICA ANTARCTICA DIET LT 350ML', 2, 7, 'Água tônica dietética Antarctica, com sabor marcante e refrescante, adoçada artificialmente para quem busca sabor sem calorias.', '/fws/IMG_Produtos/10.png', 8.00, 2.60, 31, 12, 'ativo', '2025-10-20 17:54:49'),
+	(11, 'ÁGUA TONICA ANTARCTICA LT 350ML', 2, 7, 'Água tônica Antarctica clássica, com mistura perfeita de quinino e gás que proporciona um sabor único e refrescante para seus drinks ou momentos de relaxamento.', '/fws/IMG_Produtos/11.png', 8.00, 2.52, 15, 12, 'ativo', '2025-10-20 17:54:49'),
+	(12, 'AP BARBEAR BIC CONF3 NORMAL', 11, 2, 'Kit de aparelhos de barbear BIC com 3 lâminas, oferecendo precisão e conforto para um barbear eficiente e seguro, ideal para o cuidado diário da pele.', '/fws/IMG_Produtos/12.png', 8.50, 4.11, 32, 0, 'ativo', '2025-10-20 17:54:49'),
+	(13, 'BALA DROPS HALLS MENTA PCT 28G', 4, 8, 'Bala Drops Halls sabor menta, proporciona frescor imediato para a garganta, ajudando a aliviar desconfortos e refrescar o hálito.', '/fws/IMG_Produtos/13.png', 3.50, 1.19, 22, 12, 'ativo', '2025-10-20 17:54:49'),
+	(14, 'BALA DROPS HALLS MENTA PRATA PCT 28G', 4, 8, 'Bala Drops Halls Menta Prata com sabor intenso e refrescante, formulada para aliviar irritações na garganta e manter o hálito puro.', '/fws/IMG_Produtos/14.png', 3.50, 1.14, 47, 12, 'ativo', '2025-10-20 17:54:49'),
+	(15, 'BALA DROPS HALLS MENTOL PCT 28G', 4, 8, 'Bala Drops Halls Mentol, combinando frescor e alívio imediato para a garganta, ideal para dias frios ou ambientes secos.', '/fws/IMG_Produtos/15.png', 3.50, 1.19, 36, 12, 'ativo', '2025-10-20 17:54:49'),
+	(16, 'BALA DROPS HALLS MORANGO PCT 28G', 4, 8, 'Bala Drops Halls sabor morango, doce e refrescante, que suaviza a garganta enquanto oferece um gostinho frutado irresistível.', '/fws/IMG_Produtos/16.png', 3.50, 1.19, 34, 12, 'ativo', '2025-10-20 17:54:49'),
+	(17, 'BALA DROPS HALLS UVA VERDE PCT 28G', 4, 8, 'Bala Drops Halls sabor uva verde, mistura um sabor frutado com efeito refrescante, perfeita para quem busca alívio e sabor juntos.', '/fws/IMG_Produtos/17.png', 3.50, 1.19, 28, 12, 'ativo', '2025-10-20 17:54:49'),
+	(18, 'BALA FINI BEIJOS MORANGO DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini formato beijo sabor morango, macia e saborosa, perfeita para adoçar o dia com uma explosão de sabor frutado.', '/fws/IMG_Produtos/18.png', 9.99, 4.99, 14, 12, 'ativo', '2025-10-20 17:54:49'),
+	(19, 'BALA FINI DENTADURA DE GELATINA PCT 100G', 4, 9, 'Bala de gelatina Fini dentadura sabor doce, divertida e saborosa, ideal para crianças e adultos que gostam de doces macios e divertidos.', '/fws/IMG_Produtos/19.png', 10.99, 4.99, 29, 12, 'ativo', '2025-10-20 17:54:49'),
+	(20, 'BALA FINI TUBES MORANGO DE GOMA PCT 80G', 4, 9, 'Bala de goma Fini sabor morango, em formato de tubo, macia e saborosa, proporciona uma experiência divertida e deliciosa para qualquer hora.', '/fws/IMG_Produtos/20.png', 9.99, 4.99, 37, 12, 'ativo', '2025-10-20 17:54:49'),
+	(21, 'BALA FRUITTELLA MASTIGAVEL BLUEBERRY PCT 40G', 4, 9, 'Bala mastigável sabor blueberry, deliciosa e prática para qualquer momento do dia.', '/fws/IMG_Produtos/21.png', 6.99, 1.96, 45, 12, 'ativo', '2025-10-30 12:59:48'),
+	(22, 'BALA FRUITTELLA MORANGO C CREME LEITE PCT 45G', 4, 9, 'Bala sabor morango com creme de leite, combinação irresistível de sabor e suavidade.', '/fws/IMG_Produtos/22.png', 3.99, 1.96, 35, 12, 'ativo', '2025-10-30 12:59:48'),
+	(23, 'BALA MENTOS FANTA LARANJA PCT 37,5G', 4, 10, 'Bala Mentos sabor Fanta Laranja, refrescante e divertida, perfeita para qualquer hora.', '/fws/IMG_Produtos/23.png', 4.00, 1.89, 76, 12, 'ativo', '2025-10-30 12:59:48'),
+	(24, 'BALA MENTOS KISS MENTA FORTE 35G', 4, 10, 'Bala Mentos sabor menta forte, oferece refrescância intensa e duradoura.', '/fws/IMG_Produtos/24.png', 17.99, 8.60, 15, 12, 'ativo', '2025-10-30 12:59:48'),
+	(25, 'BALA MENTOS KISS MENTA LT 35G 50UN', 4, 10, 'Bala Mentos Kiss sabor menta em embalagem lata, ideal para compartilhar e manter o hálito fresco.', '/fws/IMG_Produtos/25.png', 17.99, 8.60, 34, 12, 'ativo', '2025-10-30 12:59:48'),
+	(26, 'BALA MENTOS KISS MORANGO LT 35G', 4, 10, 'Bala Mentos Kiss sabor morango, refrescante e saborosa, perfeita para o dia a dia.', '/fws/IMG_Produtos/26.png', 17.99, 8.60, 17, 12, 'ativo', '2025-10-30 12:59:48'),
+	(27, 'BALA TIC TAC PASTILHA LARANJA CX 15G', 4, 6, 'Pastilhas Tic Tac sabor laranja, pequenas e refrescantes, ideais para levar no bolso.', '/fws/IMG_Produtos/27.png', 5.50, 1.93, 38, 12, 'ativo', '2025-10-30 12:59:48'),
+	(28, 'BARRA PROTEICA INTEGRAL MEDICA CRISP BROWNIE EMB 45G', 5, 11, 'Barra proteica sabor brownie crocante, ideal para recuperação muscular e nutrição prática.', '/fws/IMG_Produtos/28.png', 13.50, 7.05, 28, 12, 'ativo', '2025-10-30 12:59:48'),
+	(29, 'BARRA PROTEICA NUTRATA CARAMELO EMB 45G', 5, 11, 'Barra proteica sabor caramelo, com alto teor de proteínas e textura cremosa.', '/fws/IMG_Produtos/29.png', 15.99, 0.00, 26, 12, 'ativo', '2025-10-30 12:59:48'),
+	(30, 'BARRA DE CEREAL BAUDUCCO MAXI CHOCOLATE PCT 25G', 6, 10, 'Barra de cereal Bauducco sabor chocolate, deliciosa opção de lanche rápido e nutritivo.', '/fws/IMG_Produtos/30.png', 3.50, 1.13, 27, 12, 'ativo', '2025-10-30 12:59:48'),
+	(31, 'BARRA DE CEREAL NUTS BAR CASTANHAS CHOCOLATE PCT 25G', 6, 9, 'Barra de cereal com castanhas e chocolate, fonte de energia e sabor para o dia a dia.', '/fws/IMG_Produtos/31.png', 5.99, 2.93, 37, 12, 'ativo', '2025-10-30 13:02:47'),
+	(32, 'BARRA DE CEREAL NUTS CASTANHA E SEMENTES PCT 25G', 6, 9, 'Barra de cereal com castanhas e sementes, perfeita para lanches nutritivos e saudáveis.', '/fws/IMG_Produtos/32.png', 5.99, 2.93, 30, 12, 'ativo', '2025-10-30 13:02:47'),
+	(33, 'BARRA DE CEREAL SUPINO PROTEIN CAPPUCCINO PCT 30G', 5, 9, 'Barra proteica sabor cappuccino, ideal para recuperação muscular e energia extra.', '/fws/IMG_Produtos/33.png', 8.50, 3.64, 29, 12, 'ativo', '2025-10-30 13:02:47'),
+	(34, 'BARRA DE PROTEINA SUPINO COCO C CHOCOLATE 30G', 5, 9, 'Barra proteica sabor coco com chocolate, deliciosa e rica em proteínas.', '/fws/IMG_Produtos/34.png', 8.50, 3.86, 27, 12, 'ativo', '2025-10-30 13:02:47'),
+	(35, 'BARRA NUTRATA PROTOBAR AVELA WHEY PCT 70G', 5, 11, 'Barra de proteína sabor avelã com whey, ideal para atletas e quem busca nutrição equilibrada.', '/fws/IMG_Produtos/35.png', 22.99, 12.22, 34, 12, 'ativo', '2025-10-30 13:02:47'),
+	(36, 'BARRA NUTRATA PROTOBAR COCONUT PCT 70G', 5, 11, 'Barra de proteína sabor coco, combina alto teor proteico com sabor irresistível.', '/fws/IMG_Produtos/36.png', 22.99, 12.22, 22, 12, 'ativo', '2025-10-30 13:02:47'),
+	(37, 'BARRA NUTRATA YOPRO PROTEICA MORANGO 55G', 5, 11, 'Barra proteica Yopro sabor morango, perfeita para suplementar proteínas com sabor.', '/fws/IMG_Produtos/37.png', 19.99, 10.47, 34, 12, 'ativo', '2025-10-30 13:02:47'),
+	(38, 'BARRA PROTEICA INTEGRAL MEDICA TRUFA AVELA CHOC 45G', 5, 11, 'Barra proteica sabor trufa de avelã com chocolate, rica em proteínas e muito saborosa.', '/fws/IMG_Produtos/38.png', 13.50, 7.05, 36, 12, 'ativo', '2025-10-30 13:02:47'),
+	(39, 'BARRA PROTEICA INTEGRAL MEDICA BAR NINHO CREME DE AVELA 45G', 5, 11, 'Barra proteica sabor Ninho com creme de avelã, deliciosa opção pós-treino.', '/fws/IMG_Produtos/39.png', 13.50, 6.63, 27, 12, 'ativo', '2025-10-30 13:02:47'),
+	(40, 'BARRA PROTOBAR BROWNIE C DOCE DE LEITE HAVANNA PCT 70G', 5, 11, 'Barra proteica sabor brownie com doce de leite Havanna, indulgente e nutritiva.', '/fws/IMG_Produtos/40.png', 25.90, 13.09, 39, 12, 'ativo', '2025-10-30 13:02:47'),
+	(41, 'BARRA PROTOBAR NUTRATA HAVANNA 70G', 5, 11, 'Barra proteica Nutrata sabor Havanna, perfeita para um lanche nutritivo e saboroso.', '/fws/IMG_Produtos/41.png', 25.90, 13.86, 11, 12, 'ativo', '2025-10-30 13:04:29'),
+	(42, 'BARRA PROTOBAR NUTRATA SENSATIONS WHEY PCT 70G', 5, 11, 'Barra proteica Sensations Whey, ideal para complementar proteínas com praticidade e sabor.', '/fws/IMG_Produtos/42.png', 23.99, 12.22, 27, 12, 'ativo', '2025-10-30 13:04:29'),
+	(43, 'BEB LACTEA 3 CORACOES CAPPUCCINO CHOCOLATE CX 260ML', 7, 12, 'Bebida láctea sabor cappuccino com chocolate, cremosa e nutritiva, perfeita para qualquer momento.', '/fws/IMG_Produtos/43.png', 12.50, 5.72, 25, 12, 'ativo', '2025-10-30 13:04:29'),
+	(45, 'BEB LACTEA 3 CORACOES POWER WHEY CAPPUCCINO CLASSICO 250ML', 7, 12, 'Bebida láctea Power Whey sabor cappuccino, fonte de proteínas para energia e recuperação.', '/fws/IMG_Produtos/45.png', 13.99, 6.67, 18, 12, 'ativo', '2025-10-30 13:04:29'),
+	(46, 'BEB LACTEA NESTLE NESCAU FAST 270ML', 7, 13, 'Bebida láctea Nesquik Fast, prática e saborosa, ideal para complementar sua nutrição diária.', '/fws/IMG_Produtos/46.png', 12.50, 5.14, 28, 12, 'ativo', '2025-10-30 13:04:29'),
+	(47, 'BEB LACTEA NESTON FAST VITAMINA C CEREAL 280ML', 7, 13, 'Bebida láctea Neston Fast com vitamina C e cereal, perfeita para um lanche nutritivo.', '/fws/IMG_Produtos/47.png', 12.50, 5.00, 35, 12, 'ativo', '2025-10-30 13:04:29'),
+	(48, 'BEB LACTEA TODDYNHO LEVINHO CX 200ML', 7, 3, 'Bebida láctea Toddy Leve, sabor chocolate suave, ideal para lanches rápidos e deliciosos.', '/fws/IMG_Produtos/48.png', 6.50, 2.35, 32, 12, 'ativo', '2025-10-30 13:04:29'),
+	(49, 'BEB LACTEA TODDYNHO TRADICIONAL CX 200ML', 7, 3, 'Bebida láctea Toddy Tradicional, sabor clássico de chocolate, perfeita para crianças e adultos.', '/fws/IMG_Produtos/49.png', 6.50, 3.14, 28, 12, 'ativo', '2025-10-30 13:04:29'),
+	(50, 'BEBIDA DA CAFETEIRA CAPUCCINO 3 CORACOES 200ML', 2, 12, 'Bebida de cappuccino pronta para consumo, prática, cremosa e perfeita para qualquer hora.', '/fws/IMG_Produtos/50.png', 6.99, 1.72, 405, 12, 'ativo', '2025-10-30 13:04:29'),
+	(51, 'BISC BAUDUCCO BISCUIT CHOCOLATE MEIO AMARGO PCT 80G', 8, 10, 'Biscoito Bauducco sabor chocolate meio amargo, crocante e delicioso para lanches e cafés.', '/fws/IMG_Produtos/51.png', 12.90, 6.01, 29, 12, 'ativo', '2025-10-30 13:07:21'),
+	(52, 'BISC BAUDUCCO CEREALE CACAU AVEIA E MEL PCT 170G', 8, 10, 'Biscoito Bauducco Cereal com cacau, aveia e mel, nutritivo e saboroso para qualquer hora do dia.', '/fws/IMG_Produtos/52.png', 7.50, 3.58, 25, 12, 'ativo', '2025-10-30 13:07:21'),
+	(53, 'BISC BAUDUCCO CHOCO BISCUIT CHOCOLATE AO LEITE 80G', 8, 10, 'Biscoito Bauducco Choco Biscuit com chocolate ao leite, perfeito para lanches rápidos e doces.', '/fws/IMG_Produtos/53.png', 12.90, 6.01, 28, 12, 'ativo', '2025-10-30 13:07:21'),
+	(54, 'BISC BAUDUCCO COOKIE CHOCOLATE PCT 100G', 8, 10, 'Cookie Bauducco sabor chocolate, macio por dentro e crocante por fora, ideal para acompanhar café ou lanche.', '/fws/IMG_Produtos/54.png', 8.99, 3.32, 29, 12, 'ativo', '2025-10-30 13:07:21'),
+	(55, 'BISC BAUDUCCO COOKIE ORIGINAL PCT 100G', 8, 10, 'Cookie Bauducco original, sabor clássico e textura irresistível para qualquer hora do dia.', '/fws/IMG_Produtos/55.png', 8.99, 3.32, 31, 12, 'ativo', '2025-10-30 13:07:21'),
+	(56, 'BISC BAUDUCCO WAFER CHOCOLATE PCT 140G', 8, 10, 'Wafer Bauducco sabor chocolate, crocante e recheado, perfeito para lanches rápidos.', '/fws/IMG_Produtos/56.png', 7.50, 3.45, 32, 12, 'ativo', '2025-10-30 13:07:21'),
+	(57, 'BISC BAUDUCCO WAFER MAXI CHOCOLATE PCT 104G', 8, 10, 'Wafer Bauducco Maxi chocolate, sabor intenso e textura crocante, ideal para crianças e adultos.', '/fws/IMG_Produtos/57.png', 7.50, 3.45, 27, 12, 'ativo', '2025-10-30 13:07:21'),
+	(58, 'BISC BAUDUCCO WAFER MORANGO PCT 140G', 8, 10, 'Wafer Bauducco sabor morango, crocante e delicioso, perfeito para lanches e cafés.', '/fws/IMG_Produtos/58.png', 7.50, 3.45, 30, 12, 'ativo', '2025-10-30 13:07:21'),
+	(59, 'BISC BAUDUCCO WAFER TRIPLO CHOCOLATE PCT 140G', 8, 10, 'Wafer Bauducco Triplo Chocolate, crocante e recheado, ideal para quem ama chocolate.', '/fws/IMG_Produtos/59.png', 7.50, 3.45, 27, 12, 'ativo', '2025-10-30 13:07:21'),
+	(60, 'BISC CASSINI POLVILHO SALGADO PCT 100G', 8, 9, 'Biscoito de polvilho Cassini, crocante e levemente salgado, ótimo para lanches e aperitivos.', '/fws/IMG_Produtos/60.png', 8.50, 3.19, 39, 12, 'ativo', '2025-10-30 13:07:21'),
+	(61, 'BISC CLUB SOCIAL CROSTINI QUEIJO PARMESAO E VEGETAIS PCT 80G', 8, 8, 'Biscoito Club Social Crostini com queijo parmesão e vegetais, leve e crocante, ideal para lanches saudáveis.', '/fws/IMG_Produtos/61.png', 10.90, 5.03, 28, 12, 'ativo', '2025-10-30 13:07:42'),
+	(62, 'BISC CLUB SOCIAL INTEGRAL PCT 144G', 8, 8, 'Biscoito Club Social Integral, nutritivo e crocante, perfeito para quem busca opções mais saudáveis.', '/fws/IMG_Produtos/62.png', 11.50, 5.03, 27, 12, 'ativo', '2025-10-30 13:07:42'),
+	(63, 'BISC CLUB SOCIAL ORIGINAL 141G', 8, 8, 'Biscoito Club Social Original, sabor clássico e textura crocante, ideal para lanches rápidos.', '/fws/IMG_Produtos/63.png', 11.50, 5.03, 12, 12, 'ativo', '2025-10-30 13:07:42'),
+	(64, 'BISC NESTLE CALIPSO RECH ORIGINAL PCT 130G', 8, 13, 'Biscoito Nestlé Calipso recheado original, sabor delicioso e perfeito para sobremesas e lanches.', '/fws/IMG_Produtos/64.png', 13.90, 6.53, 26, 12, 'ativo', '2025-10-30 13:07:42'),
+	(65, 'BISC NESTLE CLASSIC RECH CHOCOLATE PCT 140G', 8, 13, 'Biscoito Nestlé Classic recheado com chocolate, crocante e irresistível, ideal para qualquer hora.', '/fws/IMG_Produtos/65.png', 7.50, 3.92, 24, 12, 'ativo', '2025-10-30 13:07:42'),
+	(66, 'BISC NESTLE MOCA RECH PCT 140G', 8, 13, 'Biscoito Nestlé Moça recheado, sabor clássico e delicioso, perfeito para café ou lanche.', '/fws/IMG_Produtos/66.png', 7.50, 3.75, 25, 12, 'ativo', '2025-10-30 13:07:42'),
+	(67, 'BISC NESTLE NESFIT INTEGRAL CACAU E CEREAIS PCT 160G', 8, 13, 'Biscoito Nestlé Nesfit integral com cacau e cereais, nutritivo e crocante, ideal para lanches saudáveis.', '/fws/IMG_Produtos/67.png', 7.50, 3.03, 25, 12, 'ativo', '2025-10-30 13:07:42'),
+	(68, 'BISC NESTLE NESFIT INTEGRAL MORANGO E CEREAIS PCT 160G', 8, 13, 'Biscoito Nestlé Nesfit integral sabor morango com cereais, saudável e delicioso para qualquer momento.', '/fws/IMG_Produtos/68.png', 7.50, 3.58, 23, 12, 'ativo', '2025-10-30 13:07:42'),
+	(69, 'BISC NESTLE PASSATEMPO RECHEADO CHOCOLATE 130G', 8, 13, 'Biscoito Passatempo recheado com chocolate, macio e saboroso, perfeito para lanches infantis.', '/fws/IMG_Produtos/69.png', 6.90, 2.63, 27, 12, 'ativo', '2025-10-30 13:07:42'),
+	(70, 'BISC NESTLE PASSATEMPO RECHEADO MORANGO PCT 130G', 8, 13, 'Biscoito Passatempo recheado com morango, macio e doce, ideal para crianças e lanches rápidos.', '/fws/IMG_Produtos/70.png', 6.90, 2.63, 26, 12, 'ativo', '2025-10-30 13:07:42'),
+	(71, 'BISC NESTLE RECHEADO NESCAU PCT 140G', 8, 13, 'Biscoito Nestlé recheado com Nesquik, crocante e doce, ideal para lanches e sobremesas.', '/fws/IMG_Produtos/71.png', 7.50, 3.92, 26, 12, 'ativo', '2025-10-30 13:08:18'),
+	(72, 'BISC OREO ORIGINAL 90G', 8, 14, 'Biscoito Oreo Original, recheio cremoso e sabor icônico, perfeito para qualquer lanche ou sobremesa.', '/fws/IMG_Produtos/72.png', 7.50, 3.40, 25, 12, 'ativo', '2025-10-30 13:08:18'),
+	(73, 'BISC OREO RECHEADO CHOCOLATE 90G', 8, 14, 'Biscoito Oreo recheado com chocolate, crocante e irresistível, ótimo para lanches rápidos.', '/fws/IMG_Produtos/73.png', 7.50, 3.46, 28, 12, 'ativo', '2025-10-30 13:08:18'),
+	(74, 'BISC OREO RECHEADO MILKSHAKE MORANGO 90G', 8, 14, 'Biscoito Oreo recheado sabor milkshake de morango, doce e cremoso, perfeito para sobremesas ou lanches.', '/fws/IMG_Produtos/74.png', 7.50, 3.46, 16, 12, 'ativo', '2025-10-30 13:08:18'),
+	(75, 'BISC RECHEADO BONO LIMAO PCT 90G', 8, 13, 'Biscoito Bono recheado sabor limão, macio e refrescante, ideal para lanche da tarde.', '/fws/IMG_Produtos/75.png', 6.50, 2.27, 26, 12, 'ativo', '2025-10-30 13:08:18'),
+	(76, 'BISC RECHEADO NABISCO CHOCOLICIA CHOCOLATE PCT 132G', 8, 14, 'Biscoito Chocólicia recheado com chocolate, sabor intenso e irresistível, perfeito para momentos doces.', '/fws/IMG_Produtos/76.png', 12.00, 5.30, 27, 12, 'ativo', '2025-10-30 13:08:18'),
+	(77, 'BISC RECHEADO NESTLE BONO CHOCOLATE PCT 90G', 8, 13, 'Biscoito Nestlé Bono recheado com chocolate, sabor clássico e macio, ideal para lanches rápidos.', '/fws/IMG_Produtos/77.png', 6.50, 2.27, 28, 12, 'ativo', '2025-10-30 13:08:18'),
+	(78, 'BISC RECHEADO NESTLE NEGRESCO CHOCOLATE PCT 90G', 8, 13, 'Biscoito Nestlé Negresco recheado com chocolate, crocante e sabor intenso, perfeito para sobremesas.', '/fws/IMG_Produtos/78.png', 6.50, 2.14, 49, 12, 'ativo', '2025-10-30 13:08:18'),
+	(79, 'BISC RECHEADO NESTLE NEGRESCO MORANGO PCT 90G', 8, 13, 'Biscoito Nestlé Negresco recheado sabor morango, doce e crocante, ótimo para lanches infantis.', '/fws/IMG_Produtos/79.png', 6.50, 2.27, 48, 12, 'ativo', '2025-10-30 13:08:18'),
+	(80, 'BISC TOSTINES NESTLE MACA E CANELA PCT 160G', 8, 13, 'Biscoito Tostines Nestlé sabor maçã e canela, crocante e aromático, perfeito para cafés e lanches.', '/fws/IMG_Produtos/80.png', 7.50, 3.34, 48, 12, 'ativo', '2025-10-30 13:08:18');
 
 -- Copiando estrutura para tabela fws.retiradas
 CREATE TABLE IF NOT EXISTS `retiradas` (
@@ -673,14 +684,19 @@ CREATE TABLE IF NOT EXISTS `retiradas` (
   CONSTRAINT `retiradas_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`),
   CONSTRAINT `retiradas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
   CONSTRAINT `retiradas_ibfk_3` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.retiradas: ~4 rows (aproximadamente)
+-- Copiando dados para a tabela fws.retiradas: ~9 rows (aproximadamente)
 INSERT INTO `retiradas` (`id`, `produto_id`, `usuario_id`, `funcionario_id`, `quantidade`, `data_retirada`, `tipo_motivo`, `motivo`) VALUES
 	(1, 1, NULL, 1, 1, '2025-12-05 09:58:24', 'uso_interno', 'Retirada via Estoque'),
 	(2, 1, NULL, 1, 1, '2025-12-05 10:01:58', 'roubo', NULL),
 	(3, 1, NULL, 1, 1, '2025-12-05 10:04:18', 'roubo', 'roubaram'),
-	(4, 1, NULL, 1, 1, '2025-12-05 12:22:12', 'roubo', 'a nath roubou');
+	(4, 1, NULL, 1, 1, '2025-12-05 12:22:12', 'roubo', 'a nath roubou'),
+	(5, 39, NULL, 1, 24, '2025-12-06 00:33:37', 'uso_interno', NULL),
+	(6, 39, NULL, 1, 1, '2025-12-06 00:34:04', 'uso_interno', NULL),
+	(7, 39, NULL, 1, 1, '2025-12-06 00:34:39', 'uso_interno', NULL),
+	(8, 74, NULL, 1, 1, '2025-12-06 00:36:32', 'uso_interno', NULL),
+	(9, 39, NULL, 1, 1, '2025-12-07 00:08:24', 'doacao', NULL);
 
 -- Copiando estrutura para tabela fws.usuarios
 CREATE TABLE IF NOT EXISTS `usuarios` (
@@ -699,15 +715,16 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `cpf` (`cpf`),
   UNIQUE KEY `telefone` (`telefone`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.usuarios: ~5 rows (aproximadamente)
+-- Copiando dados para a tabela fws.usuarios: ~6 rows (aproximadamente)
 INSERT INTO `usuarios` (`id`, `nome`, `data_nascimento`, `telefone`, `cpf`, `email`, `senha`, `criado_em`, `ultimo_login`, `ativo`, `google_id`) VALUES
-	(4, 'NIKOLAS DE SOUZA LI', '2007-01-09', '(11) 96854-4147', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-12-05 14:21:00', 0, NULL),
+	(4, 'NIKOLAS DE SOUZA LI', '2007-01-09', '(11) 96854-4147', '47944286859', 'nikolas.souzalima007@gmail.com', '$2y$10$DN2sT4jhtzeogW.CVlBzb.Y2s0n.6pp3tswHQb.R7yXe2eLg43ZFq', '2025-10-20 23:59:00', '2025-12-07 00:39:08', 0, NULL),
 	(6, 'Sabrina', '2007-02-14', '11930265543', '54449709888', 'sabrina@gmail.com', '$2y$10$xVCz9nu7WWZVB25HuJQAJuVeIWKOMuqMtlEP68.sorCERfJ7LVO9.', '2025-10-22 11:30:07', '2025-10-22 08:32:23', 1, NULL),
 	(7, 'Nicolly Clement de Freitas', '2007-07-25', '11928926150', '50674089871', 'clementnicolly@gmail.com', '$2y$10$0Igs1yOGF5dtBMYbX/vlme9BcBJ3gu/VfRlwxSsOjCwq6ytGu3dJi', '2025-10-22 14:07:05', '2025-10-22 11:08:02', 1, NULL),
 	(8, 'nathally ferreira', '2007-08-13', '11999284328', '49681441800', 'nathally@gmail.com', '$2y$10$M45ldEWNbN1mc.pYonwGu.rJg9leM2BjTe3kynY6lN9K8KmVu.BPi', '2025-10-22 14:59:52', '2025-10-22 12:01:16', 1, NULL),
-	(9, 'Maria Da Silva', '2005-04-29', '11967222222', '85577959047', 'Maria@gmail.com', '$2y$10$oUmViqIQVL8Ys.jdemrrSOuSFaoECwDtUIR.bxzDzVKW63npUZMK2', '2025-10-24 01:22:47', '2025-10-23 22:23:34', 1, NULL);
+	(9, 'Maria Da Silva', '2005-04-29', '11967222222', '85577959047', 'Maria@gmail.com', '$2y$10$oUmViqIQVL8Ys.jdemrrSOuSFaoECwDtUIR.bxzDzVKW63npUZMK2', '2025-10-24 01:22:47', '2025-10-23 22:23:34', 1, NULL),
+	(10, 'NIKOLAS DE SOUZA LIMA', '2007-04-29', '11968544129', '94883052079', 'nikolas.souzalima@gmail.com', '$2y$10$v.kne6EOxqqedvjM.eb8XeyDMEAtyVGzmbOvqsG4oY.U7ERED/HEu', '2025-12-05 22:47:17', '2025-12-05 20:28:17', 0, NULL);
 
 -- Copiando estrutura para tabela fws.vendas
 CREATE TABLE IF NOT EXISTS `vendas` (
@@ -721,92 +738,48 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   `tempo_chegada` time DEFAULT NULL,
   `data_criacao` datetime DEFAULT CURRENT_TIMESTAMP,
   `data_finalizacao` datetime DEFAULT NULL,
+  `tempo_adicionado` enum('S','N') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'N',
   PRIMARY KEY (`id`),
   KEY `funcionario_id` (`funcionario_id`),
   KEY `usuario_id` (`usuario_id`),
   CONSTRAINT `vendas_ibfk_1` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`),
   CONSTRAINT `vendas_ibfk_2` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Copiando dados para a tabela fws.vendas: ~19 rows (aproximadamente)
-INSERT INTO `vendas` (`id`, `funcionario_id`, `usuario_id`, `total`, `status_pagamento`, `situacao_compra`, `metodo_pagamento`, `tempo_chegada`, `data_criacao`, `data_finalizacao`) VALUES
-	(11, 1, 4, 10.50, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-10-30 11:05:40', NULL),
-	(12, 1, 4, 54.48, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-11-26 18:39:32', NULL),
-	(13, 1, 4, 168.49, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-12-02 08:04:03', NULL),
-	(14, 1, 4, 176.60, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 01:45:51', NULL),
-	(15, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 01:48:58', NULL),
-	(16, 1, 4, 69.90, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 01:51:46', NULL),
-	(17, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 02:41:37', NULL),
-	(18, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 02:49:07', NULL),
-	(19, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:30:00', '2025-12-04 03:05:03', NULL),
-	(20, 1, 4, 8.40, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 03:11:09', NULL),
-	(21, 1, 4, 8.40, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 03:43:55', NULL),
-	(22, 1, 4, 69.90, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 10:06:57', NULL),
-	(23, 1, 4, 10.50, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 10:14:10', NULL),
-	(24, 1, 4, 69.90, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 10:19:49', NULL),
-	(25, 1, 4, 279.60, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 11:37:51', NULL),
-	(26, 1, 4, 604.70, 'pendente', 'finalizada', 'cartao_debito', '00:15:00', '2025-12-04 14:41:53', NULL),
-	(27, 1, 4, 70.67, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-05 11:47:53', NULL),
-	(28, 1, 4, 70.67, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-05 12:12:08', NULL),
-	(29, 1, 4, 70.67, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-05 12:49:57', NULL);
-
--- Copiando estrutura para trigger fws.trg_estoque_insuficiente
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `trg_estoque_insuficiente` BEFORE INSERT ON `movimentacao_estoque` FOR EACH ROW BEGIN
-    DECLARE estoque_atual INT;
-
-    SELECT estoque INTO estoque_atual
-    FROM produtos
-    WHERE id = NEW.produto_id;
-
-    IF NEW.tipo_movimentacao = 'saida' AND estoque_atual < NEW.quantidade THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Estoque insuficiente para essa saída';
-    END IF;
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
-
--- Copiando estrutura para trigger fws.trg_insert_lote
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `trg_insert_lote` BEFORE INSERT ON `lotes_produtos` FOR EACH ROW BEGIN
-    DECLARE meses INT;
-
-    -- pega a validade padrão do produto
-    SELECT validade_padrao_meses INTO meses
-    FROM produtos
-    WHERE id = NEW.produto_id;
-
-    -- se meses for NULL ou igual a 0 -> validade deve ser NULL
-    IF meses IS NULL OR meses = 0 THEN
-        SET NEW.validade = NULL;
-    ELSE
-        -- calcula validade normal
-        SET NEW.validade = DATE_ADD(CURRENT_DATE(), INTERVAL meses MONTH);
-    END IF;
-
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
-
--- Copiando estrutura para trigger fws.trg_movimentacao_estoque
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `trg_movimentacao_estoque` AFTER INSERT ON `movimentacao_estoque` FOR EACH ROW BEGIN
-    IF NEW.tipo_movimentacao = 'entrada' THEN
-        UPDATE produtos
-        SET estoque = estoque + NEW.quantidade
-        WHERE id = NEW.produto_id;
-    ELSEIF NEW.tipo_movimentacao = 'saida' THEN
-        UPDATE produtos
-        SET estoque = estoque - NEW.quantidade
-        WHERE id = NEW.produto_id;
-    END IF;
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
+-- Copiando dados para a tabela fws.vendas: ~32 rows (aproximadamente)
+INSERT INTO `vendas` (`id`, `funcionario_id`, `usuario_id`, `total`, `status_pagamento`, `situacao_compra`, `metodo_pagamento`, `tempo_chegada`, `data_criacao`, `data_finalizacao`, `tempo_adicionado`) VALUES
+	(11, 1, 4, 10.50, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-10-30 11:05:40', NULL, NULL),
+	(12, 1, 4, 54.48, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-11-26 18:39:32', NULL, NULL),
+	(13, 1, 4, 168.49, 'pendente', 'cancelada', 'dinheiro', '00:45:00', '2025-12-02 08:04:03', NULL, NULL),
+	(14, 1, 4, 176.60, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 01:45:51', NULL, NULL),
+	(15, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 01:48:58', NULL, NULL),
+	(16, 1, 4, 69.90, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 01:51:46', NULL, NULL),
+	(17, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 02:41:37', NULL, NULL),
+	(18, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 02:49:07', NULL, NULL),
+	(19, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:30:00', '2025-12-04 03:05:03', NULL, NULL),
+	(20, 1, 4, 8.40, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 03:11:09', NULL, NULL),
+	(21, 1, 4, 8.40, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 03:43:55', NULL, NULL),
+	(22, 1, 4, 69.90, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 10:06:57', NULL, NULL),
+	(23, 1, 4, 10.50, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 10:14:10', NULL, NULL),
+	(24, 1, 4, 69.90, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-04 10:19:49', NULL, NULL),
+	(25, 1, 4, 279.60, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-04 11:37:51', NULL, NULL),
+	(26, 1, 4, 604.70, 'pendente', 'finalizada', 'cartao_debito', '00:15:00', '2025-12-04 14:41:53', NULL, NULL),
+	(27, 1, 4, 70.67, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-05 11:47:53', NULL, NULL),
+	(28, 1, 4, 70.67, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-05 12:12:08', NULL, NULL),
+	(29, 1, 4, 70.67, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-05 12:49:57', NULL, NULL),
+	(30, 1, 4, 69.90, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-05 14:44:08', NULL, NULL),
+	(32, 1, 10, 7.50, 'pendente', 'cancelada', 'cartao_debito', '00:15:00', '2025-12-05 20:39:00', NULL, NULL),
+	(33, 1, 10, 31.99, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-06 00:29:36', NULL, NULL),
+	(34, 1, 10, 14.50, 'pendente', 'cancelada', 'dinheiro', '00:15:00', '2025-12-06 18:21:59', NULL, NULL),
+	(35, 1, 10, 8.00, 'pendente', 'cancelada', 'dinheiro', '00:30:00', '2025-12-06 18:27:11', NULL, NULL),
+	(50, 1, 4, 14.50, 'pendente', 'finalizada', 'dinheiro', '00:30:00', '2025-12-07 12:22:44', NULL, 'S'),
+	(51, 1, 4, 69.90, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-07 12:44:55', NULL, 'N'),
+	(52, 1, 4, 319.90, 'pendente', 'finalizada', 'cartao_debito', '00:15:00', '2025-12-07 12:45:24', NULL, 'N'),
+	(53, 1, 4, 1398.00, 'pendente', 'finalizada', 'cartao_credito', '00:15:00', '2025-12-07 12:47:26', NULL, 'N'),
+	(54, 1, 4, 518.00, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-07 12:48:42', NULL, 'N'),
+	(55, 1, 4, 1398.00, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-11-07 12:50:09', NULL, 'N'),
+	(56, 1, 4, 518.00, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-07 12:50:51', NULL, 'N'),
+	(57, 1, 4, 409.80, 'pendente', 'finalizada', 'dinheiro', '00:15:00', '2025-12-07 12:52:33', NULL, 'N');
 
 -- Copiando estrutura para trigger fws.trg_nao_cancelar_finalizada
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';

@@ -1,5 +1,9 @@
 <?php
+date_default_timezone_set('America/Sao_Paulo');
+
 include "../../conn.php";
+include "../PHP/calcular_validade_lote.php";
+include "../PHP/gerenciar_chegada_lote.php";
 
 session_start();
 
@@ -42,14 +46,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['repor_estoque'])) {
             $data_validade = date('Y-m-d', strtotime("+$validade_padrao months"));
         }
         
-        // 3. Inserir novo lote em lotes_produtos
-        $sql_lote = "INSERT INTO lotes_produtos (produto_id, quantidade, validade, fornecedor_id) 
-                     VALUES ($produto_id, $quantidade, " . ($data_validade ? "'$data_validade'" : "NULL") . ", " . ($fornecedor_id ? $fornecedor_id : "NULL") . ")";
+        // 3. Calcular data de chegada (data de hoje)
+        $data_chegada = date('Y-m-d H:i:s');
+        
+        // 4. Inserir novo lote em lotes_produtos COM data de chegada
+        $sql_lote = "INSERT INTO lotes_produtos (produto_id, quantidade, validade, fornecedor_id, chegada) 
+                     VALUES ($produto_id, $quantidade, " . ($data_validade ? "'$data_validade'" : "NULL") . ", " . ($fornecedor_id ? $fornecedor_id : "NULL") . ", '$data_chegada')";
         if (!$sql->query($sql_lote)) {
             die("Erro ao criar lote: " . $sql->error);
         }
         
-        // 4. Registrar entrada na tabela movimentacao_estoque
+        // 5. Atualizar estoque na tabela produtos
+        $sql_update_estoque = "UPDATE produtos SET estoque = estoque + $quantidade WHERE id = $produto_id";
+        if (!$sql->query($sql_update_estoque)) {
+            die("Erro ao atualizar estoque: " . $sql->error);
+        }
+        
+        // 6. Registrar entrada na tabela movimentacao_estoque
         $sql_insert = "INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, data_movimentacao) 
                        VALUES ($produto_id, 'entrada', $quantidade, NOW())";
         if (!$sql->query($sql_insert)) {
@@ -87,6 +100,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['retirar_estoque'])) {
                 die("Erro ao registrar movimentação: " . $sql->error);
             }
             
+            // Atualizar estoque na tabela produtos
+            $sql_update_estoque = "UPDATE produtos SET estoque = estoque - $quantidade_retirada WHERE id = $produto_id";
+            if (!$sql->query($sql_update_estoque)) {
+                die("Erro ao atualizar estoque: " . $sql->error);
+            }
+            
             // Registrar na tabela retiradas
             $motivo_sql = $motivo_retirada ? "'" . $sql->real_escape_string($motivo_retirada) . "'" : "NULL";
             $sql_retirada = "INSERT INTO retiradas (produto_id, funcionario_id, quantidade, tipo_motivo, motivo) 
@@ -107,13 +126,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['retirar_estoque'])) {
 }
 
 $sqli = "SELECT p.id, p.nome, p.foto_produto, c.nome as categoria_nome, f.nome as fornecedor_nome, p.preco_venda, 
-        SUM(lp.quantidade) as estoque_total, p.status, p.criado_em, lp.validade
+        lp.id as lote_id, lp.quantidade, p.status, p.criado_em, lp.validade, lp.chegada
 FROM produtos p 
 LEFT JOIN categorias c ON p.categoria_id = c.id 
 LEFT JOIN fornecedores f ON p.fornecedor_id = f.id
 LEFT JOIN lotes_produtos lp ON p.id = lp.produto_id
-GROUP BY p.id, lp.validade
-ORDER BY lp.validade ASC, p.id ASC";
+ORDER BY lp.validade ASC, p.id ASC, lp.id ASC";
 $result = $sql->query($sqli);
 if(!$result){
     die("Erro na consulta: " . $sql->error);
@@ -132,7 +150,7 @@ if(!$result_total){
 }
 
 // Buscar produtos com estoque baixo
-$sqli_baixo = "SELECT id, nome, estoque FROM produtos WHERE estoque < 15 ORDER BY estoque ASC";
+$sqli_baixo = "SELECT id, nome, estoque, foto_produto FROM produtos WHERE estoque < 15 ORDER BY estoque ASC";
 $result_baixo = $sql->query($sqli_baixo);
 $produtos_baixos = [];
 if($result_baixo && $result_baixo->num_rows > 0) {
@@ -141,20 +159,52 @@ if($result_baixo && $result_baixo->num_rows > 0) {
     }
 }
 
-// Buscar produtos com validade próxima (10 dias ou menos)
-$sqli_validade = "SELECT DISTINCT p.id, p.nome, lp.validade FROM produtos p
+// Buscar produtos que vencem HOJE
+$sqli_vencendo_hoje = "SELECT p.id, p.nome, p.foto_produto, MAX(DATE(lp.validade)) as validade FROM produtos p
                   LEFT JOIN lotes_produtos lp ON p.id = lp.produto_id
                   WHERE lp.validade IS NOT NULL 
-                  AND lp.validade <= DATE_ADD(CURDATE(), INTERVAL 10 DAY)
-                  AND lp.validade >= CURDATE()
-                  ORDER BY lp.validade ASC";
-$result_validade = $sql->query($sqli_validade);
-$produtos_vencimento = [];
-if($result_validade && $result_validade->num_rows > 0) {
-    while($row = $result_validade->fetch_assoc()) {
-        $produtos_vencimento[] = $row;
+                  AND DATE(lp.validade) = CURDATE()
+                  GROUP BY p.id
+                  ORDER BY MAX(DATE(lp.validade)) ASC";
+$result_vencendo_hoje = $sql->query($sqli_vencendo_hoje);
+$produtos_vencendo_hoje = [];
+if($result_vencendo_hoje && $result_vencendo_hoje->num_rows > 0) {
+    while($row = $result_vencendo_hoje->fetch_assoc()) {
+        $produtos_vencendo_hoje[] = $row;
     }
 }
+
+// Buscar produtos que vencem nos próximos 10 dias (amanhã até +10 dias)
+$sqli_vencendo_10dias = "SELECT p.id, p.nome, p.foto_produto, MAX(DATE(lp.validade)) as validade FROM produtos p
+                  LEFT JOIN lotes_produtos lp ON p.id = lp.produto_id
+                  WHERE lp.validade IS NOT NULL 
+                  AND DATE(lp.validade) > CURDATE()
+                  AND DATE(lp.validade) <= DATE_ADD(CURDATE(), INTERVAL 10 DAY)
+                  GROUP BY p.id
+                  ORDER BY MAX(DATE(lp.validade)) ASC";
+$result_vencendo_10dias = $sql->query($sqli_vencendo_10dias);
+$produtos_vencendo_10dias = [];
+if($result_vencendo_10dias && $result_vencendo_10dias->num_rows > 0) {
+    while($row = $result_vencendo_10dias->fetch_assoc()) {
+        $produtos_vencendo_10dias[] = $row;
+    }
+}
+
+// Buscar produtos vencidos (antes de hoje - pega o lote MAIS PRÓXIMO de hoje que venceu)
+$sqli_vencidos = "SELECT p.id, p.nome, p.foto_produto, MAX(DATE(lp.validade)) as validade FROM produtos p
+                  LEFT JOIN lotes_produtos lp ON p.id = lp.produto_id
+                  WHERE lp.validade IS NOT NULL 
+                  AND DATE(lp.validade) < CURDATE()
+                  GROUP BY p.id
+                  ORDER BY MAX(DATE(lp.validade)) DESC";
+$result_vencidos = $sql->query($sqli_vencidos);
+$produtos_vencidos = [];
+if($result_vencidos && $result_vencidos->num_rows > 0) {
+    while($row = $result_vencidos->fetch_assoc()) {
+        $produtos_vencidos[] = $row;
+    }
+}
+
 
 // Buscar todas as categorias
 $sql_categorias = "SELECT DISTINCT id, nome FROM categorias ORDER BY nome ASC";
@@ -176,6 +226,19 @@ $sql_movimentacao = "SELECT m.id, m.produto_id, m.tipo_movimentacao, m.quantidad
 $result_movimentacao = $sql->query($sql_movimentacao);
 if(!$result_movimentacao){
     die("Erro na consulta de movimentação: " . $sql->error);
+}
+
+// Buscar retiradas de estoque
+$sql_retiradas = "SELECT r.id, r.produto_id, r.funcionario_id, r.quantidade, r.tipo_motivo, r.motivo, r.data_retirada,
+                         p.nome as produto_nome, p.foto_produto,
+                         f.nome as funcionario_nome
+                  FROM retiradas r
+                  LEFT JOIN produtos p ON r.produto_id = p.id
+                  LEFT JOIN funcionarios f ON r.funcionario_id = f.id
+                  ORDER BY r.data_retirada DESC";
+$result_retiradas = $sql->query($sql_retiradas);
+if(!$result_retiradas){
+    die("Erro na consulta de retiradas: " . $sql->error);
 }
 ?>
 <!doctype html>
@@ -320,6 +383,18 @@ if(!$result_movimentacao){
 
         .alerta-validade {
             background-color: #f5222d !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .alerta-validade-proxima {
+            background-color: #ff8c00 !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .alerta-validade-valido {
+            background-color: #52c41a !important;
             color: #fff !important;
             font-weight: bold;
         }
@@ -562,13 +637,35 @@ if(!$result_movimentacao){
                                 <!-- Lista dinâmica de estoque baixo -->
                             </div>
 
-                            <!-- Seção Validade Próxima -->
-                            <div id="listaProdutosValidade" style="margin-bottom:25px;">
-                                <!-- Lista dinâmica de validade próxima -->
+                            <!-- Seção Vencendo Hoje -->
+                            <div id="listaProdutosVendoHoje" style="margin-bottom:20px;">
+                                <!-- Lista dinâmica de vencendo hoje -->
+                            </div>
+
+                            <!-- Seção Validade Próxima (próximos 10 dias) -->
+                            <div id="listaProdutosVendoProximos10" style="margin-bottom:25px;">
+                                <!-- Lista dinâmica de validade próxima (próximos 10 dias) -->
+                            </div>
+
+                            <!-- Seção Produtos Vencidos -->
+                            <div id="listaProdutosVencidos" style="margin-bottom:25px;">
+                                <!-- Lista dinâmica de produtos vencidos -->
                             </div>
 
                             <div style="text-align:center;">
                                 <button onclick="fecharAlertaEstoque()" style="padding:10px 40px; background-color:#52c41a; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">OK</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal de Confirmação de Remoção de Lote Vencido -->
+                    <div id="modalRemocaoLote" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;" onclick="if(event.target === this) fecharModalRemocao();">
+                        <div style="background-color:white; padding:30px; border-radius:8px; box-shadow:0 4px 6px rgba(0,0,0,0.1); max-width:400px; text-align:center;">
+                            <h3 style="color:#d11b1b; margin-bottom:20px;">⚠️ Confirmar Remoção</h3>
+                            <p id="textoConfirmacao" style="color:#333; margin-bottom:20px; font-size:1rem;"></p>
+                            <div style="display:flex; gap:10px; justify-content:center;">
+                                <button onclick="fecharModalRemocao()" style="padding:10px 30px; background-color:#999; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Cancelar</button>
+                                <button id="btnConfirmarRemocao" onclick="confirmarRemocaoLote()" style="padding:10px 30px; background-color:#d11b1b; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Remover</button>
                             </div>
                         </div>
                     </div>
@@ -578,6 +675,7 @@ if(!$result_movimentacao){
                         <button class="tab-btn active" onclick="mudarTab('total')">Estoque Total</button>
                         <button class="tab-btn" onclick="mudarTab('lote')">Estoque por Lote</button>
                         <button class="tab-btn" onclick="mudarTab('movimentacao')">Movimentação Estoque</button>
+                        <button class="tab-btn" onclick="mudarTab('retiradas')">Retiradas</button>
                     </div>
 
                     <!-- Tabela de Estoque Total -->
@@ -586,13 +684,14 @@ if(!$result_movimentacao){
                             <thead class="table-dark">
                                 <tr>
                                     <th onclick="ordenarTabela('tabelaTotal', 0, 'foto')">Foto <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaTotal', 1, 'texto')">Nome <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaTotal', 2, 'texto')">Categoria <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaTotal', 3, 'texto')">Fornecedor <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaTotal', 4, 'numero')">Preço <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaTotal', 5, 'numero')">Quantidade Total <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaTotal', 6, 'texto')">Status <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaTotal', 7, 'data')">Chegada <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 1, 'numero')">ID <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 2, 'texto')">Nome <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 3, 'texto')">Categoria <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 4, 'texto')">Fornecedor <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 5, 'numero')">Preço <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 6, 'numero')">Quantidade Total <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 7, 'texto')">Status <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaTotal', 8, 'data')">Chegada <span class="sort-icon"></span></th>
                                     <th>Ação</th>
                                 </tr>
                             </thead>
@@ -610,6 +709,7 @@ if(!$result_movimentacao){
                                             ?>
                                             <img src="<?= $foto ?>" alt="<?= htmlspecialchars($row['nome']) ?>" style="width:75px; height:45px; object-fit:cover; border-radius:4px;">
                                         </td>
+                                        <td style="font-weight:bold; color:#ff9100;"><?= $row['id'] ?></td>
                                         <td class="col-nome"><?= htmlspecialchars($row['nome']) ?></td>
                                         <td><?= htmlspecialchars($row['categoria_nome'] ?? 'N/A') ?></td>
                                         <td><?= htmlspecialchars($row['fornecedor_nome'] ?? 'N/A') ?></td>
@@ -639,21 +739,22 @@ if(!$result_movimentacao){
                             <thead class="table-dark">
                                 <tr>
                                     <th onclick="ordenarTabela('tabelaLote', 0, 'foto')">Foto <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 1, 'texto')">Nome <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 2, 'texto')">Categoria <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 3, 'texto')">Fornecedor <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 4, 'numero')">Preço <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 5, 'numero')">Quantidade <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 6, 'data')">Validade <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 7, 'texto')">Status <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaLote', 8, 'data')">Chegada <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 1, 'numero')">ID <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 2, 'texto')">Nome <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 3, 'texto')">Categoria <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 4, 'texto')">Fornecedor <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 5, 'numero')">Preço <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 6, 'numero')">Quantidade <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 7, 'data')">Validade <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 8, 'texto')">Status <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaLote', 9, 'data')">Chegada <span class="sort-icon"></span></th>
+                                    <th>Ação</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 <?php if ($result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): 
-                                        $estoque = $row['estoque_total'] ?? 0;
                                         $produto_id = $row['id'];
                                         $validade = $row['validade'];
                                         
@@ -669,13 +770,36 @@ if(!$result_movimentacao){
                                         // Alerta apenas se o TOTAL está baixo
                                         $class_alerta_qtd = ($estoque_total_produto < 15) ? 'alerta-quantidade' : '';
                                         
-                                        $class_alerta_val = '';
+                                        // Calcular validade usando a função
+                                        $resultado_validade = calcularValidadeLote($sql, $produto_id);
+                                        $validade_exibicao = '';
+                                        
                                         if ($validade) {
+                                            // Usar a validade do banco de dados se existir
                                             $data_validade = new DateTime($validade);
                                             $data_hoje = new DateTime();
                                             $intervalo = $data_hoje->diff($data_validade);
-                                            if ($intervalo->days <= 7 && $intervalo->invert == 0) {
+                                            
+                                            if ($intervalo->days <= 9 && $intervalo->invert == 0) {
+                                                $class_alerta_val = 'alerta-validade-proxima';
+                                                $validade_exibicao = '<span style="font-weight:bold;">⏰ ' . date('d/m/Y', strtotime($validade)) . '</span>';
+                                            } else if ($intervalo->invert == 1) {
+                                                // Vencido - mostra data em vermelho com ícone de alerta
                                                 $class_alerta_val = 'alerta-validade';
+                                                $validade_exibicao = '<span style="color:white; font-weight:bold;">⚠️ ' . date('d/m/Y', strtotime($validade)) . '</span>';
+                                            } else {
+                                                // Válido
+                                                $class_alerta_val = 'alerta-validade-valido';
+                                                $validade_exibicao = '<span style="font-weight:bold;">✓ ' . date('d/m/Y', strtotime($validade)) . '</span>';
+                                            }
+                                        } else {
+                                            // Se não tem validade no lote, usar a calculada
+                                            if ($resultado_validade['sucesso'] && $resultado_validade['validade']) {
+                                                $validade_exibicao = '<span style="color:#52c41a;">✓ ' . $resultado_validade['validade_formatada'] . ' (calculada)</span>';
+                                                $class_alerta_val = '';
+                                            } else {
+                                                $validade_exibicao = '<span style="color:#999; font-style:italic;">Sem validade</span>';
+                                                $class_alerta_val = '';
                                             }
                                         }
                                     ?>
@@ -686,14 +810,25 @@ if(!$result_movimentacao){
                                             ?>
                                             <img src="<?= $foto ?>" alt="<?= htmlspecialchars($row['nome']) ?>" style="width:75px; height:45px; object-fit:cover; border-radius:4px;">
                                         </td>
+                                        <td style="font-weight:bold; color:#ff9100;"><?= $row['id'] ?></td>
                                         <td class="col-nome"><?= htmlspecialchars($row['nome']) ?></td>
                                         <td><?= htmlspecialchars($row['categoria_nome'] ?? 'N/A') ?></td>
                                         <td><?= htmlspecialchars($row['fornecedor_nome'] ?? 'N/A') ?></td>
                                         <td class="col-preco">R$ <?= number_format($row['preco_venda'], 2, ',', '.') ?></td>
-                                        <td class="<?= $class_alerta_qtd ?>"><?= $estoque ?></td>
-                                        <td class="<?= $class_alerta_val ?>"><?= $validade ? date('d/m/Y', strtotime($validade)) : 'Sem validade' ?></td>
+                                        <td class="<?= $class_alerta_qtd ?>"><?= $row['quantidade'] ?? 0 ?></td>
+                                        <td class="<?= $class_alerta_val ?>"><?= $validade_exibicao ?></td>
                                         <td><?= ($row['status'] === 'ativo' ? 'Ativo' : 'Inativo') ?></td>
-                                        <td><?= date('d/m/Y', strtotime($row['criado_em'])) ?></td>
+                                        <td><?= $row['chegada'] ? date('d/m/Y', strtotime($row['chegada'])) : 'N/A' ?></td>
+                                        <td>
+                                            <?php 
+                                            // Mostrar botão de remover apenas se estiver vencido ou vencem hoje
+                                            if (isset($intervalo) && (($intervalo->invert == 1) || ($intervalo->days == 0 && $intervalo->invert == 0))) {
+                                                ?>
+                                                <button onclick="removerLoteVencido(<?= $row['lote_id'] ?>, '<?= htmlspecialchars($row['nome']) ?>', <?= $row['quantidade'] ?? 0 ?>)" style="padding:5px 10px; background-color:#d11b1b; color:white; border:none; border-radius:4px; cursor:pointer; font-size:0.85rem; font-weight:bold;">🗑️ Remover</button>
+                                                <?php
+                                            }
+                                            ?>
+                                        </td>
                                     </tr>
                                     <?php endwhile; ?>
                                 <?php else: ?>
@@ -710,13 +845,14 @@ if(!$result_movimentacao){
                             <thead class="table-dark">
                                 <tr>
                                     <th onclick="ordenarTabela('tabelaMovimentacao', 0, 'foto')">Foto <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaMovimentacao', 1, 'texto')">Produto <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaMovimentacao', 2, 'texto')">Categoria <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaMovimentacao', 3, 'texto')">Fornecedor <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaMovimentacao', 4, 'numero')">Quantidade <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaMovimentacao', 5, 'tipo')">Tipo <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaMovimentacao', 6, 'data')">Data <span class="sort-icon"></span></th>
-                                    <th onclick="ordenarTabela('tabelaMovimentacao', 7, 'numero')">Nº Pedido <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 1, 'numero')">ID <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 2, 'texto')">Produto <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 3, 'texto')">Categoria <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 4, 'texto')">Fornecedor <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 5, 'numero')">Quantidade <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 6, 'tipo')">Tipo <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 7, 'data')">Data <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaMovimentacao', 8, 'numero')">Nº Pedido <span class="sort-icon"></span></th>
                                 </tr>
                             </thead>
 
@@ -730,6 +866,7 @@ if(!$result_movimentacao){
                                             ?>
                                             <img src="<?= $foto ?>" alt="<?= htmlspecialchars($row_mov['produto_nome'] ?? 'Produto') ?>" style="width:75px; height:45px; object-fit:cover; border-radius:4px;">
                                         </td>
+                                        <td style="font-weight:bold; color:#ff9100;"><?= $row_mov['produto_id'] ?></td>
                                         <td class="col-nome"><?= htmlspecialchars($row_mov['produto_nome'] ?? 'N/A') ?></td>
                                         <td><?= htmlspecialchars($row_mov['categoria_nome'] ?? 'N/A') ?></td>
                                         <td><?= htmlspecialchars($row_mov['fornecedor_nome'] ?? 'N/A') ?></td>
@@ -761,7 +898,68 @@ if(!$result_movimentacao){
                                 <?php endif; ?>
                             </tbody>
                         </table>
-                    </div>                    <!-- Modal de Confirmação -->
+                    </div>
+
+                    <!-- Tabela de Retiradas -->
+                    <div id="retiradas" class="tab-content">
+                        <table class="table table-bordered table-hover" id="tabelaRetiradas">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 0, 'foto')">Foto <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 1, 'numero')">ID Produto <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 2, 'texto')">Produto <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 3, 'texto')">Funcionário <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 4, 'numero')">Quantidade <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 5, 'texto')">Motivo <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 6, 'texto')">Descrição <span class="sort-icon"></span></th>
+                                    <th onclick="ordenarTabela('tabelaRetiradas', 7, 'data')">Data Retirada <span class="sort-icon"></span></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php if ($result_retiradas->num_rows > 0): ?>
+                                    <?php while ($row_ret = $result_retiradas->fetch_assoc()): ?>
+                                    <tr>
+                                        <td style="padding:8px;">
+                                            <?php 
+                                                $foto = !empty($row_ret['foto_produto']) ? htmlspecialchars($row_ret['foto_produto']) : '/fws/IMG_Produtos/sem_imagem.png';
+                                            ?>
+                                            <img src="<?= $foto ?>" alt="<?= htmlspecialchars($row_ret['produto_nome'] ?? 'Produto') ?>" style="width:75px; height:45px; object-fit:cover; border-radius:4px;">
+                                        </td>
+                                        <td style="font-weight:bold; color:#ff9100;"><?= $row_ret['produto_id'] ?></td>
+                                        <td class="col-nome"><?= htmlspecialchars($row_ret['produto_nome'] ?? 'N/A') ?></td>
+                                        <td><?= htmlspecialchars($row_ret['funcionario_nome'] ?? 'N/A') ?></td>
+                                        <td style="text-align:center; font-weight:bold;"><?= $row_ret['quantidade'] ?></td>
+                                        <td><?php 
+                                            // Formatar tipo_motivo: substituir underscores por espaços e capitalizar
+                                            $tipo_motivo = $row_ret['tipo_motivo'] ?? 'N/A';
+                                            
+                                            // Mapa de conversão para nomes mais legíveis
+                                            $mapa_motivos = [
+                                                'doacao' => 'Doação',
+                                                'uso_interno' => 'Uso Interno',
+                                                'roubo' => 'Roubo',
+                                                'quebra' => 'Quebra',
+                                                'outros' => 'Outros'
+                                            ];
+                                            
+                                            $tipo_formatado = isset($mapa_motivos[$tipo_motivo]) ? $mapa_motivos[$tipo_motivo] : ucwords(str_replace('_', ' ', $tipo_motivo));
+                                            echo htmlspecialchars($tipo_formatado);
+                                        ?></td>
+                                        <td><?= htmlspecialchars($row_ret['motivo'] ?? '-') ?></td>
+                                        <td style="text-align:center;"><?= date('d/m/Y H:i', strtotime($row_ret['data_retirada'])) ?></td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                <tr>
+                                    <td colspan="8" style="text-align:center;">Nenhuma retirada registrada.</td>
+                                </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Modal de Confirmação -->
                     <div id="modalConfirmacao" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
                         <div style="background-color:white; padding:30px; border-radius:8px; text-align:center; box-shadow:0 4px 6px rgba(0,0,0,0.1); max-width:400px;">
                             <h3 style="color:#d11b1b; margin-bottom:20px;">Adicionar Lote</h3>
@@ -840,21 +1038,27 @@ if(!$result_movimentacao){
 
     // Dados dos produtos com estoque baixo
     const produtosBaixos = <?php echo json_encode($produtos_baixos); ?>;
-    const produtosValidade = <?php echo json_encode($produtos_vencimento); ?>;
+    const produtosVendoHoje = <?php echo json_encode($produtos_vencendo_hoje); ?>;
+    const produtosVendoProximos10 = <?php echo json_encode($produtos_vencendo_10dias); ?>;
+    const produtosVencidos = <?php echo json_encode($produtos_vencidos); ?>;
 
     // Mostrar modal ao carregar a página se houver alertas
     document.addEventListener('DOMContentLoaded', function() {
-        if (produtosBaixos.length > 0 || produtosValidade.length > 0) {
+        if (produtosBaixos.length > 0 || produtosVendoHoje.length > 0 || produtosVendoProximos10.length > 0 || produtosVencidos.length > 0) {
             exibirAlertaEstoque();
         }
     });
 
     function exibirAlertaEstoque() {
         const listaEstoque = document.getElementById('listaProdutosBaixos');
-        const listaValidade = document.getElementById('listaProdutosValidade');
+        const listaVendoHoje = document.getElementById('listaProdutosVendoHoje');
+        const listaVendoProximos10 = document.getElementById('listaProdutosVendoProximos10');
+        const listaVencidos = document.getElementById('listaProdutosVencidos');
         
         listaEstoque.innerHTML = '';
-        listaValidade.innerHTML = '';
+        listaVendoHoje.innerHTML = '';
+        listaVendoProximos10.innerHTML = '';
+        listaVencidos.innerHTML = '';
         
         // Seção Estoque Baixo
         if (produtosBaixos.length > 0) {
@@ -865,32 +1069,88 @@ if(!$result_movimentacao){
             
             produtosBaixos.forEach((produto, index) => {
                 const item = document.createElement('div');
-                item.style.cssText = 'background-color:#fff1f0; padding:12px; margin-bottom:10px; border-radius:4px; border-left:4px solid #f5222d;';
+                item.style.cssText = 'background-color:#f5222d; padding:12px; margin-bottom:10px; border-radius:4px; border-left:4px solid #f5222d; display:flex; gap:12px; align-items:flex-start;';
+                const imgPath = produto.foto_produto ? produto.foto_produto : '/fws/IMG_Produtos/sem_imagem.png';
                 item.innerHTML = `
-                    <div style="font-weight:bold; color:#d11b1b;">${index + 1}. ${produto.nome}</div>
-                    <div style="color:#666; margin-top:5px;">Estoque atual: <strong>${produto.estoque}</strong> unidades</div>
+                    <img src="${imgPath}" alt="${produto.nome}" style="width:60px; height:60px; object-fit:cover; border-radius:4px; flex-shrink:0;">
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; color:white;">${index + 1}. ${produto.nome}</div>
+                        <div style="color:white; margin-top:5px;">Estoque atual: <strong>${produto.estoque}</strong> unidades</div>
+                    </div>
                 `;
                 listaEstoque.appendChild(item);
             });
         }
         
-        // Seção Validade Próxima
-        if (produtosValidade.length > 0) {
-            const tituloValidade = document.createElement('h4');
-            tituloValidade.style.cssText = 'color:#ff9500; margin-bottom:15px; margin-top:20px; font-size:1rem;';
-            tituloValidade.innerHTML = '⏰ Produtos que irão vencer em menos de 10 dias';
-            listaValidade.appendChild(tituloValidade);
+        // Seção Vencendo Hoje
+        if (produtosVendoHoje.length > 0) {
+            const tituloHoje = document.createElement('h4');
+            tituloHoje.style.cssText = 'color:#d11b1b; margin-bottom:15px; font-size:1rem;';
+            tituloHoje.innerHTML = '🚨 Vencendo HOJE';
+            listaVendoHoje.appendChild(tituloHoje);
             
-            produtosValidade.forEach((produto, index) => {
+            produtosVendoHoje.forEach((produto, index) => {
                 const item = document.createElement('div');
-                item.style.cssText = 'background-color:#fff7e6; padding:12px; margin-bottom:10px; border-radius:4px; border-left:4px solid #ff9500;';
-                const dataValidade = new Date(produto.validade);
-                const dataFormatada = dataValidade.toLocaleDateString('pt-BR');
+                item.style.cssText = 'background-color:#d11b1b; padding:12px; margin-bottom:10px; border-radius:4px; border-left:4px solid #d11b1b; display:flex; gap:12px; align-items:flex-start;';
+                const [ano, mes, dia] = produto.validade.split('-');
+                const dataFormatada = `${dia}/${mes}/${ano}`;
+                const imgPath = produto.foto_produto ? produto.foto_produto : '/fws/IMG_Produtos/sem_imagem.png';
                 item.innerHTML = `
-                    <div style="font-weight:bold; color:#ff9500;">${index + 1}. ${produto.nome}</div>
-                    <div style="color:#666; margin-top:5px;">Validade: <strong>${dataFormatada}</strong></div>
+                    <img src="${imgPath}" alt="${produto.nome}" style="width:60px; height:60px; object-fit:cover; border-radius:4px; flex-shrink:0;">
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; color:white;">${index + 1}. ${produto.nome}</div>
+                        <div style="color:white; margin-top:5px;">Vence em: <strong>${dataFormatada}</strong></div>
+                    </div>
                 `;
-                listaValidade.appendChild(item);
+                listaVendoHoje.appendChild(item);
+            });
+        }
+        
+        // Seção Validade Próxima (próximos 10 dias)
+        if (produtosVendoProximos10.length > 0) {
+            const tituloProximos = document.createElement('h4');
+            tituloProximos.style.cssText = 'color:#ff8c00; margin-bottom:15px; font-size:1rem;';
+            tituloProximos.innerHTML = '⏰ Vencendo nos próximos 10 dias';
+            listaVendoProximos10.appendChild(tituloProximos);
+            
+            produtosVendoProximos10.forEach((produto, index) => {
+                const item = document.createElement('div');
+                item.style.cssText = 'background-color:#ff8c00; padding:12px; margin-bottom:10px; border-radius:4px; border-left:4px solid #ff8c00; display:flex; gap:12px; align-items:flex-start;';
+                const [ano, mes, dia] = produto.validade.split('-');
+                const dataFormatada = `${dia}/${mes}/${ano}`;
+                const imgPath = produto.foto_produto ? produto.foto_produto : '/fws/IMG_Produtos/sem_imagem.png';
+                item.innerHTML = `
+                    <img src="${imgPath}" alt="${produto.nome}" style="width:60px; height:60px; object-fit:cover; border-radius:4px; flex-shrink:0;">
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; color:white;">${index + 1}. ${produto.nome}</div>
+                        <div style="color:white; margin-top:5px;">Validade: <strong>${dataFormatada}</strong></div>
+                    </div>
+                `;
+                listaVendoProximos10.appendChild(item);
+            });
+        }
+        
+        // Seção Produtos Vencidos
+        if (produtosVencidos.length > 0) {
+            const tituloVencidos = document.createElement('h4');
+            tituloVencidos.style.cssText = 'color:#d11b1b; margin-bottom:15px; margin-top:20px; font-size:1rem;';
+            tituloVencidos.innerHTML = '🚨 Produtos VENCIDOS';
+            listaVencidos.appendChild(tituloVencidos);
+            
+            produtosVencidos.forEach((produto, index) => {
+                const item = document.createElement('div');
+                item.style.cssText = 'background-color:#d11b1b; padding:12px; margin-bottom:10px; border-radius:4px; border-left:4px solid #d11b1b; display:flex; gap:12px; align-items:flex-start;';
+                const [ano, mes, dia] = produto.validade.split('-');
+                const dataFormatada = `${dia}/${mes}/${ano}`;
+                const imgPath = produto.foto_produto ? produto.foto_produto : '/fws/IMG_Produtos/sem_imagem.png';
+                item.innerHTML = `
+                    <img src="${imgPath}" alt="${produto.nome}" style="width:60px; height:60px; object-fit:cover; border-radius:4px; flex-shrink:0;">
+                    <div style="flex:1;">
+                        <div style="font-weight:bold; color:white;">${index + 1}. ${produto.nome}</div>
+                        <div style="color:white; margin-top:5px;">Venceu em: <strong>${dataFormatada}</strong></div>
+                    </div>
+                `;
+                listaVencidos.appendChild(item);
             });
         }
         
@@ -899,6 +1159,93 @@ if(!$result_movimentacao){
 
     function fecharAlertaEstoque() {
         document.getElementById('modalEstoqueBaixo').style.display = 'none';
+    }
+
+    function removerProdutosVencidos() {
+        if (!confirm('Tem certeza que deseja remover TODOS os LOTES VENCIDOS? Isto irá criar registros de movimentação de estoque.')) {
+            return;
+        }
+
+        // Enviar requisição para remover vencidos
+        fetch('/fws/FWS_ADM/estoque/PHP/remover_produtos_vencidos.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                remover_todos: true
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.sucesso) {
+                alert('✅ ' + data.mensagem);
+                // Recarregar a página após 1 segundo
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                alert('❌ Erro: ' + data.erro);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('❌ Erro ao remover lotes vencidos!');
+        });
+    }
+
+    function removerLoteVencido(loteId, nomeProduto, quantidade) {
+        // Guardar dados para usar na confirmação
+        window.loteParaRemover = {
+            id: loteId,
+            nome: nomeProduto,
+            quantidade: quantidade
+        };
+
+        // Mostrar modal de confirmação
+        document.getElementById('textoConfirmacao').innerHTML = `Tem certeza que deseja remover o lote vencido de <strong>${nomeProduto}</strong>?<br><br>Quantidade: <strong>${quantidade} un.</strong><br><br>Isto irá criar um registro de movimentação de estoque.`;
+        document.getElementById('modalRemocaoLote').style.display = 'flex';
+    }
+
+    function fecharModalRemocao() {
+        document.getElementById('modalRemocaoLote').style.display = 'none';
+        window.loteParaRemover = null;
+    }
+
+    function confirmarRemocaoLote() {
+        if (!window.loteParaRemover) {
+            alert('Erro: nenhum lote selecionado');
+            return;
+        }
+
+        const lote = window.loteParaRemover;
+        fecharModalRemocao();
+
+        // Enviar requisição para remover lote
+        fetch('/fws/FWS_ADM/estoque/PHP/remover_produtos_vencidos.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                lote_id: lote.id
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.sucesso) {
+                alert('✅ ' + data.mensagem);
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                alert('❌ Erro: ' + data.erro);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('❌ Erro ao remover lote vencido!');
+        });
     }
     function mudarTab(tabName) {
         // Esconder todas as abas
@@ -940,12 +1287,13 @@ if(!$result_movimentacao){
         const preco = parseFloat(document.getElementById('filtroPreco').value) || Infinity;
         
         // Filtrar tabela de Lote
+        // Estrutura: Foto (0) → ID (1) → Nome (2) → Categoria (3) → Fornecedor (4)
         const tabelaLote = document.getElementById('tabelaLote');
         const linhasLote = tabelaLote.querySelectorAll('tbody tr');
         linhasLote.forEach(linha => {
-            const nome = linha.cells[1]?.textContent.toLowerCase() || '';
-            const fornecedorCel = linha.cells[3]?.textContent.toLowerCase() || '';
-            const categoriaCel = linha.cells[2]?.textContent.toLowerCase() || '';
+            const nome = linha.cells[2]?.textContent.toLowerCase() || '';
+            const fornecedorCel = linha.cells[4]?.textContent.toLowerCase() || '';
+            const categoriaCel = linha.cells[3]?.textContent.toLowerCase() || '';
             
             const coincidePesquisa = nome.includes(termoPesquisa) || fornecedorCel.includes(termoPesquisa);
             const coincideCategoria = !categoria || categoriaCel.includes(categoria);
@@ -959,13 +1307,14 @@ if(!$result_movimentacao){
         });
         
         // Filtrar tabela de Total
+        // Estrutura: Foto (0) → ID (1) → Nome (2) → Categoria (3) → Fornecedor (4) → Preço (5)
         const tabelaTotal = document.getElementById('tabelaTotal');
         const linhasTotal = tabelaTotal.querySelectorAll('tbody tr');
         linhasTotal.forEach(linha => {
-            const nome = linha.cells[1]?.textContent.toLowerCase() || '';
-            const fornecedorCel = linha.cells[3]?.textContent.toLowerCase() || '';
-            const categoriaCel = linha.cells[2]?.textContent.toLowerCase() || '';
-            const precoTexto = linha.cells[4]?.textContent || '';
+            const nome = linha.cells[2]?.textContent.toLowerCase() || '';
+            const fornecedorCel = linha.cells[4]?.textContent.toLowerCase() || '';
+            const categoriaCel = linha.cells[3]?.textContent.toLowerCase() || '';
+            const precoTexto = linha.cells[5]?.textContent || '';
             const precoValor = parseFloat(precoTexto.replace('R$ ', '').replace(',', '.')) || 0;
             
             const coincidePesquisa = nome.includes(termoPesquisa) || fornecedorCel.includes(termoPesquisa);
@@ -981,12 +1330,13 @@ if(!$result_movimentacao){
         });
         
         // Filtrar tabela de Movimentação
+        // Estrutura: Foto (0) → ID (1) → Produto (2) → Categoria (3) → Fornecedor (4)
         const tabelaMovimentacao = document.getElementById('tabelaMovimentacao');
         const linhasMovimentacao = tabelaMovimentacao.querySelectorAll('tbody tr');
         linhasMovimentacao.forEach(linha => {
-            const nome = linha.cells[1]?.textContent.toLowerCase() || '';
-            const fornecedorCel = linha.cells[3]?.textContent.toLowerCase() || '';
-            const categoriaCel = linha.cells[2]?.textContent.toLowerCase() || '';
+            const nome = linha.cells[2]?.textContent.toLowerCase() || '';
+            const fornecedorCel = linha.cells[4]?.textContent.toLowerCase() || '';
+            const categoriaCel = linha.cells[3]?.textContent.toLowerCase() || '';
             
             const coincidePesquisa = nome.includes(termoPesquisa) || fornecedorCel.includes(termoPesquisa);
             const coincideCategoria = !categoria || categoriaCel.includes(categoria);
@@ -998,6 +1348,25 @@ if(!$result_movimentacao){
                 linha.style.display = 'none';
             }
         });
+
+        // Filtrar tabela de Retiradas
+        // Estrutura: Foto (0) → ID Produto (1) → Produto (2) → Funcionário (3) → Quantidade (4) → Motivo (5) → Descrição (6) → Data (7)
+        const tabelaRetiradas = document.getElementById('tabelaRetiradas');
+        if (tabelaRetiradas) {
+            const linhasRetiradas = tabelaRetiradas.querySelectorAll('tbody tr');
+            linhasRetiradas.forEach(linha => {
+                const nome = linha.cells[2]?.textContent.toLowerCase() || '';
+                const funcionarioCel = linha.cells[3]?.textContent.toLowerCase() || '';
+                
+                const coincidePesquisa = nome.includes(termoPesquisa) || funcionarioCel.includes(termoPesquisa);
+                
+                if (coincidePesquisa) {
+                    linha.style.display = '';
+                } else {
+                    linha.style.display = 'none';
+                }
+            });
+        }
     }
 
     function confirmarAdicao(produtoId, nomeProduto) {
