@@ -19,6 +19,8 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
 
 // Buscar todos os fornecedores
 $query = "SELECT id, nome, cnpj, telefone, email FROM fornecedores ORDER BY id ASC";

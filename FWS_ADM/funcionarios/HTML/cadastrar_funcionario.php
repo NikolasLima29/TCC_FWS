@@ -22,7 +22,8 @@ $stmtAdm->bind_result($adm_nome, $adm_cpf, $adm_email, $adm_nivel);
 $stmtAdm->fetch();
 $stmtAdm->close();
 
-
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
 
 /* ==========================================
    PROCESSAR CADASTRO

@@ -21,6 +21,9 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
 if (!$sql){
     die("conexão falhou: " . mysqli_error());
 }

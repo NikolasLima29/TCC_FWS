@@ -19,6 +19,9 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
 // Verifica se existe ID na URL
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Fornecedor inválido.");

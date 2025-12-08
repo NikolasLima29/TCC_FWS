@@ -24,6 +24,9 @@ $stmt->bind_result($nome_adm, $cpf, $email, $nivel);
 $stmt->fetch();
 $stmt->close();
 
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
 // Processar POST primeiro
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['alterar_estado'], $_POST['pedido_id'], $_POST['novo_estado'])) {

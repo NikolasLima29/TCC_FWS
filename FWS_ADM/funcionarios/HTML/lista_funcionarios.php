@@ -10,13 +10,16 @@ if (!isset($_SESSION['usuario_id_ADM'])) {
 
 $id = $_SESSION['usuario_id_ADM'];
 
-// Busca nome do ADM
-$stmt = $sql->prepare("SELECT nome FROM funcionarios WHERE id = ?");
+// Busca nome e nível do ADM
+$stmt = $sql->prepare("SELECT nome, nivel_permissao FROM funcionarios WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();
-$stmt->bind_result($nome_adm);
+$stmt->bind_result($nome_adm, $nivel_adm);
 $stmt->fetch();
 $stmt->close();
+
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
 
 // Buscar todos os funcionários
 $query = "SELECT id, nome, email, CPF, nivel_permissao, criado_em, ultimo_login FROM funcionarios ORDER BY id ASC";
@@ -24,7 +27,10 @@ $result = $sql->query($query);
 
 // Função para traduzir nível de permissão
 function nivelPermissao($nivel) {
-    return ($nivel == 1) ? 'Atendente' : 'Gerente';
+    if ($nivel == 1) return "Atendente";
+    if ($nivel == 2) return "Gerente";
+    if ($nivel == 3) return "Gerente";
+    return "Desconhecido";
 }
 ?>
 <!DOCTYPE html>
@@ -108,18 +114,28 @@ function nivelPermissao($nivel) {
         border-right: none;
     }
 
-    /* Nome com quebra de linha */
     .col-nome {
         max-width: 220px;
         white-space: normal;
         word-wrap: break-word;
     }
 
-    /* Sem quebra de linha em email, CPF e datas */
     .sem-quebra { white-space: nowrap; }
 
-    /* Nível de permissão em vermelho */
     .nivel-vermelho { color: #d11b1b; font-weight: bold; }
+
+    .btn-editar {
+        background-color: #007bff;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .btn-editar:hover {
+        background-color: #0056b3;
+        color: white;
+    }
 
     @import url('../../Fonte_Config/fonte_geral.css');
     </style>
@@ -207,7 +223,7 @@ function nivelPermissao($nivel) {
         <!-- CONTEÚDO PRINCIPAL -->
         <div class="col py-3" id="conteudo-principal">
             <div class="container">
-                <a href="javascript:history.back()" class="btn btn-voltar">← Voltar</a>
+                <a href="menu_funcionarios.php" class="btn btn-voltar">← Voltar</a>
                 <h2>Funcionários Cadastrados</h2>
 
                 <table class="table table-bordered table-hover">
@@ -220,6 +236,9 @@ function nivelPermissao($nivel) {
                             <th>Nível de permissão</th>
                             <th>Criado em</th>
                             <th>Último login</th>
+                            <?php if ($nivel_adm == 2 || $nivel_adm == 3): ?>
+                                <th>Ações</th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -233,11 +252,18 @@ function nivelPermissao($nivel) {
                                     <td class="nivel-vermelho"><?= nivelPermissao($row['nivel_permissao']) ?></td>
                                     <td class="sem-quebra"><?= date('d/m/Y H:i', strtotime($row['criado_em'])) ?></td>
                                     <td class="sem-quebra"><?= $row['ultimo_login'] ? date('d/m/Y H:i', strtotime($row['ultimo_login'])) : '-' ?></td>
+
+                                    <?php if ($nivel_adm == 2 || $nivel_adm == 3): ?>
+                                    <td>
+                                        <a href="editar_funcionario.php?id=<?= $row['id'] ?>" class="btn-editar">Editar</a>
+                                    </td>
+                                    <?php endif; ?>
+
                                 </tr>
                             <?php endwhile; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="7">Nenhum funcionário cadastrado.</td>
+                                <td colspan="8">Nenhum funcionário cadastrado.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>
