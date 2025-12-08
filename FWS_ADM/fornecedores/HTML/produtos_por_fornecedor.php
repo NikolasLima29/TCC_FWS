@@ -49,6 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['repor_estoque_geral']
                 die("Erro ao criar lote: " . $sql->error);
             }
             
+            // Atualizar estoque na tabela produtos
+            $sql_update_estoque = "UPDATE produtos SET estoque = estoque + $quantidade WHERE id = $produto_id";
+            if (!$sql->query($sql_update_estoque)) {
+                die("Erro ao atualizar estoque: " . $sql->error);
+            }
+            
             // Registrar entrada na tabela movimentacao_estoque
             $sql_insert = "INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, data_movimentacao) 
                            VALUES ($produto_id, 'entrada', $quantidade, NOW())";
@@ -89,7 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['repor_estoque'])) {
             die("Erro ao criar lote: " . $sql->error);
         }
         
-        // 4. Registrar entrada na tabela movimentacao_estoque
+        // 4. Atualizar estoque na tabela produtos
+        $sql_update_estoque = "UPDATE produtos SET estoque = estoque + $quantidade WHERE id = $produto_id";
+        if (!$sql->query($sql_update_estoque)) {
+            die("Erro ao atualizar estoque: " . $sql->error);
+        }
+        
+        // 5. Registrar entrada na tabela movimentacao_estoque
         $sql_insert = "INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, data_movimentacao) 
                        VALUES ($produto_id, 'entrada', $quantidade, NOW())";
         if (!$sql->query($sql_insert)) {
