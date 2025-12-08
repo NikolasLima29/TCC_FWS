@@ -602,9 +602,13 @@ if(!$result_retiradas){
             <!-- 🔹 Conteúdo principal -->
             <div class="col py-3" id="conteudo-principal">
                 <div class="container">
-
-
-                    <h2>Relatório Financeiro</h2>
+                    <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px; justify-content:space-between;">
+                        <a href="menu_financeiro.php" class="btn btn-warning" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
+                            <span style="font-size:18px;">←</span> Voltar
+                        </a>
+                        <h2 style="margin:0; flex:1; text-align:center;">Relatório Financeiro</h2>
+                        <div style="width:120px;"></div>
+                    </div>
                     <!-- Gráficos lado a lado -->
                     <div style="display:flex; gap:40px; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin-bottom:30px;">
                         <!-- Gráfico de Linha -->
@@ -642,7 +646,7 @@ if(!$result_retiradas){
                                     <button type="submit" class="btn-reposicao" style="width:100%;">Ver mês</button>
                                 </div>
                             </form>
-                            <canvas id="graficoLinha" width="500" height="400" style="max-width:500px; margin:auto auto auto -10px; display:block;"></canvas>
+                            <canvas id="graficoLinha" width="500" height="400" style="max-width:500px; margin:auto auto auto -30px; display:block;"></canvas>
                             <div id="legendaLinha" style="max-width:500px; margin:12px auto 0 auto; text-align:center; font-size:1rem;"></div>
                             <div id="margemLucro" style="max-width:500px; margin:15px auto 0 auto; text-align:center; font-size:1.1rem; font-weight:bold;"></div>
                         </div>
