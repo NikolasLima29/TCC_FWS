@@ -235,19 +235,19 @@ $nome_adm = explode(" ", trim($nome_adm))[0];
                 <!-- LINHA SUPERIOR: 2 botões -->
                 <div class="btn-row">
                     <div class="action-card" onclick="window.location.href='relatorio_financeiro.php'">
-                        <img src="../../menu_principal/IMG/financeiro.png">
+                        <img src="../IMG/relatorio_financeiro.png">
                         <span>Relatório Financeiro</span>
                     </div>
 
                     <div class="action-card" onclick="window.location.href='despesas.php'">
-                        <img src="../../menu_principal/IMG/estoque.png">
+                        <img src="../IMG/despesas.png">
                         <span>Despesas</span>
                     </div>
                 </div>
 
                 <!-- BOTÃO INFERIOR CENTRAL -->
                 <div class="action-card" onclick="window.location.href='fluxo_caixa.php'">
-                    <img src="../../menu_principal/IMG/fastservice.png">
+                    <img src="../IMG/fluxo_de_caixa.png">
                     <span>Fluxo de Caixa</span>
                 </div>
 

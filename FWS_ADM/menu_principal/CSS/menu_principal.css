@@ -20,14 +20,20 @@
     padding-bottom: 13px;
 }
 
-#cor-fonte:hover {
-    background-color: #f4a21d67 !important;
-}
-
 #cor-fonte img{
     width: 32px;
 }
 
 #logo-linha img {
     width: 150px;
+}
+
+.nav-link {
+    width: 100%;
+    display: block;
+}
+
+.nav-link.active {
+    background-color: #f4a21d67 !important;
+    border-radius: 0 !important;
 }
