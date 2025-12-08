@@ -21,6 +21,8 @@ $stmt->execute();
 $stmt->bind_result($nome_adm, $cpf, $email, $nivel);
 $stmt->fetch();
 $stmt->close();
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
 
 $foto = "../../fotodeperfiladm.png";
 ?>

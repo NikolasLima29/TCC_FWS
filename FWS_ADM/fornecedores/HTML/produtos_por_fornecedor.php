@@ -19,6 +19,9 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
+// Sobrescreve o nome para conter apenas o primeiro nome
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
 // Definir fornecedor_id no início
 $fornecedor_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
