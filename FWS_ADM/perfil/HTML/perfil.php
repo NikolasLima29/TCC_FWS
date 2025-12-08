@@ -18,6 +18,9 @@ $stmt->bind_result($nome, $cpf, $email, $nivel);
 $stmt->fetch();
 $stmt->close();
 
+$nome = explode(" ", trim($nome))[0];
+
+
 function nivel($n) {
     return $n == 1 ? "Atendente" : "Gerente";
 }

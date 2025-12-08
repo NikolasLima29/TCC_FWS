@@ -18,7 +18,9 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
-// Buscar todos os produtos
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
+// Buscar produtos
 $query = "
     SELECT 
         p.id, 
@@ -34,6 +36,7 @@ $query = "
     LEFT JOIN fornecedores f ON p.fornecedor_id = f.id
     ORDER BY p.id ASC
 ";
+
 $result = $sql->query($query);
 ?>
 <!DOCTYPE html>
@@ -47,181 +50,180 @@ $result = $sql->query($query);
 
     <style>
     body {
-    background-color: #fff8e1;
-    font-family: "Poppins", sans-serif;
-    margin: 0;
-}
+        background-color: #fff8e1;
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        overflow-x: hidden;
+        animation: fadeInBody .5s ease;
+    }
 
-/* 🔹 Barra lateral fixa */
-#fund {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 250px;
-    background-color: black !important;
-    overflow-y: auto;
-    z-index: 1000;
-}
+    @keyframes fadeInBody {
+        from {
+            opacity: 0;
+        }
 
-/* 🔹 Área principal */
-#conteudo-principal {
-    margin-left: 250px;
-    padding: 40px;
-}
+        to {
+            opacity: 1;
+        }
+    }
 
-.container {
-    width: 100%;
-    max-width: 100%;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
+    #fund {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px;
+        background-color: black !important;
+        overflow-y: auto;
+        z-index: 1000;
+    }
 
-h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #ff9100;
-    font-weight: bold;
-}
+    #menu {
+        background-color: black;
+    }
 
-/* 🔹 TABELA AJUSTADA — SEM DESLIZAR PARA O LADO */
-table {
-    width: 100%;
-    table-layout: fixed;
-}
+    #cor-fonte {
+        color: #ff9100;
+        font-size: 23px;
+        padding-bottom: 30px;
+    }
 
-/* 🔹 Células centralizadas + quebra de texto */
-table th,
-table td {
-    text-align: center;
-    vertical-align: middle;
-    word-break: break-word;
-    white-space: normal;
-}
+    #cor-fonte:hover {
+        background-color: #f4a21d67 !important;
+    }
 
-.table thead.table-dark {
-    background-color: #ff9100;
-}
+    #cor-fonte img {
+        width: 44px;
+    }
 
-.table thead.table-dark th {
-    background-color: #ff9100;
-    color: white;
-    border-color: #ff9100;
-    border-right: 1px solid #e68000;
-}
+    #logo-linha img {
+        width: 170px;
+    }
 
-.table thead.table-dark th:last-child {
-    border-right: none;
-}
+    #conteudo-principal {
+        margin-left: 250px;
+        padding: 40px;
+    }
 
-/* 🔹 LARGURAS IDEIAIS */
-table th:nth-child(1),
-table td:nth-child(1) {
-    width: 40px; /* ID */
-}
+    .container {
+        max-width: 1050px;
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.12);
+        animation: fadeInCard .6s ease;
+    }
 
-table th:nth-child(2),
-table td:nth-child(2) {
-    width: 180px; /* Nome */
-}
+    @keyframes fadeInCard {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
 
-table th:nth-child(3),
-table td:nth-child(3) {
-    width: 130px; /* Categoria */
-}
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-table th:nth-child(4),
-table td:nth-child(4) {
-    width: 180px; /* Fornecedor */
-}
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #ff9100;
+        font-weight: bold;
+    }
 
-/* 🔥 COLUNAS CURTINHAS (com quebra “Preço/de/venda”) */
-table th:nth-child(5),
-table td:nth-child(5),
-table th:nth-child(6),
-table td:nth-child(6) {
-    width: 70px; /* Preços */
-}
+    .btn-cadastro {
+        background-color: #ff9100;
+        color: white;
+        font-weight: bold;
+        border: none;
+        padding: 10px 18px;
+        transition: all .25s ease-in-out;
+        border-radius: 8px;
+    }
 
-/* 🔹 Força a quebra da legenda */
-th:nth-child(5),
-th:nth-child(6) {
-    line-height: 1.1;
-    word-break: break-word;
-}
+    .btn-cadastro:hover {
+        transform: scale(1.05);
+        background-color: #e68000;
+        color: #fff !important;
+        box-shadow: 0 4px 12px rgba(255, 140, 0, .45);
+    }
 
-/* 🔹 Estoque */
-table th:nth-child(7),
-table td:nth-child(7) {
-    width: 85px; 
-}
+    table {
+        animation: fadeInTable .6s ease;
+    }
 
+    @keyframes fadeInTable {
+        from {
+            opacity: 0;
+            transform: translateY(12px);
+        }
 
-/* 🔹 Status */
-table th:nth-child(8),
-table td:nth-child(8) {
-    width: 70px;
-}
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-/* 🔹 Ações */
-table th:nth-child(9),
-table td:nth-child(9) {
-    width: 80px;
-}
-.no-wrap {
-    white-space: nowrap !important;
-}
+    .table thead.table-dark {
+        background-color: #ff9100;
+    }
 
-.btn-cadastro {
-    background-color: #ff9100;
-    border: none;
-    color: white;
-    font-weight: bold;
-}
+    .table thead.table-dark th {
+        background-color: #ff9100;
+        color: white;
+        border-color: #ff9100;
+    }
 
-.btn-cadastro:hover {
-    background-color: #e68000;
-    color: white;
-}
+    tr {
+        transition: background .18s ease, transform .15s ease;
+    }
 
+    tr:hover {
+        background-color: #fff3cd;
+        transform: scale(1.007);
+    }
 
-/* 🔹 Botão Editar */
-.btn-edit {
-    background-color: #f4a01d;
-    border: none;
-    color: black;
-    font-weight: bold;
-}
+    .btn-edit {
+        background-color: #f4a01d;
+        color: black;
+        border: none;
+        font-weight: bold;
+        transition: all .2s ease;
+    }
 
-.btn-edit:hover {
-    background-color: #d68c19;
-    color: white;
-}
+    .btn-edit:hover {
+        background-color: #d68c19;
+        color: white;
+        transform: scale(1.07);
+    }
 
-/* 🔹 Menu lateral */
-#cor-fonte {
-    color: #ff9100;
-    font-size: 23px;
-    padding-bottom: 30px;
-}
+    /* 🔹 Estiliza o cabeçalho da tabela */
+    .table thead th {
+        text-align: center !important;
+        vertical-align: middle !important;
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+        font-size: 15px;
+        letter-spacing: 0.3px;
+        font-weight: 600;
+    }
 
-#cor-fonte:hover {
-    background-color: #f4a21d67 !important;
-}
+    /* 🔹 Ajusta o texto das colunas com quebra (Preço Venda / Compra) */
+    .table thead th small {
+        display: block;
+        font-size: 12px;
+        margin-top: 2px;
+    }
 
-#cor-fonte img {
-    width: 44px;
-}
+    /* 🔹 Mantém a mesma aparência do fundo */
+    .table thead th {
+        background-color: #ff9100 !important;
+        color: white !important;
+    }
 
-#logo-linha img {
-    width: 170px;
-}
-
-/* Fonte personalizada */
-@import url('../../Fonte_Config/fonte_geral.css');
-
+    @import url('../../Fonte_Config/fonte_geral.css');
     </style>
 </head>
 
@@ -230,59 +232,61 @@ table td:nth-child(9) {
     <div class="container-fluid">
         <div class="row flex-nowrap">
 
-            <!-- NAVBAR -->
+            <!-- MENU LATERAL COMPLETO -->
             <div class="col-auto px-sm-2 px-0 bg-dark" id="fund">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
                     id="menu">
 
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
+
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
 
-                        <li class="nav-item">
-                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
-                                class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php" class="nav-link px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
-                            </a>
-                        </li>
+                            </a></li>
 
-                        <li><a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fastservice.png">
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/vendaspai.png">
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
-                                id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/estoque.png">
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php"
-                                class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php" class="nav-link px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
-                                class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php" class="nav-link px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a></li>
+
                     </ul>
 
                     <hr>
@@ -294,22 +298,30 @@ table td:nth-child(9) {
                             <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark shadow">
-                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/perfil.php">Perfil</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="logout.php">Sair</a></li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/logout.php">Sair</a></li>
                         </ul>
                     </div>
 
                 </div>
             </div>
+            <!-- FIM MENU -->
 
-            <!-- 🔹 Conteúdo principal -->
+            <!-- CONTEÚDO PRINCIPAL -->
             <div class="col py-3" id="conteudo-principal">
                 <div class="container">
 
                     <h2>Produtos Cadastrados</h2>
+
+                    <!-- BOTÃO NO TOPO (idêntico ao dos fornecedores) -->
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="cadastro_produto.php" class="btn btn-cadastro">
+                            + Cadastrar Novo Produto
+                        </a>
+                    </div>
 
                     <table class="table table-bordered table-hover">
                         <thead class="table-dark">
@@ -318,9 +330,9 @@ table td:nth-child(9) {
                                 <th>Nome</th>
                                 <th>Categoria</th>
                                 <th>Fornecedor</th>
-                                <th>Preço de venda</th>
-                                <th>Preço de compra</th>
-                                <th class= "no-wrap">Estoque</th>
+                                <th>Preço Venda</th>
+                                <th>Preço Compra</th>
+                                <th>Estoque</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
@@ -338,12 +350,14 @@ table td:nth-child(9) {
                                 <td>R$ <?= number_format($row['preco_compra'], 2, ',', '.') ?></td>
                                 <td><?= $row['estoque'] ?></td>
                                 <td><?= ($row['status'] === 'ativo' ? 'ativo' : 'inativo') ?></td>
+
                                 <td>
                                     <a href="editar_produto.php?id=<?= $row['id'] ?>"
                                         class="btn btn-edit btn-sm">Editar</a>
                                 </td>
                             </tr>
                             <?php endwhile; ?>
+
                             <?php else: ?>
                             <tr>
                                 <td colspan="9">Nenhum produto cadastrado.</td>
@@ -352,15 +366,27 @@ table td:nth-child(9) {
                         </tbody>
                     </table>
 
-                    <a href="cadastro_produto.php" class="btn btn-cadastro mt-3">Cadastrar Novo Produto</a>
-
                 </div>
             </div>
 
         </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    // ANIMAÇÃO IGUAL AO MODELO DOS FORNECEDORES
+    document.querySelectorAll("tbody tr").forEach((tr, i) => {
+        tr.style.opacity = "0";
+        tr.style.transform = "translateY(10px)";
+        setTimeout(() => {
+            tr.style.transition = "0.4s";
+            tr.style.opacity = "1";
+            tr.style.transform = "translateY(0)";
+        }, 80 * i);
+    });
+    </script>
 
 </body>
 
