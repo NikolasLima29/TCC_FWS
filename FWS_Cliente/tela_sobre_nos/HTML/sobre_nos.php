@@ -169,22 +169,43 @@ session_start();
             .navbar-collapse .search-area-mobile input {
                 width: 100% !important;
             }
+            /* Centraliza os títulos do menu no mobile */
+            .navbar-nav {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                width: 100% !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+            .navbar-nav .menu-bold {
+                text-align: center !important;
+                width: 100% !important;
+            }
         }
 
         /* Media Query - Desktop (577px ou maior) */
         @media (min-width: 577px) {
+            .search-area {
+                margin-right: -50px !important;
+            }
             .d-flex.align-items-center.ms-auto.me-4 h5 {
-                font-size: 16.8px !important;
-                margin-bottom: 9px !important;
+                font-size: 14px !important;
+                margin-bottom: 0px !important;
                 font-family: 'Ubuntu', sans-serif !important;
                 font-weight: bold !important;
                 margin-left: 0px !important;
+                white-space: nowrap !important;
+                margin-top: -2px !important;
+            }
             }
             /* Aumenta 30% o tamanho dos títulos do menu */
             .navbar-nav .menu-bold {
                 font-size: 23.1px !important;
             }
-        }
+        
         /* ========== FIM DO CSS DO HEADER ========== */
 
         /* ========== CSS DO RESTO DA PÁGINA ========== */
@@ -283,7 +304,7 @@ session_start();
                     <!-- ========== SEÇÃO DESKTOP (CARRINHO + BEM-VINDO + PERFIL) ========== -->
                     <div class="d-flex align-items-center ms-auto me-4">
                         <!-- Carrinho Desktop -->
-                        <a href="../../carrinho/HTML/carrinho.php">
+                        <a href="../../carrinho/HTML/carrinho.php" style="margin-left: -70px;">
                             <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30" class="me-4" style="object-fit: contain; filter: brightness(0) invert(1);">
                         </a>
 
