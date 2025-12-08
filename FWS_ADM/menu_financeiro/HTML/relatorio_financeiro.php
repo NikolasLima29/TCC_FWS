@@ -612,7 +612,7 @@ if(!$result_retiradas){
                     <!-- Gráficos lado a lado -->
                     <div style="display:flex; gap:40px; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin-bottom:30px;">
                         <!-- Gráfico de Linha -->
-                        <div style="flex:1; min-width:350px; max-width:500px;">
+                        <div style="flex:0 1 450px; border: 3px solid #ff9100; border-radius: 15px; padding: 25px; background: white;">
                             <h3 style="text-align:center; color:#1890ff; font-weight:bold; font-size:1.5rem;">Movimentação Diária</h3>
                             <!-- Filtro de mês/ano para o gráfico de linha -->
                             <form method="get" id="formMesAno" style="max-width:350px; margin:0 auto 15px auto; display:flex; gap:8px; align-items:end; flex-wrap:wrap;">
@@ -646,12 +646,12 @@ if(!$result_retiradas){
                                     <button type="submit" class="btn-reposicao" style="width:100%;">Ver mês</button>
                                 </div>
                             </form>
-                            <canvas id="graficoLinha" width="500" height="400" style="max-width:500px; margin:auto auto auto -30px; display:block;"></canvas>
-                            <div id="legendaLinha" style="max-width:500px; margin:12px auto 0 auto; text-align:center; font-size:1rem;"></div>
-                            <div id="margemLucro" style="max-width:500px; margin:15px auto 0 auto; text-align:center; font-size:1.1rem; font-weight:bold;"></div>
+                            <canvas id="graficoLinha" width="400" height="380" style="max-width:100%; margin:auto; display:block;"></canvas>
+                            <div id="legendaLinha" style="max-width:100%; margin:20px auto 0 auto; text-align:center; font-size:1rem;"></div>
+                            <div id="margemLucro" style="max-width:100%; margin:20px auto 0 auto; text-align:center; font-size:1.1rem; font-weight:bold;"></div>
                         </div>
                         <!-- Gráfico de Pizza -->
-                        <div style="flex:1; min-width:350px; max-width:400px;">
+                        <div style="flex:0 1 450px; border: 3px solid #ff9100; border-radius: 15px; padding: 25px; background: white;">
                             <h3 style="text-align:center; color:#d11b1b; font-weight:bold; font-size:1.5rem;">Despesas</h3>
                             <!-- Filtro de período para o gráfico de pizza -->
                             <form method="get" id="formPeriodo" style="max-width:400px; margin:0 auto 20px auto; display:flex; gap:10px; align-items:end; flex-wrap:wrap;">
@@ -667,8 +667,8 @@ if(!$result_retiradas){
                                     <button type="submit" class="btn-reposicao" style="width:100%;">Filtrar</button>
                                 </div>
                             </form>
-                            <canvas id="graficoDespesas" width="320" height="320" style="max-width:320px; margin:auto; display:block;"></canvas>
-                            <div id="legendaDespesas" style="max-width:400px; margin:10px auto 0 auto; text-align:center;"></div>
+                            <canvas id="graficoDespesas" width="300" height="300" style="max-width:100%; margin:auto; display:block;"></canvas>
+                            <div id="legendaDespesas" style="max-width:100%; margin:10px auto 0 auto; text-align:center;"></div>
                             <div id="totalDespesas" style="text-align:center; margin-top:20px; font-size:1.2rem; font-weight:bold; color:#333;"></div>
                         </div>
                     </div>
@@ -866,7 +866,7 @@ if(!$result_retiradas){
                     <!-- Gráficos adicionais -->
                     <div style="display:flex; gap:40px; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin-bottom:30px; margin-top:80px;">
                         <!-- Gráfico de Pizza - Produtos Mais Vendidos -->
-                        <div style="flex:1; min-width:320px; max-width:420px;">
+                        <div style="flex:0 1 450px; border: 3px solid #ff9100; border-radius: 15px; padding: 25px; background: white;">
                             <h3 style="text-align:center; color:#722ed1; font-weight:bold; font-size:1.5rem;">Projeção de Lucro</h3>
                             <!-- Input de porcentagem do estoque -->
                             <form method="get" id="formProjecaoPerc" style="max-width:280px; margin:0 auto 15px auto; display:flex; gap:8px; align-items:end;">
@@ -878,18 +878,18 @@ if(!$result_retiradas){
                                     <button type="submit" class="btn-reposicao" style="width:100%; font-size:0.85rem;">Aplicar</button>
                                 </div>
                             </form>
-                            <div style="position:relative; width:240px; height:240px; margin:0 auto;">
-                                <canvas id="graficoProjecao" width="240" height="240"></canvas>
+                            <div style="position:relative; width:280px; height:280px; margin:0 auto;">
+                                <canvas id="graficoProjecao" width="280" height="280"></canvas>
                                 <div id="gaugeText" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); text-align:center; z-index:10;">
                                     <div id="percentualGauge" style="font-size:2rem; font-weight:bold; color:#722ed1;">0%</div>
                                     <div style="font-size:0.8rem; color:#666;">Alcançado</div>
                                 </div>
                             </div>
-                            <div id="legendaProjecao" style="max-width:420px; margin:15px auto 0 auto; text-align:center; font-size:0.9rem;"></div>
+                            <div id="legendaProjecao" style="max-width:100%; margin:15px auto 0 auto; text-align:center; font-size:0.9rem;"></div>
                         </div>
 
                         <!-- Gráfico de Barras - Categorias com Maior Faturamento -->
-                        <div style="flex:1; min-width:350px; max-width:500px;">
+                        <div style="flex:0 1 450px; border: 3px solid #ff9100; border-radius: 15px; padding: 25px; background: white;">
                             <h3 style="text-align:center; color:#13c2c2; font-weight:bold; font-size:1.5rem;">Faturamento por Categoria</h3>
                             <!-- Filtro de mês/ano para faturamento por categoria -->
                             <form method="get" id="formCategorias" style="max-width:400px; margin:0 auto 20px auto; display:flex; gap:10px; align-items:end; flex-wrap:wrap;">
@@ -923,8 +923,8 @@ if(!$result_retiradas){
                                     <button type="submit" class="btn-reposicao" style="width:100%;">Ver mês</button>
                                 </div>
                             </form>
-                            <canvas id="graficoCategorias" width="500" height="350" style="max-width:500px; margin:auto; display:block;"></canvas>
-                            <div id="legendaCategorias" style="max-width:500px; margin:15px auto 0 auto; text-align:center; font-size:0.95rem;"></div>
+                            <canvas id="graficoCategorias" width="400" height="420" style="max-width:100%; margin:auto; display:block;"></canvas>
+                            <div id="legendaCategorias" style="max-width:100%; margin:20px auto 0 auto; text-align:center; font-size:0.95rem;"></div>
                         </div>
                     </div>
 

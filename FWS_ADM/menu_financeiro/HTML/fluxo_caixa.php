@@ -24,6 +24,10 @@ $stmt->close();
 // Sobrescreve o nome para conter apenas o primeiro nome
 $nome_adm = explode(" ", trim($nome_adm))[0];
 
+// Definir datas padrão para filtros
+$data_inicio = isset($_GET['data_inicio']) ? $_GET['data_inicio'] : date('Y-m-01');
+$data_fim = isset($_GET['data_fim']) ? $_GET['data_fim'] : date('Y-m-t');
+
 if (!$sql){
     die("conexão falhou: " . mysqli_error());
 }
@@ -492,6 +496,76 @@ if(!$result_retiradas){
             display: block;
         }
 
+        /* ESTILOS PARA FILTRO DE DATAS */
+        .filtro-periodo {
+            background: #f9f9f9;
+            border: 2px solid #ff9100;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: end;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filtro-campo {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filtro-campo label {
+            font-weight: bold;
+            color: #ff9100;
+            font-size: 0.9rem;
+        }
+
+        .filtro-campo input[type="date"] {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            transition: border 0.3s;
+        }
+
+        .filtro-campo input[type="date"]:focus {
+            outline: none;
+            border-color: #ff9100;
+        }
+
+        .btn-filtrar {
+            background-color: #ff9100;
+            color: white;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-filtrar:hover {
+            background-color: #e68000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 145, 0, 0.3);
+        }
+
+        .btn-limpar {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-limpar:hover {
+            background-color: #5a6268;
+        }
+
         @import url('../../Fonte_Config/fonte_geral.css');
 
         @media (max-width: 768px) {
@@ -592,36 +666,33 @@ if(!$result_retiradas){
                         <a href="menu_financeiro.php" class="btn btn-warning" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
                             <span style="font-size:18px;"></span> ← Voltar
                         </a>
-                        <h2 style="margin:0; flex:1; text-align:center;">Fluxo de caixa</h2>
+                        <h2 style="margin:0; flex:1; text-align:center;">Fluxo de Caixa</h2>
                         <div style="width:120px;"></div>
                     </div>
 
-                    <!-- Filtro de período -->
-                    <form method="get" style="display:flex; gap:15px; align-items:end; margin-bottom:25px; max-width:500px;">
-                        <div style="flex:1; min-width:120px;">
-                            <label for="data_ini" style="font-size:0.95rem; color:#333;">Data inicial:</label>
-                            <input type="date" name="data_ini" id="data_ini" class="form-control" value="<?= isset($_GET['data_ini']) ? htmlspecialchars($_GET['data_ini']) : date('Y-m-01') ?>">
-                        </div>
-                        <div style="flex:1; min-width:120px;">
-                            <label for="data_fim" style="font-size:0.95rem; color:#333;">Data final:</label>
-                            <input type="date" name="data_fim" id="data_fim" class="form-control" value="<?= isset($_GET['data_fim']) ? htmlspecialchars($_GET['data_fim']) : date('Y-m-t') ?>">
-                        </div>
-                        <div style="flex:0 0 80px;">
-                            <button type="submit" class="btn-reposicao" style="width:100%;">Filtrar</button>
+                    <!-- Filtro de Período -->
+                    <form method="GET" action="">
+                        <div class="filtro-periodo">
+                            <div class="filtro-campo">
+                                <label for="data_inicio">Data Inicial</label>
+                                <input type="date" id="data_inicio" name="data_inicio" value="<?= htmlspecialchars($data_inicio) ?>" required>
+                            </div>
+                            <div class="filtro-campo">
+                                <label for="data_fim">Data Final</label>
+                                <input type="date" id="data_fim" name="data_fim" value="<?= htmlspecialchars($data_fim) ?>" required>
+                            </div>
+                            <button type="submit" class="btn-filtrar">Filtrar</button>
+                            <a href="fluxo_caixa.php" class="btn-limpar" style="text-decoration:none;">Limpar</a>
                         </div>
                     </form>
 
                     <?php
-                    // Filtro de datas
-                    $data_ini = isset($_GET['data_ini']) ? $_GET['data_ini'] : date('Y-m-01');
-                    $data_fim = isset($_GET['data_fim']) ? $_GET['data_fim'] : date('Y-m-t');
-
                     // Buscar vendas no período
                     $sql_vendas = "SELECT v.id, v.data_criacao, v.funcionario_id, v.total, f.nome as funcionario_nome
                         FROM vendas v
                         LEFT JOIN funcionarios f ON v.funcionario_id = f.id
                         WHERE v.situacao_compra = 'finalizada'
-                        AND DATE(v.data_criacao) >= '$data_ini'
+                        AND DATE(v.data_criacao) >= '$data_inicio'
                         AND DATE(v.data_criacao) <= '$data_fim'
                         ORDER BY v.data_criacao DESC";
                     $res_vendas = $sql->query($sql_vendas);
@@ -677,15 +748,17 @@ if(!$result_retiradas){
                         LEFT JOIN produtos p ON iv.produto_id = p.id
                         LEFT JOIN vendas v ON iv.venda_id = v.id
                         WHERE v.situacao_compra = 'finalizada'
-                        AND DATE(v.data_criacao) >= '$data_ini'
+                        AND DATE(v.data_criacao) >= '$data_inicio'
                         AND DATE(v.data_criacao) <= '$data_fim'
                         GROUP BY p.id
                         ORDER BY lucro DESC, vendidos DESC
                         LIMIT 3";
                     $res_top_lucro = $sql->query($sql_top_lucro);
                     $produtos_top = [];
-                    while ($row = $res_top_lucro->fetch_assoc()) {
-                        $produtos_top[] = $row;
+                    if ($res_top_lucro && $res_top_lucro->num_rows > 0) {
+                        while ($row = $res_top_lucro->fetch_assoc()) {
+                            $produtos_top[] = $row;
+                        }
                     }
 
                     // Buscar top 3 produtos menos lucrativos (mas vendidos)
@@ -694,15 +767,17 @@ if(!$result_retiradas){
                         LEFT JOIN produtos p ON iv.produto_id = p.id
                         LEFT JOIN vendas v ON iv.venda_id = v.id
                         WHERE v.situacao_compra = 'finalizada'
-                        AND DATE(v.data_criacao) >= '$data_ini'
+                        AND DATE(v.data_criacao) >= '$data_inicio'
                         AND DATE(v.data_criacao) <= '$data_fim'
                         GROUP BY p.id
                         ORDER BY lucro ASC, vendidos DESC
                         LIMIT 3";
                     $res_low_lucro = $sql->query($sql_low_lucro);
                     $produtos_low = [];
-                    while ($row = $res_low_lucro->fetch_assoc()) {
-                        $produtos_low[] = $row;
+                    if ($res_low_lucro && $res_low_lucro->num_rows > 0) {
+                        while ($row = $res_low_lucro->fetch_assoc()) {
+                            $produtos_low[] = $row;
+                        }
                     }
                     ?>
 
@@ -771,7 +846,7 @@ if(!$result_retiradas){
                     <div style="text-align:center; margin-top:40px; padding-top:20px; border-top:2px solid #f0f0f0;">
                         <form method="post" action="exportar_fluxo.php" style="display:inline;">
                             <input type="hidden" name="tipo" value="excel">
-                            <input type="hidden" name="data_ini" value="<?= $data_ini ?>">
+                            <input type="hidden" name="data_ini" value="<?= $data_inicio ?>">
                             <input type="hidden" name="data_fim" value="<?= $data_fim ?>">
                             <button type="submit" style="background-color:#52c41a; color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer; margin-right:15px; font-size:1rem;">
                                 📊 Exportar Excel
@@ -788,10 +863,10 @@ if(!$result_retiradas){
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
                     <script>
                     // Dados PHP para JS
-                    const produtosTop = <?= json_encode($produtos_top) ?>;
-                    const produtosLow = <?= json_encode($produtos_low) ?>;
-                    const dataIni = '<?= $data_ini ?>';
-                    const dataFim = '<?= $data_fim ?>';
+                    const produtosTop = <?= json_encode($produtos_top ?? []) ?>;
+                    const produtosLow = <?= json_encode($produtos_low ?? []) ?>;
+                    const dataIni = '<?= htmlspecialchars($data_inicio) ?>';
+                    const dataFim = '<?= htmlspecialchars($data_fim) ?>';
 
                     // Botão exportar PDF
                     document.getElementById('btnExportarPDF').addEventListener('click', function() {

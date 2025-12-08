@@ -48,10 +48,10 @@ function verificarECancelarPedidosComTempoExpirado($sql) {
             }
 
             // Apagar itens vendidos relacionados à venda cancelada
-            $deleteItensQuery = "DELETE FROM itens_vendidos WHERE venda_id = " . intval($venda['id']);
-            if (!$sql->query($deleteItensQuery)) {
-                throw new Exception("Erro ao apagar itens_vendidos: " . $sql->error);
-            }
+            // $deleteItensQuery = "DELETE FROM itens_vendidos WHERE venda_id = " . intval($venda['id']);
+            // if (!$sql->query($deleteItensQuery)) {
+            //     throw new Exception("Erro ao apagar itens_vendidos: " . $sql->error);
+            // }
 
             // Registrar na tabela expiracoes_pre_compras
             $insertExpiracaoQuery = "
