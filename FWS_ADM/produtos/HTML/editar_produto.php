@@ -18,6 +18,8 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     die("Produto não informado.");
 }

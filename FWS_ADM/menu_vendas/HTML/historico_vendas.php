@@ -21,6 +21,9 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
+
 if (!$sql){
     die("conexão falhou: " . mysqli_error());
 }
@@ -761,8 +764,8 @@ if(!$result_retiradas){
             <div class="col py-3" id="conteudo-principal">
                 <div class="container">
                     <div style="position:relative; margin-bottom:25px;">
-                        <a href="menu_vendas.php" class="btn btn-warning" style="position:absolute; left:0; display:flex; align-items:center; gap:8px; white-space:nowrap;">
-                            <span style="font-size:18px;">←</span> Voltar
+                        <a href="menu_venda.php" class="btn btn-warning" style="position:absolute; left:0; display:flex; align-items:center; gap:8px; white-space:nowrap;">
+                            <span style="font-size:18px;"></span> ← Voltar
                         </a>
                         <h2 style="margin:0; text-align:center;">Histórico de Vendas</h2>
                     </div>

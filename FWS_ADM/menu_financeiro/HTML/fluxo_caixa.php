@@ -590,7 +590,7 @@ if(!$result_retiradas){
                 <div class="container">
                     <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px; justify-content:space-between;">
                         <a href="menu_financeiro.php" class="btn btn-warning" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
-                            <span style="font-size:18px;">←</span> Voltar
+                            <span style="font-size:18px;"></span> ← Voltar
                         </a>
                         <h2 style="margin:0; flex:1; text-align:center;">Fluxo de caixa</h2>
                         <div style="width:120px;"></div>

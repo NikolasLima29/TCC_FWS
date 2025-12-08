@@ -18,6 +18,8 @@ $stmt->bind_result($nome_adm);
 $stmt->fetch();
 $stmt->close();
 
+$nome_adm = explode(" ", trim($nome_adm))[0];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Entrada de dados
