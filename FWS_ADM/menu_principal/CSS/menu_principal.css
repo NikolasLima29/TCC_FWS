@@ -16,8 +16,8 @@
 
 #cor-fonte {
     color: #ff9100;
-    font-size: 23px;
-    padding-bottom: 30px;
+    font-size: 21px;
+    padding-bottom: 13px;
 }
 
 #cor-fonte:hover {
@@ -25,9 +25,9 @@
 }
 
 #cor-fonte img{
-    width: 44px;
+    width: 32px;
 }
 
 #logo-linha img {
-    width: 170px;
+    width: 150px;
 }
