@@ -135,6 +135,28 @@ if(!$result){
     die("Erro na consulta: " . $sql->error);
 }
 
+// Buscar todas as vendas finalizadas com dados do cliente
+$sql_vendas = "SELECT v.id, v.data_criacao, v.total, v.metodo_pagamento, u.nome as usuario_nome, u.telefone, u.id as usuario_id
+               FROM vendas v
+               LEFT JOIN usuarios u ON v.usuario_id = u.id
+               WHERE v.situacao_compra = 'finalizada'
+               ORDER BY v.data_criacao DESC";
+$result_vendas = $sql->query($sql_vendas);
+if(!$result_vendas){
+    die("Erro na consulta de vendas: " . $sql->error);
+}
+
+// Função para formatar método de pagamento
+function formatar_pagamento($metodo) {
+    $map = [
+        'cartao_credito' => 'Cartão de Crédito',
+        'cartao_debito' => 'Cartão de Débito',
+        'pix' => 'PIX',
+        'dinheiro' => 'Dinheiro'
+    ];
+    return isset($map[$metodo]) ? $map[$metodo] : ucfirst(str_replace('_', ' ', $metodo));
+}
+
 // Query para estoque total (sem agrupar por lote)
 $sqli_total = "SELECT p.id, p.nome, p.foto_produto, c.nome as categoria_nome, f.nome as fornecedor_nome, p.preco_venda, 
         p.estoque, p.status, p.criado_em
@@ -242,7 +264,7 @@ if(!$result_retiradas){
 <!doctype html>
 <html lang="pt-br">
 <head>
-    <title>Fluxo de Caixa</title>
+    <title>Histórico de Vendas</title>
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -489,6 +511,159 @@ if(!$result_retiradas){
             display: block;
         }
 
+        /* ESTILOS PARA CARDS DE VENDAS */
+        .venda-card {
+            background: white;
+            border: 2px solid #ff9100;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .venda-card-imagens {
+            flex: 0 0 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .venda-card-imagem {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .venda-card-conteudo {
+            flex: 1;
+        }
+
+        .venda-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff9100;
+        }
+
+        .venda-card-codigo {
+            background: #ff9100;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 8px rgba(255, 145, 0, 0.3);
+            text-align: center;
+        }
+
+        .venda-card-codigo-label {
+            font-size: 0.7rem;
+            display: block;
+            opacity: 0.9;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .venda-card-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .venda-card-info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .venda-card-info-label {
+            color: #ff9100;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .venda-card-info-valor {
+            color: #333;
+        }
+
+        .venda-card-items {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #ff9100;
+        }
+
+        .venda-card-items-title {
+            font-weight: bold;
+            color: #ff9100;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .venda-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .venda-item:last-child {
+            border-bottom: none;
+        }
+
+        .venda-item-nome {
+            flex: 1;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .venda-item-qty {
+            margin: 0 15px;
+            color: #ff9100;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .venda-item-preco {
+            min-width: 90px;
+            text-align: right;
+            color: #333;
+        }
+
+        .venda-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 10px;
+            border-top: 2px solid #ff9100;
+            font-weight: bold;
+        }
+
+        .venda-total {
+            color: #52c41a;
+            font-size: 1.4rem;
+        }
+
+        .venda-pagamento {
+            background: #000;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
         @import url('../../Fonte_Config/fonte_geral.css');
 
         @media (max-width: 768px) {
@@ -585,325 +760,111 @@ if(!$result_retiradas){
             <!-- 🔹 Conteúdo principal -->
             <div class="col py-3" id="conteudo-principal">
                 <div class="container">
-                    <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px; justify-content:space-between;">
-                        <a href="menu_financeiro.php" class="btn btn-warning" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
+                    <div style="position:relative; margin-bottom:25px;">
+                        <a href="menu_vendas.php" class="btn btn-warning" style="position:absolute; left:0; display:flex; align-items:center; gap:8px; white-space:nowrap;">
                             <span style="font-size:18px;">←</span> Voltar
                         </a>
-                        <h2 style="margin:0; flex:1; text-align:center;">Fluxo de caixa</h2>
-                        <div style="width:120px;"></div>
+                        <h2 style="margin:0; text-align:center;">Histórico de Vendas</h2>
                     </div>
-
-                    <!-- Filtro de período -->
-                    <form method="get" style="display:flex; gap:15px; align-items:end; margin-bottom:25px; max-width:500px;">
-                        <div style="flex:1; min-width:120px;">
-                            <label for="data_ini" style="font-size:0.95rem; color:#333;">Data inicial:</label>
-                            <input type="date" name="data_ini" id="data_ini" class="form-control" value="<?= isset($_GET['data_ini']) ? htmlspecialchars($_GET['data_ini']) : date('Y-m-01') ?>">
-                        </div>
-                        <div style="flex:1; min-width:120px;">
-                            <label for="data_fim" style="font-size:0.95rem; color:#333;">Data final:</label>
-                            <input type="date" name="data_fim" id="data_fim" class="form-control" value="<?= isset($_GET['data_fim']) ? htmlspecialchars($_GET['data_fim']) : date('Y-m-t') ?>">
-                        </div>
-                        <div style="flex:0 0 80px;">
-                            <button type="submit" class="btn-reposicao" style="width:100%;">Filtrar</button>
-                        </div>
-                    </form>
 
                     <?php
-                    // Filtro de datas
-                    $data_ini = isset($_GET['data_ini']) ? $_GET['data_ini'] : date('Y-m-01');
-                    $data_fim = isset($_GET['data_fim']) ? $_GET['data_fim'] : date('Y-m-t');
+                    if ($result_vendas && $result_vendas->num_rows > 0) {
+                        while ($venda = $result_vendas->fetch_assoc()) {
+                            $venda_id = $venda['id'];
+                            $telefone = $venda['telefone'];
+                            $ultimos_4_telefone = substr(preg_replace('/\D/', '', $telefone), -4);
+                            $codigo_venda = $ultimos_4_telefone . '-' . $venda_id;
 
-                    // Buscar vendas no período
-                    $sql_vendas = "SELECT v.id, v.data_criacao, v.funcionario_id, v.total, f.nome as funcionario_nome
-                        FROM vendas v
-                        LEFT JOIN funcionarios f ON v.funcionario_id = f.id
-                        WHERE v.situacao_compra = 'finalizada'
-                        AND DATE(v.data_criacao) >= '$data_ini'
-                        AND DATE(v.data_criacao) <= '$data_fim'
-                        ORDER BY v.data_criacao DESC";
-                    $res_vendas = $sql->query($sql_vendas);
-                    ?>
-
-                    <div style="overflow-x:auto;">
-                    <table class="table table-bordered" style="margin-top:10px; background:#fff;">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Nº Venda</th>
-                                <th>Data da Venda</th>
-                                <th>Funcionário</th>
-                                <th>Valor da Compra</th>
-                                <th>Lucro</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                        if ($res_vendas && $res_vendas->num_rows > 0) {
-                            while ($venda = $res_vendas->fetch_assoc()) {
-                                $venda_id = intval($venda['id']);
-                                // Calcular lucro: soma (preco_venda - preco_compra) * quantidade de todos produtos da venda
-                                $sql_lucro = "SELECT SUM((p.preco_venda - p.preco_compra) * iv.quantidade) as lucro
-                                    FROM itens_vendidos iv
-                                    LEFT JOIN produtos p ON iv.produto_id = p.id
-                                    WHERE iv.venda_id = $venda_id";
-                                $res_lucro = $sql->query($sql_lucro);
-                                $lucro = 0;
-                                if ($res_lucro && $row_lucro = $res_lucro->fetch_assoc()) {
-                                    $lucro = floatval($row_lucro['lucro']);
+                            // Buscar itens da venda
+                            $sql_itens = "SELECT iv.produto_id, iv.quantidade, p.nome, p.foto_produto, p.preco_venda
+                                         FROM itens_vendidos iv
+                                         LEFT JOIN produtos p ON iv.produto_id = p.id
+                                         WHERE iv.venda_id = $venda_id";
+                            $result_itens = $sql->query($sql_itens);
+                            $itens = [];
+                            if ($result_itens && $result_itens->num_rows > 0) {
+                                while ($item = $result_itens->fetch_assoc()) {
+                                    $itens[] = $item;
                                 }
-                                echo '<tr>';
-                                echo '<td>' . $venda_id . '</td>';
-                                echo '<td>' . date('d/m/Y H:i', strtotime($venda['data_criacao'])) . '</td>';
-                                echo '<td>' . htmlspecialchars($venda['funcionario_nome']) . '</td>';
-                                echo '<td>R$ ' . number_format($venda['total'], 2, ',', '.') . '</td>';
-                                echo '<td style="color:' . ($lucro >= 0 ? '#52c41a' : '#E53935') . '; font-weight:bold;">R$ ' . number_format($lucro, 2, ',', '.') . '</td>';
-                                echo '</tr>';
                             }
-                        } else {
-                            echo '<tr><td colspan="5" style="text-align:center; color:#999;">Nenhuma venda encontrada para o período selecionado.</td></tr>';
-                        }
-                        ?>
-                        </tbody>
-                    </table>
-                    </div>
+                            ?>
+                            <div class="venda-card">
+                                <!-- Imagens dos produtos -->
+                                <div class="venda-card-imagens">
+                                    <?php 
+                                    $imgs_count = 0;
+                                    foreach ($itens as $item):
+                                        if ($imgs_count < 3):
+                                            ?>
+                                            <img src="<?= !empty($item['foto_produto']) ? $item['foto_produto'] : '../../IMG/sem-imagem.png' ?>" 
+                                                 alt="<?= htmlspecialchars($item['nome']) ?>" class="venda-card-imagem">
+                                            <?php 
+                                            $imgs_count++;
+                                        endif;
+                                    endforeach; 
+                                    ?>
+                                </div>
 
-                    <!-- Gráficos de produtos mais/menos lucrativos -->
-                    <?php
-                    // Buscar top 3 produtos mais lucrativos
-                    $sql_top_lucro = "SELECT p.nome, SUM((p.preco_venda - p.preco_compra) * iv.quantidade) as lucro, SUM(iv.quantidade) as vendidos
-                        FROM itens_vendidos iv
-                        LEFT JOIN produtos p ON iv.produto_id = p.id
-                        LEFT JOIN vendas v ON iv.venda_id = v.id
-                        WHERE v.situacao_compra = 'finalizada'
-                        AND DATE(v.data_criacao) >= '$data_ini'
-                        AND DATE(v.data_criacao) <= '$data_fim'
-                        GROUP BY p.id
-                        ORDER BY lucro DESC, vendidos DESC
-                        LIMIT 3";
-                    $res_top_lucro = $sql->query($sql_top_lucro);
-                    $produtos_top = [];
-                    while ($row = $res_top_lucro->fetch_assoc()) {
-                        $produtos_top[] = $row;
+                                <!-- Conteúdo -->
+                                <div class="venda-card-conteudo">
+                                    <!-- Header com código -->
+                                    <div class="venda-card-header">
+                                        <div>
+                                            <div style="font-size:0.8rem; color:#666;">Nº do Pedido</div>
+                                            <div style="font-weight:bold; font-size:1.4rem;"><?= $venda_id ?></div>
+                                        </div>
+                                        <div class="venda-card-codigo">
+                                            <div class="venda-card-codigo-label">CÓDIGO DA VENDA</div>
+                                            <?= $codigo_venda ?>
+                                        </div>
+                                    </div>
+
+                                    <!-- Informações -->
+                                    <div class="venda-card-info">
+                                        <div class="venda-card-info-item">
+                                            <span class="venda-card-info-label">Data do Pedido</span>
+                                            <span class="venda-card-info-valor"><?= date('d/m/Y H:i', strtotime($venda['data_criacao'])) ?></span>
+                                        </div>
+                                        <div class="venda-card-info-item">
+                                            <span class="venda-card-info-label">Cliente</span>
+                                            <span class="venda-card-info-valor"><?= htmlspecialchars($venda['usuario_nome']) ?></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Itens vendidos -->
+                                    <div class="venda-card-items">
+                                        <div class="venda-card-items-title">📦 Itens Vendidos</div>
+                                        <?php 
+                                        foreach ($itens as $item): 
+                                            $subtotal = $item['preco_venda'] * $item['quantidade'];
+                                        ?>
+                                            <div class="venda-item">
+                                                <span class="venda-item-nome"><?= htmlspecialchars($item['nome']) ?></span>
+                                                <span class="venda-item-qty">Qtd: <?= intval($item['quantidade']) ?></span>
+                                                <span style="min-width:80px; text-align:right; color:#666; font-size:0.85rem;">R$ <?= number_format($item['preco_venda'], 2, ',', '.') ?></span>
+                                                <span class="venda-item-preco">R$ <?= number_format($subtotal, 2, ',', '.') ?></span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+
+                                    <!-- Footer com total e pagamento -->
+                                    <div class="venda-card-footer">
+                                        <div class="venda-pagamento">
+                                            💳 <?= formatar_pagamento($venda['metodo_pagamento']) ?>
+                                        </div>
+                                        <div>
+                                            <span style="color:#666; font-size:0.9rem;">Total: </span>
+                                            <span class="venda-total">R$ <?= number_format($venda['total'], 2, ',', '.') ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php 
+                        }
+                    } else {
+                        echo '<div style="text-align:center; padding:40px; color:#999;">Nenhuma venda finalizada encontrada</div>';
                     }
-
-                    // Buscar top 3 produtos menos lucrativos (mas vendidos)
-                    $sql_low_lucro = "SELECT p.nome, SUM((p.preco_venda - p.preco_compra) * iv.quantidade) as lucro, SUM(iv.quantidade) as vendidos
-                        FROM itens_vendidos iv
-                        LEFT JOIN produtos p ON iv.produto_id = p.id
-                        LEFT JOIN vendas v ON iv.venda_id = v.id
-                        WHERE v.situacao_compra = 'finalizada'
-                        AND DATE(v.data_criacao) >= '$data_ini'
-                        AND DATE(v.data_criacao) <= '$data_fim'
-                        GROUP BY p.id
-                        ORDER BY lucro ASC, vendidos DESC
-                        LIMIT 3";
-                    $res_low_lucro = $sql->query($sql_low_lucro);
-                    $produtos_low = [];
-                    while ($row = $res_low_lucro->fetch_assoc()) {
-                        $produtos_low[] = $row;
-                    }
                     ?>
-
-                    <div style="display:flex; gap:40px; justify-content:center; align-items:flex-start; flex-wrap:wrap; margin-top:40px;">
-                        <div style="flex:1; min-width:320px; max-width:500px;">
-                            <h4 style="text-align:center; color:#52c41a; font-weight:bold; font-size:1.2rem;">Top 3 Produtos Mais Lucrativos</h4>
-                            <canvas id="graficoTopLucro" width="400" height="300"></canvas>
-                            
-                            <!-- Tabela Top Lucro -->
-                            <table class="table table-bordered" style="background:#fff; margin-top:15px;">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th style="width:40px;"></th>
-                                        <th>Produto</th>
-                                        <th>Vendidos</th>
-                                        <th>Lucro (R$)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <?php
-                                $cores_top = ['#52c41a', '#13c2c2', '#faad14'];
-                                foreach ($produtos_top as $i => $p) {
-                                    echo '<tr>';
-                                    echo '<td><span style="display:inline-block; width:18px; height:18px; border-radius:4px; background:' . $cores_top[$i % count($cores_top)] . '; border:1px solid #ccc;"></span></td>';
-                                    echo '<td>' . htmlspecialchars($p['nome']) . '</td>';
-                                    echo '<td>' . intval($p['vendidos']) . '</td>';
-                                    echo '<td style="color:#52c41a; font-weight:bold;">R$ ' . number_format($p['lucro'], 2, ',', '.') . '</td>';
-                                    echo '</tr>';
-                                }
-                                ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div style="flex:1; min-width:320px; max-width:500px;">
-                            <h4 style="text-align:center; color:#E53935; font-weight:bold; font-size:1.2rem;">Top 3 Produtos Menos Lucrativos</h4>
-                            <canvas id="graficoLowLucro" width="400" height="300"></canvas>
-                            
-                            <!-- Tabela Low Lucro -->
-                            <table class="table table-bordered" style="background:#fff; margin-top:15px;">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th style="width:40px;"></th>
-                                        <th>Produto</th>
-                                        <th>Vendidos</th>
-                                        <th>Lucro (R$)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <?php
-                                $cores_low = ['#E53935', '#faad14', '#bfbfbf'];
-                                foreach ($produtos_low as $i => $p) {
-                                    echo '<tr>';
-                                    echo '<td><span style="display:inline-block; width:18px; height:18px; border-radius:4px; background:' . $cores_low[$i % count($cores_low)] . '; border:1px solid #ccc;"></span></td>';
-                                    echo '<td>' . htmlspecialchars($p['nome']) . '</td>';
-                                    echo '<td>' . intval($p['vendidos']) . '</td>';
-                                    echo '<td style="color:#E53935; font-weight:bold;">R$ ' . number_format($p['lucro'], 2, ',', '.') . '</td>';
-                                    echo '</tr>';
-                                }
-                                ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Botões de Exportação -->
-                    <div style="text-align:center; margin-top:40px; padding-top:20px; border-top:2px solid #f0f0f0;">
-                        <form method="post" action="exportar_fluxo.php" style="display:inline;">
-                            <input type="hidden" name="tipo" value="excel">
-                            <input type="hidden" name="data_ini" value="<?= $data_ini ?>">
-                            <input type="hidden" name="data_fim" value="<?= $data_fim ?>">
-                            <button type="submit" style="background-color:#52c41a; color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer; margin-right:15px; font-size:1rem;">
-                                📊 Exportar Excel
-                            </button>
-                        </form>
-                        <button type="button" id="btnExportarPDF" style="background-color:#f5222d; color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:1rem;">
-                            📄 Exportar PDF
-                        </button>
-                    </div>
-
-                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-                    <script>
-                    // Dados PHP para JS
-                    const produtosTop = <?= json_encode($produtos_top) ?>;
-                    const produtosLow = <?= json_encode($produtos_low) ?>;
-                    const dataIni = '<?= $data_ini ?>';
-                    const dataFim = '<?= $data_fim ?>';
-
-                    // Botão exportar PDF
-                    document.getElementById('btnExportarPDF').addEventListener('click', function() {
-                        $.ajax({
-                            url: 'exportar_fluxo.php',
-                            method: 'POST',
-                            data: {
-                                tipo: 'pdf',
-                                data_ini: dataIni,
-                                data_fim: dataFim
-                            },
-                            dataType: 'json',
-                            success: function(response) {
-                                const { jsPDF } = window.jspdf;
-                                const doc = new jsPDF();
-                                
-                                const div = document.createElement('div');
-                                div.innerHTML = response.html;
-                                div.style.position = 'fixed';
-                                div.style.top = '-9999px';
-                                div.style.left = '-9999px';
-                                div.style.width = '210mm';
-                                div.style.padding = '10mm';
-                                div.style.background = 'white';
-                                document.body.appendChild(div);
-                                
-                                html2canvas(div, { scale: 2, useCORS: true, logging: false }).then(canvas => {
-                                    const imgData = canvas.toDataURL('image/png');
-                                    const pageHeight = doc.internal.pageSize.getHeight();
-                                    const pageWidth = doc.internal.pageSize.getWidth();
-                                    const imgHeight = (canvas.height * pageWidth) / canvas.width;
-                                    let heightLeft = imgHeight;
-                                    let position = 0;
-                                    
-                                    doc.addImage(imgData, 'PNG', 0, position, pageWidth, imgHeight);
-                                    heightLeft -= pageHeight;
-                                    
-                                    while (heightLeft >= 0) {
-                                        position = heightLeft - imgHeight;
-                                        doc.addPage();
-                                        doc.addImage(imgData, 'PNG', 0, position, pageWidth, imgHeight);
-                                        heightLeft -= pageHeight;
-                                    }
-                                    
-                                    doc.save(response.filename);
-                                    document.body.removeChild(div);
-                                });
-                            },
-                            error: function() {
-                                alert('Erro ao gerar PDF');
-                            }
-                        });
-                    });
-
-                    // Gráfico Top Lucro
-                    const ctxTop = document.getElementById('graficoTopLucro').getContext('2d');
-                    new Chart(ctxTop, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Produto 1', 'Produto 2', 'Produto 3'],
-                            datasets: [{
-                                label: 'Lucro (R$)',
-                                data: produtosTop.map(p => Number(p.lucro)),
-                                backgroundColor: ['#52c41a', '#13c2c2', '#faad14'],
-                            }, {
-                                label: 'Vendidos',
-                                data: produtosTop.map(p => Number(p.vendidos)),
-                                backgroundColor: 'rgba(0,0,0,0.08)',
-                                type: 'line',
-                                borderColor: '#1890ff',
-                                fill: false,
-                                yAxisID: 'y1',
-                            }]
-                        },
-                        options: {
-                            plugins: { legend: { display: true, position: 'top' } },
-                            scales: {
-                                y: { beginAtZero: true, title: { display: true, text: 'Lucro (R$)' } },
-                                y1: { beginAtZero: true, position: 'right', title: { display: true, text: 'Vendidos' }, grid: { drawOnChartArea: false } },
-                                x: { ticks: { display: false } }
-                            }
-                        }
-                    });
-
-                    // Gráfico Low Lucro
-                    const ctxLow = document.getElementById('graficoLowLucro').getContext('2d');
-                    new Chart(ctxLow, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Produto 1', 'Produto 2', 'Produto 3'],
-                            datasets: [{
-                                label: 'Lucro (R$)',
-                                data: produtosLow.map(p => Number(p.lucro)),
-                                backgroundColor: ['#E53935', '#faad14', '#bfbfbf'],
-                            }, {
-                                label: 'Vendidos',
-                                data: produtosLow.map(p => Number(p.vendidos)),
-                                backgroundColor: 'rgba(0,0,0,0.08)',
-                                type: 'line',
-                                borderColor: '#1890ff',
-                                fill: false,
-                                yAxisID: 'y1',
-                            }]
-                        },
-                        options: {
-                            plugins: { legend: { display: true, position: 'top' } },
-                            scales: {
-                                y: { beginAtZero: true, title: { display: true, text: 'Lucro (R$)' } },
-                                y1: { beginAtZero: true, position: 'right', title: { display: true, text: 'Vendidos' }, grid: { drawOnChartArea: false } },
-                                x: { ticks: { display: false } }
-                            }
-                        }
-                    });
-                    </script>
-
                 </div>
             </div>
         </div>

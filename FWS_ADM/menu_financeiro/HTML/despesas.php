@@ -179,7 +179,7 @@ body {
 h2 {
     text-align: center;
     margin-bottom: 25px;
-    color: #d11b1b;
+    color: #ff9100;
     font-weight: bold;
 }
 
@@ -197,14 +197,14 @@ textarea {
 
 /* Botões */
 .btn-primary {
-    background-color: #f4a01d;
+    background-color: #52c41a;
     border: none;
-    color: black;
+    color: white;
     font-weight: bold;
 }
 
 .btn-primary:hover {
-    background-color: #d68c19;
+    background-color: #3a8a14;
     color: white;
 }
 
@@ -230,7 +230,7 @@ textarea {
     color: white;
 }
 
-.edit-btn { background:#007bff; }
+.edit-btn { background:#ff9100; }
 .delete-btn { background:#d11b1b; }
 </style>
 </head>
@@ -319,8 +319,13 @@ textarea {
         <div class="col py-3" id="conteudo-principal">
 
             <div class="container-box">
-
-                <h2><?= $edit_item ? "Editar Despesa" : "Registrar Despesa" ?></h2>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px; justify-content:space-between;">
+                    <a href="menu_financeiro.php" class="btn btn-warning" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
+                        <span style="font-size:18px;">←</span> Voltar
+                    </a>
+                    <h2 style="margin:0; flex:1; text-align:center;"><?= $edit_item ? "Editar Despesa" : "Registrar Despesa" ?></h2>
+                    <div style="width:120px;"></div>
+                </div>
 
                 <!-- ALERTA -->
                 <?php if(isset($_GET['status'])): ?>
