@@ -732,18 +732,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     </select>
                                                     <button type="submit" name="alterar_estado" class="btn-acao btn-acao-alterar">Alterar</button>
                                                 </form>
-
                                                 <!-- Botão Finalizar Pedido -->
                                                 <form method="post" style="display:inline;">
                                                     <input type="hidden" name="pedido_id" value="<?= $pedido['id'] ?>">
                                                     <button type="button" class="btn-acao btn-acao-pagar" onclick="confirmarPagamento(this)">Finalizar Pedido</button>
                                                 </form>
                                             <?php endif; ?>
+                                            <!-- Forma de Pagamento (mostrar em todos os pedidos) -->
+                                            <div style="display: inline-block; margin-left: 15px; padding: 8px 14px; background: #f0f0f0; border-radius: 5px; font-size: 0.9rem; color: #333; border: 1px solid #ddd;">
+                                                <span style="color: #666; font-weight: bold;">Pagamento:</span> <?= formatar_pagamento($pedido['metodo_pagamento']) ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <?php 
+                            <?php
                         }
                     } else {
                         echo '<div style="text-align:center; padding:40px; color:#999;">Nenhum pedido encontrado</div>';
