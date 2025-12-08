@@ -366,6 +366,11 @@ $(document).ready(function() {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../CSS/carrinho.css">
     <style>
+        /* Bordas dos cards em vermelho */
+        .card {
+            border: 2px solid #c40000 !important;
+        }
+
         /* Botões + e - com estilo parecido ao produto_especifico.php */
         .btn-mais, .btn-menos {
             width:40px;
