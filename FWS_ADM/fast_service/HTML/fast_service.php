@@ -386,12 +386,9 @@ $pagina = 'fast';
         color: #ff9100;
         font-weight: bold;
     }
-        padding: 7px 16px;
-        margin-left: 12px;
-        background: #FFD100;
-        color: #111;
-        display: inline-block;
-    }
+
+
+   
     .pedido-info {
         display: flex;
         gap: 32px;
