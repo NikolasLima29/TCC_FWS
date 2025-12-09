@@ -52,6 +52,14 @@ $_SESSION['usuario_id_ADM'] = $func_id;
 $_SESSION['usuario_nome_ADM'] = $func_nome;     // Nome exibe no logout
 $_SESSION['usuario_email_ADM'] = $func_email;   // Opcional mas recomendado
 
+// Atualiza o último login do funcionário recém-logado
+$update = $sql->prepare("UPDATE funcionarios SET ultimo_login = NOW() WHERE id = ?");
+if ($update) {
+    $update->bind_param("i", $func_id);
+    $update->execute();
+    $update->close();
+}
+
 echo json_encode(["status" => "ok"]);
 exit;
 
