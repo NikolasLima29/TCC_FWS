@@ -80,6 +80,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
     }
 }
+
+$pagina = 'funcionarios';
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -91,45 +94,65 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
     <style>
+        @import url('../../Fonte_Config/fonte_geral.css');
         body {
             background-color: #fff8e1;
-            font-family: "Poppins", sans-serif;
             margin: 0;
         }
 
-        /* NAVBAR LATERAL */
         #fund {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 250px;
-            background-color: black !important;
-            overflow-y: auto;
-            z-index: 1000;
-        }
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px;
+        background-color: black !important;
+        overflow-y: auto;
+        z-index: 1000;
+    }
 
-        #menu {
-            background-color: black;
-        }
+    #texto {
+        text-align: center;
+        font-size: 80px;
+        height: 140px;
+    }
 
-        #cor-fonte {
-            color: #ff9100;
-            font-size: 23px;
-            padding-bottom: 30px;
-        }
+    #menu {
+        background-color: black;
+    }
 
-        #cor-fonte:hover {
-            background-color: #f4a21d67 !important;
-        }
+    #fund {
+        background-color: black !important;
+    }
 
-        #cor-fonte img {
-            width: 44px;
-        }
+    #cor-fonte {
+        color: #ff9100;
+        font-size: 21px;
+        padding-bottom: 13px;
+    }
 
-        #logo-linha img {
-            width: 170px;
-        }
+    #cor-fonte img{
+        width: 32px;
+    }
+
+    #cor-fonte:hover {
+        background-color: #f4a21d67 !important;
+    }
+
+    #logo-linha img {
+        width: 150px;
+    }
+
+    .nav-link {
+        width: 100%;
+        display: block;
+        border-radius: 10px;
+    }
+
+    .nav-link.active {
+        background-color: #f4a21d67 !important;
+        border-radius: 5px;
+    }
 
         /* CONTEÚDO */
         #conteudo-principal {
@@ -232,7 +255,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 id="cor-fonte"><img src="../../menu_principal/IMG/fornecedor.png"><span
                                     class="ms-1 d-none d-sm-inline">Fornecedores</span></a></li>
 
-                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link px-0"
+                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link px-0 <?php if($pagina=='funcionarios') echo 'active'; ?>"
                                 id="cor-fonte"><img src="../../menu_principal/IMG/funcionarios.png"><span
                                     class="ms-1 d-none d-sm-inline">Funcionários</span></a></li>
                     </ul>

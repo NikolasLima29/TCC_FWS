@@ -25,6 +25,8 @@ $stmt->close();
 // Sobrescreve o nome para conter apenas o primeiro nome
 $nome_adm = explode(" ", trim($nome_adm))[0];
 
+$pagina = 'financeiro';
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -36,44 +38,65 @@ $nome_adm = explode(" ", trim($nome_adm))[0];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
     <style>
+        @import url('../../Fonte_Config/fonte_geral.css');
         body {
             background-color: #fff8e1;
-            font-family: "Poppins", sans-serif;
             margin: 0;
         }
 
         #fund {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 250px;
-            background-color: black !important;
-            overflow-y: auto;
-        }
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 250px;
+        background-color: black !important;
+        overflow-y: auto;
+        z-index: 1000;
+    }
 
-        #menu {
-            background-color: black;
-        }
+    #texto {
+        text-align: center;
+        font-size: 80px;
+        height: 140px;
+    }
 
-        #cor-fonte {
-            color: #ff9100;
-            font-size: 23px;
-            padding-bottom: 30px;
-            width: 100%;
-        }
+    #menu {
+        background-color: black;
+    }
 
-        #cor-fonte:hover {
-            background-color: #f4a21d67 !important;
-        }
+    #fund {
+        background-color: black !important;
+    }
 
-        #cor-fonte img {
-            width: 44px;
-        }
+    #cor-fonte {
+        color: #ff9100;
+        font-size: 21px;
+        padding-bottom: 13px;
+    }
 
-        #logo-linha img {
-            width: 170px;
-        }
+    #cor-fonte img{
+        width: 32px;
+    }
+
+    #cor-fonte:hover {
+        background-color: #f4a21d67 !important;
+    }
+
+    #logo-linha img {
+        width: 150px;
+    }
+
+    .nav-link {
+        width: 100%;
+        display: block;
+        border-radius: 10px;
+    }
+
+    .nav-link.active {
+        background-color: #f4a21d67 !important;
+        border-radius: 5px;
+    }
 
         #conteudo-principal {
             margin-left: 250px;
@@ -171,7 +194,7 @@ $nome_adm = explode(" ", trim($nome_adm))[0];
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0 <?php if($pagina=='financeiro') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                             </a></li>

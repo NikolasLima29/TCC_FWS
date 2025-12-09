@@ -86,6 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         }
     }
 }
+
+$pagina = 'funcionarios';
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -100,10 +103,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
   <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
     <style>
-    /* NAVBAR */
+        @import url('../../Fonte_Config/fonte_geral.css');
     body {
         background-color: #fff8e1;
-        font-family: "Poppins", sans-serif;
+        margin: 0;
     }
 
     #fund {
@@ -114,29 +117,52 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         width: 250px;
         background-color: black !important;
         overflow-y: auto;
+        z-index: 1000;
+    }
+
+    #texto {
+        text-align: center;
+        font-size: 80px;
+        height: 140px;
     }
 
     #menu {
         background-color: black;
     }
 
+    #fund {
+        background-color: black !important;
+    }
+
     #cor-fonte {
         color: #ff9100;
-        font-size: 23px;
-        padding-bottom: 30px;
+        font-size: 21px;
+        padding-bottom: 13px;
+    }
+
+    #cor-fonte img{
+        width: 32px;
     }
 
     #cor-fonte:hover {
         background-color: #f4a21d67 !important;
     }
 
-    #cor-fonte img {
-        width: 44px;
+    #logo-linha img {
+        width: 150px;
     }
 
-    #logo-linha img {
-        width: 170px;
+    .nav-link {
+        width: 100%;
+        display: block;
+        border-radius: 10px;
     }
+
+    .nav-link.active {
+        background-color: #f4a21d67 !important;
+        border-radius: 5px;
+    }
+
 
     #conteudo-principal {
         margin-left: 250px;
@@ -274,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png" alt="Logo"></li>
 
                         <li class="nav-item">
-                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html"
+                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png" alt="Painel Geral">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
@@ -314,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a></li>
 
-                        <li><a href="#" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="#" class="nav-link align-middle px-0 <?php if($pagina=='funcionarios') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png" alt="Funcionários">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a></li>
@@ -489,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     .then(resp => {
                         if (resp.status === "ok") {
                             window.location.href =
-                                "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
+                                "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php";
                         } else {
                             alert("Erro ao logar: " + resp.msg);
                         }

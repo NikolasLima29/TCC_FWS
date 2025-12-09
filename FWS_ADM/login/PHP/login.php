@@ -68,6 +68,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['usuario_nome_ADM'] = $usuario['nome'];
             $_SESSION['usuario_email_ADM'] = $usuario['email'];
 
+            // Atualiza o último login do funcionário
+            $update = $sql->prepare("UPDATE funcionarios SET ultimo_login = NOW() WHERE id = ?");
+            if ($update) {
+                $update->bind_param("i", $usuario['id']);
+                $update->execute();
+                $update->close();
+            }
+
             header("Location: ../../index.html?status=sucesso&msg=Login realizado com sucesso");
             exit;
         } else {

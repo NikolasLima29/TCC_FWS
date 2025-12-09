@@ -73,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        @import url('../../Fonte_Config/fonte_geral.css');
     body {
         background-color: #fff8e1;
-        font-family: "Poppins", sans-serif;
         margin: 0;
         display: flex;
         justify-content: center;
@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .then(r => r.json())
             .then(resp => {
                 if (resp.status === "ok") {
-                    window.location.href = "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
+                    window.location.href = "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php";
                 } else {
                     alert("Erro ao logar: " + resp.msg);
                 }
