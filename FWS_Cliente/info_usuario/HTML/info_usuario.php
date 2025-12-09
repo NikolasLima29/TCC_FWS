@@ -591,6 +591,34 @@ if (!$usuario) die("Usuário não encontrado.");
         </div>
     </div>
 
+    <footer class="text-center bg-body-tertiary">
+        <div class="container pt-4">
+            <!-- Section: Redes sociais -->
+            <section class="mb-4">
+                <!-- Facebook -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+                    href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
+
+                <!-- Google -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fa-solid fa-phone"></i></a>
+
+                <!-- Instagram -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+                    href="https://www.instagram.com/shell.brasil/" role="button" data-mdb-ripple-color="dark"><i
+                        class="fab fa-instagram"></i></a>
+            </section>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: #FFD100;">
+            © 2025 Copyright:
+            <a class="text-body">FWS - Faster Way Service</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+
     <script>
         // Máscara de telefone
         function mascaraTelefone(valor) {

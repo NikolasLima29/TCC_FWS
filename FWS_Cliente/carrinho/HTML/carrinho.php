@@ -1052,7 +1052,7 @@ if (isset($_POST['reservar'])) {
                             "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
                             item.label +
                             "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
-                            )
+                        )
                         .appendTo(ul);
                 };
             }
@@ -1087,7 +1087,7 @@ if (isset($_POST['reservar'])) {
                             "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
                             item.label +
                             "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
-                            )
+                        )
                         .appendTo(ul);
                 };
             }
@@ -1267,199 +1267,233 @@ if (isset($_POST['reservar'])) {
     <div id="reserva-modal"
         style="display:none; position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2100; background:#fff; border-radius:12px; padding:22px; width:360px; max-width:92%; box-shadow:0 10px 40px rgba(0,0,0,0.35); text-align:center;">
         <div id="reserva-modal-content">
-        <!-- Conteúdo preenchido dinamicamente -->
-        <div id="reserva-loading" style="display:flex; flex-direction:column; align-items:center; gap:14px;">
-            <div class="spinner-border text-primary" role="status" style="width:54px;height:54px;"><span
-                    class="visually-hidden">Loading...</span></div>
-            <div style="font-weight:700;">Processando sua reserva...</div>
-            <div style="font-size:13px; color:#666;">Aguarde um instante, estamos gravando seu pedido.</div>
-        </div>
-        <div id="reserva-success" style="display:none;">
-            <div id="reserva-success-title"
-                style="font-size:1.25rem; font-weight:800; color:#00A65A; margin-bottom:8px;">Reserva feita com sucesso
+            <!-- Conteúdo preenchido dinamicamente -->
+            <div id="reserva-loading" style="display:flex; flex-direction:column; align-items:center; gap:14px;">
+                <div class="spinner-border text-primary" role="status" style="width:54px;height:54px;"><span
+                        class="visually-hidden">Loading...</span></div>
+                <div style="font-weight:700;">Processando sua reserva...</div>
+                <div style="font-size:13px; color:#666;">Aguarde um instante, estamos gravando seu pedido.</div>
             </div>
-            <div id="reserva-success-body" style="color:#333; margin-bottom:12px; font-size:0.95rem;">O seu pedido já
-                está sendo preparado, você tem <span id="reserva-countdown" style="font-weight:700;">00:00</span> para
-                chegar no estabelecimento e retirar seu pedido, caso contrário, sua reserva será cancelada.</div>
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button id="reserva-continuar" class="modal-btn-red">Continuar comprando</button>
-                <button id="reserva-meuspedidos" class="modal-btn-yellow">Meus pedidos</button>
+            <div id="reserva-success" style="display:none;">
+                <div id="reserva-success-title"
+                    style="font-size:1.25rem; font-weight:800; color:#00A65A; margin-bottom:8px;">Reserva feita com
+                    sucesso
+                </div>
+                <div id="reserva-success-body" style="color:#333; margin-bottom:12px; font-size:0.95rem;">O seu pedido
+                    já
+                    está sendo preparado, você tem <span id="reserva-countdown" style="font-weight:700;">00:00</span>
+                    para
+                    chegar no estabelecimento e retirar seu pedido, caso contrário, sua reserva será cancelada.</div>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button id="reserva-continuar" class="modal-btn-red">Continuar comprando</button>
+                    <button id="reserva-meuspedidos" class="modal-btn-yellow">Meus pedidos</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    // Intercepta o submit do form-reserva, envia via AJAX e mostra modal com loading + contagem
-    (function () {
-        const form = document.getElementById('form-reserva');
-        if (!form) return;
+    <footer class="text-center bg-body-tertiary">
+        <div class="container pt-4">
+            <!-- Section: Redes sociais -->
+            <section class="mb-4">
+                <!-- Facebook -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+                    href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button"
+                    data-mdb-ripple-color="dark"><i class="fab fa-facebook-f"></i></a>
 
-        const backdrop = document.getElementById('reserva-modal-backdrop');
-        const modal = document.getElementById('reserva-modal');
-        const loading = document.getElementById('reserva-loading');
-        const success = document.getElementById('reserva-success');
-        const countdownEl = document.getElementById('reserva-countdown');
-        const btnContinuar = document.getElementById('reserva-continuar');
-        const btnMeusPedidos = document.getElementById('reserva-meuspedidos');
+                <!-- Google -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button"
+                    data-mdb-ripple-color="dark"><i class="fa-solid fa-phone"></i></a>
 
-        let countdownInterval = null;
+                <!-- Instagram -->
+                <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+                    href="https://www.instagram.com/shell.brasil/" role="button" data-mdb-ripple-color="dark"><i
+                        class="fab fa-instagram"></i></a>
+            </section>
+        </div>
 
-        function showModal() {
-            backdrop.style.display = 'block';
-            modal.style.display = 'block';
-        }
+        <!-- Copyright -->
+        <div class="text-center p-3" style="background-color: #FFD100;">
+            © 2025 Copyright:
+            <a class="text-body">FWS - Faster Way Service</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
 
-        function hideModal() {
-            backdrop.style.display = 'none';
-            modal.style.display = 'none';
-            // limpar interval
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-                countdownInterval = null;
+    <script>
+        // Intercepta o submit do form-reserva, envia via AJAX e mostra modal com loading + contagem
+        (function () {
+            const form = document.getElementById('form-reserva');
+            if (!form) return;
+
+            const backdrop = document.getElementById('reserva-modal-backdrop');
+            const modal = document.getElementById('reserva-modal');
+            const loading = document.getElementById('reserva-loading');
+            const success = document.getElementById('reserva-success');
+            const countdownEl = document.getElementById('reserva-countdown');
+            const btnContinuar = document.getElementById('reserva-continuar');
+            const btnMeusPedidos = document.getElementById('reserva-meuspedidos');
+
+            let countdownInterval = null;
+
+            function showModal() {
+                backdrop.style.display = 'block';
+                modal.style.display = 'block';
             }
-        }
 
-        btnContinuar.addEventListener('click', function () {
-            window.location.href = '/fws/FWS_Cliente/produto/HTML/produto.php';
-        });
-        btnMeusPedidos.addEventListener('click', function () {
-            window.location.href = '/fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php';
-        });
-        // NOTA: deliberadamente não registramos listener para fechar o modal via backdrop
-        // e não exibimos botão de fechar. O modal só é removido pelas ações internas (botões).
+            function hideModal() {
+                backdrop.style.display = 'none';
+                modal.style.display = 'none';
+                // limpar interval
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                }
+            }
 
-        function parseTimeToMs(timestr) {
-            // espera formato HH:MM:SS
-            const parts = timestr.split(':').map(Number);
-            if (parts.length !== 3) return 0;
-            return ((parts[0] * 3600) + (parts[1] * 60) + parts[2]) * 1000;
-        }
+            btnContinuar.addEventListener('click', function () {
+                window.location.href = '/fws/FWS_Cliente/produto/HTML/produto.php';
+            });
+            btnMeusPedidos.addEventListener('click', function () {
+                window.location.href = '/fws/FWS_Cliente/meus_pedidos/HTML/Meus_pedidos.php';
+            });
+            // NOTA: deliberadamente não registramos listener para fechar o modal via backdrop
+            // e não exibimos botão de fechar. O modal só é removido pelas ações internas (botões).
 
-        function formatRemaining(ms) {
-            if (ms <= 0) return '00:00:00';
-            const totalSec = Math.floor(ms / 1000);
-            const h = Math.floor(totalSec / 3600);
-            const m = Math.floor((totalSec % 3600) / 60);
-            const s = totalSec % 60;
-            if (h > 0)
-            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-        }
+            function parseTimeToMs(timestr) {
+                // espera formato HH:MM:SS
+                const parts = timestr.split(':').map(Number);
+                if (parts.length !== 3) return 0;
+                return ((parts[0] * 3600) + (parts[1] * 60) + parts[2]) * 1000;
+            }
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
+            function formatRemaining(ms) {
+                if (ms <= 0) return '00:00:00';
+                const totalSec = Math.floor(ms / 1000);
+                const h = Math.floor(totalSec / 3600);
+                const m = Math.floor((totalSec % 3600) / 60);
+                const s = totalSec % 60;
+                if (h > 0)
+                    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            }
 
-            // Verifica se o carrinho está vazio (nenhum form com data-nome)
-            const itensNoCarrinho = document.querySelectorAll("form[data-nome]").length;
-            if (itensNoCarrinho === 0) {
-                // mostra toast parecido com limite de estoque
-                (function showEmptyCartToast() {
-                    // evita duplicar toasts
-                    if (document.getElementById('toast-empty-cart')) return;
-                    const toast = document.createElement('div');
-                    toast.id = 'toast-empty-cart';
-                    toast.style.position = 'fixed';
-                    toast.style.top = '50%';
-                    toast.style.left = '50%';
-                    toast.style.transform = 'translate(-50%,-50%)';
-                    toast.style.background = '#E53935';
-                    toast.style.color = 'white';
-                    toast.style.padding = '15px 25px';
-                    toast.style.borderRadius = '12px';
-                    toast.style.fontWeight = '600';
-                    toast.style.zIndex = '9999';
-                    toast.style.boxShadow = '0 8px 25px rgba(0,0,0,0.4)';
-                    toast.style.display = 'flex';
-                    toast.style.alignItems = 'center';
-                    toast.style.gap = '12px';
-                    toast.style.maxWidth = '360px';
-                    toast.style.textAlign = 'center';
-                    toast.style.fontSize = '14px';
-                    toast.innerHTML = `
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Verifica se o carrinho está vazio (nenhum form com data-nome)
+                const itensNoCarrinho = document.querySelectorAll("form[data-nome]").length;
+                if (itensNoCarrinho === 0) {
+                    // mostra toast parecido com limite de estoque
+                    (function showEmptyCartToast() {
+                        // evita duplicar toasts
+                        if (document.getElementById('toast-empty-cart')) return;
+                        const toast = document.createElement('div');
+                        toast.id = 'toast-empty-cart';
+                        toast.style.position = 'fixed';
+                        toast.style.top = '50%';
+                        toast.style.left = '50%';
+                        toast.style.transform = 'translate(-50%,-50%)';
+                        toast.style.background = '#E53935';
+                        toast.style.color = 'white';
+                        toast.style.padding = '15px 25px';
+                        toast.style.borderRadius = '12px';
+                        toast.style.fontWeight = '600';
+                        toast.style.zIndex = '9999';
+                        toast.style.boxShadow = '0 8px 25px rgba(0,0,0,0.4)';
+                        toast.style.display = 'flex';
+                        toast.style.alignItems = 'center';
+                        toast.style.gap = '12px';
+                        toast.style.maxWidth = '360px';
+                        toast.style.textAlign = 'center';
+                        toast.style.fontSize = '14px';
+                        toast.innerHTML = `
                     <div style="font-size:20px">🚫</div>
                     <div style="text-align:left">Não é possível fazer a reserva — não há nenhum produto no carrinho.</div>
                 `;
-                    document.body.appendChild(toast);
-                    setTimeout(() => {
-                        toast.style.transition = 'opacity 0.3s ease';
-                        toast.style.opacity = '0';
-                        setTimeout(() => toast.remove(), 300);
-                    }, 4000);
-                })();
-                return; // não prosseguir com o submit
-            }
+                        document.body.appendChild(toast);
+                        setTimeout(() => {
+                            toast.style.transition = 'opacity 0.3s ease';
+                            toast.style.opacity = '0';
+                            setTimeout(() => toast.remove(), 300);
+                        }, 4000);
+                    })();
+                    return; // não prosseguir com o submit
+                }
 
-            // prepara FormData e adiciona flags necessárias (inclui 'reservar' para o backend)
-            const fd = new FormData(form);
-            fd.append('ajax', '1');
-            // O backend espera a presença de 'reservar' para executar a criação da venda
-            fd.append('reservar', '1');
+                // prepara FormData e adiciona flags necessárias (inclui 'reservar' para o backend)
+                const fd = new FormData(form);
+                fd.append('ajax', '1');
+                // O backend espera a presença de 'reservar' para executar a criação da venda
+                fd.append('reservar', '1');
 
-            showModal();
-            loading.style.display = 'flex';
-            success.style.display = 'none';
+                showModal();
+                loading.style.display = 'flex';
+                success.style.display = 'none';
 
-            // envia para mesma URL (carrinho.php)
-            fetch('', {
-                    method: 'POST',
-                    body: fd
-                })
-                .then(r => r.text())
-                .then(text => {
-                    let data;
-                    try {
-                        data = JSON.parse(text);
-                    } catch (err) {
-                        throw new Error('Resposta inválida do servidor: ' + text);
-                    }
-                    // agora 'data' é o JSON esperado
+                // envia para mesma URL (carrinho.php)
+                fetch('', {
+                        method: 'POST',
+                        body: fd
+                    })
+                    .then(r => r.text())
+                    .then(text => {
+                        let data;
+                        try {
+                            data = JSON.parse(text);
+                        } catch (err) {
+                            throw new Error('Resposta inválida do servidor: ' + text);
+                        }
+                        // agora 'data' é o JSON esperado
 
 
 
-                    // exibe loading por 4s, depois sucesso
-                    setTimeout(() => {
-                        loading.style.display = 'none';
-                        success.style.display = 'block';
+                        // exibe loading por 4s, depois sucesso
+                        setTimeout(() => {
+                            loading.style.display = 'none';
+                            success.style.display = 'block';
 
-                        // calcula deadline: data_criacao + tempo_chegada
-                        // data_criacao vem no formato 'YYYY-MM-DD HH:MM:SS'
-                        const created = data.data_criacao ? new Date(data.data_criacao.replace(
-                            ' ', 'T')) : new Date();
-                        const msLimit = parseTimeToMs(data.tempo_chegada || '00:30:00');
-                        const deadline = new Date(created.getTime() + msLimit);
+                            // calcula deadline: data_criacao + tempo_chegada
+                            // data_criacao vem no formato 'YYYY-MM-DD HH:MM:SS'
+                            const created = data.data_criacao ? new Date(data.data_criacao
+                                .replace(
+                                    ' ', 'T')) : new Date();
+                            const msLimit = parseTimeToMs(data.tempo_chegada || '00:30:00');
+                            const deadline = new Date(created.getTime() + msLimit);
 
-                        function updateCountdown() {
-                            const now = new Date();
-                            const rem = deadline.getTime() - now.getTime();
-                            countdownEl.textContent = formatRemaining(rem);
-                            if (rem <= 0) {
-                                countdownEl.textContent = '00:00:00';
-                                if (countdownInterval) {
-                                    clearInterval(countdownInterval);
-                                    countdownInterval = null;
+                            function updateCountdown() {
+                                const now = new Date();
+                                const rem = deadline.getTime() - now.getTime();
+                                countdownEl.textContent = formatRemaining(rem);
+                                if (rem <= 0) {
+                                    countdownEl.textContent = '00:00:00';
+                                    if (countdownInterval) {
+                                        clearInterval(countdownInterval);
+                                        countdownInterval = null;
+                                    }
                                 }
                             }
-                        }
 
-                        updateCountdown();
-                        countdownInterval = setInterval(updateCountdown, 500);
+                            updateCountdown();
+                            countdownInterval = setInterval(updateCountdown, 500);
 
-                    }, 4000);
-                }).catch(err => {
-                    console.error('Erro ao enviar reserva', err);
-                    loading.style.display = 'none';
-                    success.style.display = 'block';
-                    document.getElementById('reserva-success-title').textContent =
-                        'Erro ao efetuar reserva';
-                    // mostrar mensagem de erro mais informativa (trunca para evitar html enorme)
-                    const msg = err.message ? err.message : 'Ocorreu um erro ao processar seu pedido.';
-                    document.getElementById('reserva-success-body').textContent = msg.substring(0, 300);
-                });
-        });
+                        }, 4000);
+                    }).catch(err => {
+                        console.error('Erro ao enviar reserva', err);
+                        loading.style.display = 'none';
+                        success.style.display = 'block';
+                        document.getElementById('reserva-success-title').textContent =
+                            'Erro ao efetuar reserva';
+                        // mostrar mensagem de erro mais informativa (trunca para evitar html enorme)
+                        const msg = err.message ? err.message :
+                            'Ocorreu um erro ao processar seu pedido.';
+                        document.getElementById('reserva-success-body').textContent = msg.substring(0,
+                            300);
+                    });
+            });
 
-    })();
-</script>
+        })();
+    </script>
 </body>
 
 </html>
