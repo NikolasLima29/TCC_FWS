@@ -1385,14 +1385,23 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 
   <style>
     @media (max-width: 768px) {
+      .botoes {
+        display: flex;
+        width: auto;
+        gap: 20px;
+        position: absolute;
+        right: 10px;
+        top: 20px;
+      }
+
       .btn-entrar {
-        margin-left: auto;
-        margin-right: 15px !important;
+        margin-left: 0;
+        margin-right: 0 !important;
       }
 
       .btn-cadastre-se {
-        margin-right: auto;
-        margin-left: 25px !important;
+        margin-right: 0;
+        margin-left: 0 !important;
       }
 
       .carousel-item img {
@@ -1417,6 +1426,10 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
         margin: 0;
         overflow-x: hidden;
         max-width: 100vw;
+      }
+
+      section.section {
+        overflow-x: visible;
       }
 
       html,
