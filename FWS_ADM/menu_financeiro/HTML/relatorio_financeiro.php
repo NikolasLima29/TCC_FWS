@@ -411,7 +411,10 @@ if(!$result_retiradas){
         }
 
         .btn-reposicao:hover {
-            background-color: #E67E00;
+            /* escurece o vermelho do botão PDF e aplica animação igual ao Excel */
+            background-color: #c41616 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
         }
 
         .btn-excel {
@@ -426,6 +429,7 @@ if(!$result_retiradas){
 
         .btn-excel:hover {
             background-color: #389e0d;
+            transform: translateY(-2px);
         }
 
         .btn-retirada {
@@ -504,6 +508,49 @@ if(!$result_retiradas){
 
         .tab-content.active {
             display: block;
+        }
+
+        /* Animações e estilo de botão (igual lista_funcionarios.php) */
+        body { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .container, .container-form { animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-voltar,
+        .btn-cadastrar {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            transition: all .2s ease;
+            color: white;
+            text-decoration: none !important;
+            display: inline-block;
+        }
+
+        .btn-voltar { background-color: #e68000; }
+
+        .btn-voltar:hover,
+        .btn-cadastrar:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 10px rgba(255, 138, 0, 0.4);
+        }
+
+        /* Preservar tamanho reduzido usado por .btn-reposicao antes da mudança */
+        .btn-voltar.small {
+            padding: 5px 10px;
+            font-size: 0.85rem;
+            border-radius: 4px;
+        }
+
+        /* Forçar cor do texto branco em todos os estados (evitar azul em links) */
+        .btn-voltar,
+        .btn-voltar:link,
+        .btn-voltar:visited,
+        .btn-voltar:active,
+        .btn-voltar:hover {
+            color: white !important;
         }
 
         @import url('../../Fonte_Config/fonte_geral.css');
@@ -603,9 +650,7 @@ if(!$result_retiradas){
             <div class="col py-3" id="conteudo-principal">
                 <div class="container">
                     <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px; justify-content:space-between;">
-                        <a href="menu_financeiro.php" class="btn btn-warning" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
-                            <span style="font-size:18px;"></span> ← Voltar
-                        </a>
+                        <a href="menu_financeiro.php" class="btn-voltar">← Voltar</a>
                         <h2 style="margin:0; flex:1; text-align:center;">Relatório Financeiro</h2>
                         <div style="width:120px;"></div>
                     </div>
@@ -643,7 +688,7 @@ if(!$result_retiradas){
                                     </select>
                                 </div>
                                 <div style="flex:0 0 80px;">
-                                    <button type="submit" class="btn-reposicao" style="width:100%;">Ver mês</button>
+                                    <button type="submit" class="btn-voltar small" style="width:100%;">Ver mês</button>
                                 </div>
                             </form>
                             <canvas id="graficoLinha" width="400" height="380" style="max-width:100%; margin:auto; display:block;"></canvas>
@@ -664,7 +709,7 @@ if(!$result_retiradas){
                                     <input type="date" name="data_fim" id="data_fim" class="form-control" value="<?= isset($_GET['data_fim']) ? htmlspecialchars($_GET['data_fim']) : '' ?>">
                                 </div>
                                 <div style="flex:0 0 80px;">
-                                    <button type="submit" class="btn-reposicao" style="width:100%;">Filtrar</button>
+                                    <button type="submit" class="btn-voltar small" style="width:100%">Filtrar</button>
                                 </div>
                             </form>
                             <canvas id="graficoDespesas" width="300" height="300" style="max-width:100%; margin:auto; display:block;"></canvas>
@@ -874,8 +919,8 @@ if(!$result_retiradas){
                                     <label for="perc_estoque" style="font-size:0.9rem; color:#333;">% Estoque:</label>
                                     <input type="number" name="perc_estoque" id="perc_estoque" class="form-control" min="0" max="100" step="5" value="<?= isset($_GET['perc_estoque']) ? intval($_GET['perc_estoque']) : 100 ?>" style="font-size:0.9rem;">
                                 </div>
-                                <div style="flex:0 0 70px;">
-                                    <button type="submit" class="btn-reposicao" style="width:100%; font-size:0.85rem;">Aplicar</button>
+                                <div style="flex:0 0 80px;">
+                                    <button type="submit" class="btn-voltar small" style="width:100%">Ver mês</button>
                                 </div>
                             </form>
                             <div style="position:relative; width:280px; height:280px; margin:0 auto;">
@@ -920,7 +965,7 @@ if(!$result_retiradas){
                                     </select>
                                 </div>
                                 <div style="flex:0 0 80px;">
-                                    <button type="submit" class="btn-reposicao" style="width:100%;">Ver mês</button>
+                                    <button type="submit" class="btn-voltar small" style="width:100%">Ver mês</button>
                                 </div>
                             </form>
                             <canvas id="graficoCategorias" width="400" height="420" style="max-width:100%; margin:auto; display:block;"></canvas>
@@ -1162,7 +1207,7 @@ if(!$result_retiradas){
                     });
 
                     // Salvar scroll ao clicar em botões de filtro
-                    const botoesFiltro = document.querySelectorAll('.btn-reposicao');
+                    const botoesFiltro = document.querySelectorAll('.btn-voltar');
                     botoesFiltro.forEach(btn => {
                         btn.addEventListener('click', function() {
                             sessionStorage.setItem('scrollPos', window.scrollY);

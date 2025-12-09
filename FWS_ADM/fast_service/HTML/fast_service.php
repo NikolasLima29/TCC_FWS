@@ -350,6 +350,17 @@ $pagina = 'fast';
         transition: all 0.3s;
     }
 
+    /* Animação padronizada (scale + sombra) para botões locais; NÃO altera cores */
+    .btn-acao:hover,
+    .btn-acao:focus,
+    .btn-acao:active,
+    .btn-acao-alterar:hover,
+    .btn-acao-pagar:hover,
+    .btn.btn-sm:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
     .btn-acao-alterar {
         background-color: #ff9100;
         color: white;
