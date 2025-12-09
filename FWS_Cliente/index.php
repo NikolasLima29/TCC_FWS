@@ -98,6 +98,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     body {
       font-family: 'Ubuntu', sans-serif !important;
       background-color: white;
+      overflow-x: hidden;
     }
 
     p,
@@ -604,8 +605,8 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
   <section class="section">
     <div class="botoes">
       <?php if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true): ?>
-      <a href="cadastro/HTML/cadastro.html" class="btn">Cadastre-se</a>
-      <a href="login/HTML/login.html" class="btn">Entrar</a>
+      <a href="cadastro/HTML/cadastro.html" class="btn btn-cadastre-se">Cadastre-se</a>
+      <a href="login/HTML/login.html" class="btn btn-entrar">Entrar</a>
       <?php endif; ?>
     </div>
     <div class="div-jd-america">
@@ -614,7 +615,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
   </section>
 
   <section>
-    <div id="carrossel-custom" style="max-width:480px; margin:0 auto; padding:24px 0;">
+    <div id="carrossel-custom" style="padding:24px 0;">
       <div class="carrossel-slide" style="position: relative; height: 220px; min-height: 140px;">
         <button id="btnPrev"
           style="position:absolute; left:0; top:50%; transform: translateY(-50%); z-index:10; font-size: 1.5rem; background: transparent; border: none; cursor: pointer;">&#9664;</button>
@@ -633,6 +634,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     #carrossel-custom {
       width: 90vw;
       max-width: 480px;
+      margin: 0 auto;
     }
 
     .carrossel-slide {
@@ -701,6 +703,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     let idx = 0;
     const imgTags = document.querySelectorAll('.carrossel-img');
     let timeout;
+    let isMobile = window.innerWidth <= 768;
 
     function showCarrossel() {
       const total = imgs.length;
@@ -744,9 +747,19 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     startAuto();
 
     const carrossel = document.querySelector('.carrossel-slide');
-    carrossel.addEventListener('mouseenter', pauseAuto);
-    carrossel.addEventListener('mouseleave', startAuto);
-
+    
+    // Em mobile, autoplay contínuo. Em desktop, pausar ao passar mouse
+    if (isMobile) {
+      // Mobile: continua autoplay sempre
+      carrossel.addEventListener('click', () => {
+        pauseAuto();
+        startAuto();
+      });
+    } else {
+      // Desktop: pausar ao passar mouse
+      carrossel.addEventListener('mouseenter', pauseAuto);
+      carrossel.addEventListener('mouseleave', startAuto);
+    }
 
     // Botões next e prev
     document.getElementById('btnNext').addEventListener('click', () => {
@@ -858,7 +871,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 
   <script>
     $(function () {
-      var usuario_id = < ? php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ? > ;
+      var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
 
 
       $(".Carrinho").on("click", function () {
@@ -1020,6 +1033,7 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     body {
       background: #fff;
       /* Garantir fundo branco total */
+      overflow-x: hidden;
     }
 
     /* Container do carrossel */
@@ -1217,10 +1231,11 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
     }
 
     .custom-modal img {
-      max-width: 400px;
-
+      width: 300px;
+      height: 210px;
       margin-bottom: 10px;
       border-radius: 8px;
+      object-fit: cover;
     }
 
     .custom-modal .produto-titulo {
@@ -1335,17 +1350,50 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 
     .btn-cadastrar {
       background: #FFD100;
-      color: #000000ff;
+      color: #000000;
     }
 
     .btn-voltar {
       background: #999;
       color: #000;
     }
+
+    @media (max-width: 768px) {
+      .modal-actions a,
+      .modal-actions button {
+        margin: 8px 0;
+        display: inline-block;
+        width: auto;
+        padding: 12px 20px;
+      }
+
+      .btn-login {
+        margin-right: 15px;
+      }
+
+      .btn-cadastrar {
+        margin-left: 25px;
+      }
+
+      .btn-login,
+      .btn-cadastrar,
+      .btn-voltar {
+        padding: 12px 20px;
+      }
+    }
   </style>
 
   <style>
     @media (max-width: 768px) {
+      .btn-entrar {
+        margin-left: auto;
+        margin-right: 15px !important;
+      }
+
+      .btn-cadastre-se {
+        margin-right: auto;
+        margin-left: 25px !important;
+      }
 
       .carousel-item img {
         max-height: 180px;
@@ -1361,6 +1409,154 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 
       .carousel-caption .carrossel-buttons {
         flex-direction: column;
+      }
+
+      /* Carrossel responsivo para mobile */
+      section {
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+        max-width: 100vw;
+      }
+
+      html,
+      body {
+        max-width: 100vw;
+        overflow-x: hidden !important;
+      }
+
+      #carrossel-custom {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 16px 0 !important;
+        margin: 0 !important;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .carrossel-slide {
+        height: 160px;
+        min-height: 100px;
+        overflow: hidden;
+      }
+
+      .carrossel-img {
+        max-height: 130px;
+      }
+
+      .carrossel-img.center {
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+
+      .carrossel-img.left {
+        transform: translate(calc(-50% - 100%), -50%) scale(0.9) rotate(-6deg);
+      }
+
+      .carrossel-img.right {
+        transform: translate(calc(-50% + 100%), -50%) scale(0.9) rotate(6deg);
+      }
+
+      #btnPrev,
+      #btnNext {
+        font-size: 1.2rem !important;
+      }
+
+      /* Modal responsivo para mobile */
+      .custom-modal {
+        min-width: 320px;
+        padding: 24px 20px 18px 20px;
+      }
+
+      .custom-modal img {
+        width: 300px;
+        height: 210px;
+        object-fit: cover;
+      }
+
+      .custom-modal .produto-titulo {
+        font-size: 1.1rem;
+      }
+
+      .custom-modal .produto-descricao {
+        font-size: 0.9rem;
+      }
+
+      .custom-modal .modal-actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .custom-modal .btn-popup {
+        width: 100%;
+        padding: 10px 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      html,
+      body {
+        max-width: 100vw;
+        overflow-x: hidden !important;
+      }
+
+      #carrossel-custom {
+        padding: 12px 0 !important;
+        margin: 0 !important;
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .carrossel-slide {
+        height: 140px;
+        overflow: hidden;
+      }
+
+      .carrossel-img {
+        max-height: 110px;
+      }
+
+      .carrossel-img.left {
+        transform: translate(calc(-50% - 80%), -50%) scale(0.85) rotate(-5deg);
+      }
+
+      .carrossel-img.right {
+        transform: translate(calc(-50% + 80%), -50%) scale(0.85) rotate(5deg);
+      }
+
+      #btnPrev,
+      #btnNext {
+        font-size: 1rem !important;
+      }
+
+      .custom-modal {
+        min-width: 280px;
+        padding: 20px 16px 16px 16px;
+      }
+
+      .custom-modal img {
+        width: 300px;
+        height: 210px;
+        object-fit: cover;
+      }
+
+      .custom-modal .contador-box {
+        margin: 14px 0;
+      }
+
+      .custom-modal .contador-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+      }
+
+      .custom-modal .quantidade-number {
+        font-size: 1rem;
+        width: 35px;
+      }
+
+      .custom-modal .btn-popup {
+        font-size: 0.9rem;
+        padding: 8px 12px;
       }
     }
   </style>

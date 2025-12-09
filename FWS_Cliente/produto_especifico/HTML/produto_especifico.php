@@ -548,13 +548,13 @@ if ($result_recomendados->num_rows == 0) {
       <div style="margin-bottom: 30px; display: flex; gap: 12px; align-items: center;">
         <span style="font-weight:bold; font-size: 0.95rem;">Compartilhar:</span>
         <button type="button" class="btn-compartilhar-whatsapp" data-produto-id="<?php echo $produto['id']; ?>" data-produto-nome="<?php echo htmlspecialchars($produto['nome']); ?>" title="Compartilhar no WhatsApp" style="background: white; border: 2px solid #25D366; color: #25D366; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem;">
-          <i class="fab fa-whatsapp"></i>
+          <i class="bi bi-whatsapp"></i>
         </button>
         <button type="button" class="btn-compartilhar-facebook" data-produto-id="<?php echo $produto['id']; ?>" data-produto-nome="<?php echo htmlspecialchars($produto['nome']); ?>" title="Compartilhar no Facebook" style="background: white; border: 2px solid #1877F2; color: #1877F2; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem;">
-          <i class="fab fa-facebook"></i>
+          <i class="bi bi-facebook"></i>
         </button>
         <button type="button" class="btn-compartilhar-link" data-produto-id="<?php echo $produto['id']; ?>" title="Copiar link" style="background: white; border: 2px solid #c40000; color: #c40000; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; transition: all 0.3s ease; font-size: 1.2rem;">
-          <i class="fas fa-link"></i>
+          <i class="bi bi-link-45deg"></i>
         </button>
       </div>
 
@@ -563,7 +563,7 @@ if ($result_recomendados->num_rows == 0) {
         <div style="margin-top: 8px; margin-bottom: 0px; background: #FFF; border:2px solid #111; border-radius: 8px; font-size:1rem; padding:8px 16px; font-weight:600; display:inline-block;">
           PARA MAIORES DE 18 anos:
           <span style="font-weight:400;"><?php echo htmlspecialchars($mensagem_etaria ?? 'Necessário RG na entrega/retirada'); ?></span>
-          <i class="fas fa-ban" style="color:#C40000; margin-left:10px; font-size:1.1em;"></i>
+          <i class="bi bi-exclamation-circle-fill" style="color:#C40000; margin-left:10px; font-size:1.1em;"></i>
         </div>
       <?php endif ?>
     </div>
@@ -591,7 +591,7 @@ if ($result_recomendados->num_rows == 0) {
         style="background:#11C47E; color:white; border:none; border-radius:9px; font-size:1.26rem; font-weight:700; padding:12px 40px 12px 24px; box-shadow:0 2px 4px #0002; cursor:pointer; position:relative; box-sizing:border-box; display:flex; align-items:center;"
         <?php echo ($produto['estoque'] == 0) ? 'disabled' : ''; ?>>
         adicionar ao carrinho
-        <span style="margin-left:7px; font-size:1.3rem;"><i class="fas fa-shopping-cart"></i></span>
+        <span style="margin-left:7px; font-size:1.3rem;"><i class="bi bi-cart-fill"></i></span>
       </button>
     </div>
   </div>
