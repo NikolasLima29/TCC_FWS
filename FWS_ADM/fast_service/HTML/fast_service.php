@@ -387,8 +387,6 @@ $pagina = 'fast';
         font-weight: bold;
     }
 
-
-   
     .pedido-info {
         display: flex;
         gap: 32px;
