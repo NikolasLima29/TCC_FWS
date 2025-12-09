@@ -920,8 +920,10 @@ if (isset($_POST['reservar'])) {
                             style="width: 300px;">
                         <button class="btn btn-outline-light" type="submit"
                             style="background-color: #FFD100; border-color: #FFD100;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" class="bi bi-search" viewBox="0 0 16 16">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-search"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                             </svg>
                         </button>
                     </form>
@@ -935,22 +937,22 @@ if (isset($_POST['reservar'])) {
                     <ul class="navbar-nav d-flex align-items-center gap-4 justify-content-center w-100"
                         style="margin-right: 40px;">
                         <li class="nav-item">
-                            <a class="nav-link" href="../../index.php" data-bs-toggle="collapse" data-bs-target="#collapsibleNavId">
+                            <a class="nav-link" href="../../index.php">
                                 <h5 class="m-0 text-white menu-bold">Home</h5>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../../produto/HTML/produto.php" data-bs-toggle="collapse" data-bs-target="#collapsibleNavId">
+                            <a class="nav-link" href="../../produto/HTML/produto.php">
                                 <h5 class="m-0 text-white menu-bold">Produtos</h5>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../../meus_pedidos/HTML/Meus_pedidos.php" data-bs-toggle="collapse" data-bs-target="#collapsibleNavId">
+                            <a class="nav-link" href="../../meus_pedidos/HTML/Meus_pedidos.php">
                                 <h5 class="m-0 text-white menu-bold">Meus Pedidos</h5>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../../tela_sobre_nos/HTML/sobre_nos.php" data-bs-toggle="collapse" data-bs-target="#collapsibleNavId">
+                            <a class="nav-link" href="../../tela_sobre_nos/HTML/sobre_nos.php">
                                 <h5 class="m-0 text-white menu-bold">Sobre Nós</h5>
                             </a>
                         </li>
@@ -1023,50 +1025,6 @@ if (isset($_POST['reservar'])) {
 
     <script>
         $(function () {
-            // Comportamento de fechamento do menu mobile (collapse)
-            const collapseEl = document.getElementById('collapsibleNavId');
-            const toggler = document.querySelector('.navbar-toggler');
-            
-            if (collapseEl && toggler && window.bootstrap) {
-                const navLinks = collapseEl.querySelectorAll('.navbar-nav .nav-link');
-                let bsCollapse = new bootstrap.Collapse(collapseEl, { toggle: false });
-
-                // Alterna o collapse ao clicar no toggle (abre/fecha)
-                toggler.addEventListener('click', (e) => {
-                    bsCollapse.toggle();
-                });
-
-                // Fecha ao clicar em qualquer item de menu (em mobile)
-                navLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        if (window.innerWidth < 577) {
-                            bsCollapse.hide();
-                        }
-                    });
-                });
-
-                // Fecha ao clicar fora do menu quando aberto
-                document.addEventListener('click', (e) => {
-                    const isOpen = collapseEl.classList.contains('show');
-                    if (!isOpen) return;
-                    if (toggler.contains(e.target)) return;
-                    if (!collapseEl.contains(e.target)) {
-                        bsCollapse.hide();
-                    }
-                });
-            }
-            
-            // Enviar formulário ao clicar no botão de busca (desktop)
-            $('form[role="search"]').on('submit', function(e) {
-                const q = $(this).find('input[name="q"]').val().trim();
-                if (q) {
-                    return true;
-                } else {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
             var autocomplete = $("#search").autocomplete({
                 source: function (request, response) {
                     $.ajax({
@@ -1136,14 +1094,6 @@ if (isset($_POST['reservar'])) {
                 };
             }
         });
-    </script>
-
-    <script>
-        // Toggle de menu mobile com visual feedback
-        function toggleMenu(button) {
-            const isExpanded = button.getAttribute('aria-expanded') === 'true';
-            button.setAttribute('aria-expanded', !isExpanded);
-        }
     </script>
 
     <script>
