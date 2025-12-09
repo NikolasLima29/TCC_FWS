@@ -45,47 +45,38 @@ $pagina = 'painel';
     <main>
         <div class="container-fluid">
             <div class="row flex-nowrap">
-                <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark" id="fund">
-                    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
-                        id="menu">
+                <div class="col-auto px-sm-2 px-0 bg-dark" id="fund" style="width:250px; min-width:250px; max-width:250px;">
+                    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100" id="menu">
                         <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
                             <a id="logo-linha"><img src="../IMG/logo_linhas.png"></a>
                             <li class="nav-item">
                                 <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php" class="nav-link align-middle px-0 <?php if($pagina=='painel') echo 'active'; ?>" id="cor-fonte">
-                                    <i class="fs-4 bi-house"></i><img src="../IMG/painelgeral.png"> <span
-                                        class="ms-1 d-none d-sm-inline">Painel Geral</span></img>
+                                    <i class="fs-4 bi-house"></i><img src="../IMG/painelgeral.png"> <span class="ms-1 d-none d-sm-inline">Painel Geral</span></img>
                                 </a>
                             </li>
                             <li>
                                 <a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0 <?php if($pagina=='fast') echo 'active'; ?>" id="cor-fonte">
-                                    <i class="fs-4 bi-house"></i><img src="../IMG/fastservice.png"> <span
-                                        class="ms-1 d-none d-sm-inline">Fast Service</span></img>
+                                    <i class="fs-4 bi-house"></i><img src="../IMG/fastservice.png"> <span class="ms-1 d-none d-sm-inline">Fast Service</span></img>
                                 </a>
                             </li>
                             <li>
                                 <a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0 <?php if($pagina=='financeiro') echo 'active'; ?>" id="cor-fonte">
-                                    <i class="fs-4 bi-house"></i><img src="../IMG/financeiro.png"> <span
-                                        class="ms-1 d-none d-sm-inline">Financeiro</span></img>
+                                    <i class="fs-4 bi-house"></i><img src="../IMG/financeiro.png"> <span class="ms-1 d-none d-sm-inline">Financeiro</span></img>
                                 </a>
                             </li>
                             <li>
                                 <a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0 <?php if($pagina=='vendas') echo 'active'; ?>" id="cor-fonte">
-                                    <i class="fs-4 bi-house"></i><img src="../IMG/vendaspai.png"> <span
-                                        class="ms-1 d-none d-sm-inline">Vendas</span></img>
+                                    <i class="fs-4 bi-house"></i><img src="../IMG/vendaspai.png"> <span class="ms-1 d-none d-sm-inline">Vendas</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0 <?php if($pagina=='estoque') echo 'active'; ?>"
-                                    id="cor-fonte">
-                                    <i class="fs-4 bi-house"></i><img src="../IMG/estoque.png"> <span
-                                        class="ms-1 d-none d-sm-inline">Estoque</span></img>
+                                <a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0 <?php if($pagina=='estoque') echo 'active'; ?>" id="cor-fonte">
+                                    <i class="fs-4 bi-house"></i><img src="../IMG/estoque.png"> <span class="ms-1 d-none d-sm-inline">Estoque</span></img>
                                 </a>
                             </li>
                             <li>
-                                <a href="/fws/FWS_ADM/produtos/HTML/cadastro_produto.php"
-                                    class="nav-link align-middle px-0 <?php if($pagina=='produtos') echo 'active'; ?>" id="cor-fonte">
-                                    <i class="fs-4 bi-house"></i><img src="../IMG/produtos.png"> <span
-                                        class="ms-1 d-none d-sm-inline">Produtos</span></img>
+                                <a href="/fws/FWS_ADM/produtos/HTML/cadastro_produto.php" class="nav-link align-middle px-0 <?php if($pagina=='produtos') echo 'active'; ?>" id="cor-fonte">
+                                    <i class="fs-4 bi-house"></i><img src="../IMG/produtos.png"> <span class="ms-1 d-none d-sm-inline">Produtos</span></img>
                                 </a>
                             </li>
                             <li>
@@ -96,42 +87,30 @@ $pagina = 'painel';
                             </li>
                             <li>
                                 <a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0 <?php if($pagina=='funcionarios') echo 'active'; ?>" id="cor-fonte">
-                                    <i class="fs-4 bi-house"></i><img src="../IMG/funcionarios.png"> <span
-                                        class="ms-1 d-none d-sm-inline">Funcionários</span></img>
+                                    <i class="fs-4 bi-house"></i><img src="../IMG/funcionarios.png"> <span class="ms-1 d-none d-sm-inline">Funcionários</span></img>
                                 </a>
                             </li>
                         </ul>
                         <hr>
                         <div class="dropdown pb-4">
-                            <a href="#"
-                                class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
-                                id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="../../fotodeperfiladm.png " width="30" height="30" class="rounded-circle">
-                                    <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
+                                <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
                                 <li><a class="dropdown-item" href="../../perfil/HTML/perfil.php">Perfil</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="../../perfil/HTML/logout.php">Sair da conta</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                <div class="col py-3">
-                    <h3 id="texto">Painel Geral</h3>
-
-
+                <div class="col py-3" style="background: #fff8e1;">
+                    <div class="container" style="max-width: 1200px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);">
+                        <h3 id="texto">Painel Geral</h3>
+                        <!-- Conteúdo principal pode ser inserido aqui -->
+                    </div>
                 </div>
-
-
-
-
-            </div>
-
-
-        </div>
 
     </main>
     <footer>
