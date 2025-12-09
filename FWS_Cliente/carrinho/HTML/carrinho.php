@@ -181,9 +181,6 @@ if (isset($_POST['reservar'])) {
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -358,6 +355,7 @@ if (isset($_POST['reservar'])) {
 
 <!doctype html>
 <html lang="pt-BR">
+
 
 <head>
     <title>Carrinho</title>
@@ -885,7 +883,7 @@ if (isset($_POST['reservar'])) {
                 <!-- Botão do menu hambúrguer -->
                 <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapsibleNavId" aria-controls="collapsibleNavId" aria-expanded="false"
-                    aria-label="Toggle navigation" onclick="toggleMenu(this)">
+                    aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"><span></span></span>
                 </button>
 
@@ -1262,7 +1260,6 @@ if (isset($_POST['reservar'])) {
     </div>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Modal/Popup de confirmação de reserva -->
     <div id="reserva-modal-backdrop"
