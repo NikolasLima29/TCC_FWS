@@ -444,7 +444,7 @@ if (!$usuario) die("Usuário não encontrado.");
             <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get">
                 <input id="search-mobile" class="form-control me-2" type="search" name="q" placeholder="Pesquisar...">
                 <button class="btn btn-outline-light" type="submit"
-                    style="background-color: #FFD100; border-color: #FFD100;">
+                    style="background-color: #FFD100; border-color: #FFD100; width: 45px; min-width: 45px; padding: 0.375rem 0.25rem;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" class="bi bi-search"
                         viewBox="0 0 16 16">
                         <path
