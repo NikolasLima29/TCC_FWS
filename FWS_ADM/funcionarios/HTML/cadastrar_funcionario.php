@@ -300,7 +300,7 @@ $pagina = 'funcionarios';
                         <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png" alt="Logo"></li>
 
                         <li class="nav-item">
-                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html"
+                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
                                 class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png" alt="Painel Geral">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
@@ -515,7 +515,7 @@ $pagina = 'funcionarios';
                     .then(resp => {
                         if (resp.status === "ok") {
                             window.location.href =
-                                "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
+                                "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php";
                         } else {
                             alert("Erro ao logar: " + resp.msg);
                         }

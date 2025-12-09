@@ -5,7 +5,7 @@ $conn = $sql;
 session_start();
 
 /* ============================================================
-    AUTENTICAÇÃO
+   AUTENTICAÇÃO
    ============================================================ */
 if (!isset($_SESSION['usuario_id_ADM'])) {
     header("Location: ../../index.html?status=erro&msg=Faça login primeiro");
@@ -15,7 +15,7 @@ if (!isset($_SESSION['usuario_id_ADM'])) {
 $id = $_SESSION['usuario_id_ADM'];
 
 /* ============================================================
-    CARREGAR DADOS DO ADM (NAVBAR)
+   CARREGAR DADOS DO ADM (NAVBAR)
    ============================================================ */
 $stmt = $sql->prepare("SELECT nome, cpf, email, nivel_permissao FROM funcionarios WHERE id = ?");
 $stmt->bind_param("i", $id);
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $conn->query("UPDATE produtos SET estoque = estoque - $qtd WHERE id = $produto_id");
             // Registrar a saída na tabela movimentacao_estoque com o id da venda
             $conn->query("INSERT INTO movimentacao_estoque (produto_id, tipo_movimentacao, quantidade, data_movimentacao, venda_id) 
-                            VALUES ($produto_id, 'saida', $qtd, NOW(), $pedido_id)");
+                         VALUES ($produto_id, 'saida', $qtd, NOW(), $pedido_id)");
             // Desconta do lote com validade mais próxima
             $lote = $conn->query("SELECT id, quantidade FROM lotes_produtos WHERE produto_id = $produto_id AND quantidade > 0 ORDER BY validade ASC LIMIT 1");
             if ($lote && $lote->num_rows > 0) {
@@ -79,9 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
-
-$pagina = 'fast';
-
 ?><!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -89,14 +86,12 @@ $pagina = 'fast';
     <title>Fast Service</title>
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
     <style>
-        @import url('../../Fonte_Config/fonte_geral.css');
     body {
         background-color: #fff8e1;
+        font-family: "Poppins", sans-serif;
         margin: 0;
     }
-
     #fund {
         position: fixed;
         top: 0;
@@ -107,50 +102,23 @@ $pagina = 'fast';
         overflow-y: auto;
         z-index: 1000;
     }
-
-    #texto {
-        text-align: center;
-        font-size: 80px;
-        height: 140px;
-    }
-
     #menu {
         background-color: black;
     }
-
-    #fund {
-        background-color: black !important;
-    }
-
     #cor-fonte {
         color: #ff9100;
-        font-size: 21px;
-        padding-bottom: 13px;
+        font-size: 23px;
+        padding-bottom: 30px;
     }
-
-    #cor-fonte img{
-        width: 32px;
-    }
-
     #cor-fonte:hover {
         background-color: #f4a21d67 !important;
     }
-
+    #cor-fonte img {
+        width: 44px;
+    }
     #logo-linha img {
-        width: 150px;
+        width: 170px;
     }
-
-    .nav-link {
-        width: 100%;
-        display: block;
-        border-radius: 10px;
-    }
-
-    .nav-link.active {
-        background-color: #f4a21d67 !important;
-        border-radius: 5px;
-    }
-
     #conteudo-principal {
         margin-left: 250px;
         padding: 40px;
@@ -350,17 +318,6 @@ $pagina = 'fast';
         transition: all 0.3s;
     }
 
-    /* Animação padronizada (scale + sombra) para botões locais; NÃO altera cores */
-    .btn-acao:hover,
-    .btn-acao:focus,
-    .btn-acao:active,
-    .btn-acao-alterar:hover,
-    .btn-acao-pagar:hover,
-    .btn.btn-sm:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    }
-
     .btn-acao-alterar {
         background-color: #ff9100;
         color: white;
@@ -386,7 +343,12 @@ $pagina = 'fast';
         color: #ff9100;
         font-weight: bold;
     }
-
+        padding: 7px 16px;
+        margin-left: 12px;
+        background: #FFD100;
+        color: #111;
+        display: inline-block;
+    }
     .pedido-info {
         display: flex;
         gap: 32px;
@@ -405,72 +367,87 @@ $pagina = 'fast';
 </head>
 <body>
     <div class="container-fluid">
-            <!-- NAVBAR COPIADA DE menu_principal1.php -->
-            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark" id="fund">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100" id="menu">
+        <div class="row flex-nowrap">
+
+            <!-- NAVBAR -->
+            <div class="col-auto px-sm-2 px-0 bg-dark" id="fund">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
+                    id="menu">
+
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
-                        <a id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></a>
+                        <li id="logo-linha"><img src="../../menu_principal/IMG/logo_linhas.png"></li>
+
                         <li class="nav-item">
-                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php" class="nav-link align-middle px-0 <?php if($pagina=='painel') echo 'active'; ?>" id="cor-fonte">
-                                <i class="fs-4 bi-house"></i><img src="../../menu_principal/IMG/painelgeral.png"> <span class="ms-1 d-none d-sm-inline">Painel Geral</span></img>
+                            <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
+                                class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/painelgeral.png">
+                                <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0 <?php if($pagina=='fast') echo 'active'; ?>" id="cor-fonte">
-                                <i class="fs-4 bi-house"></i><img src="../../menu_principal/IMG/fastservice.png"> <span class="ms-1 d-none d-sm-inline">Fast Service</span></img>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0 <?php if($pagina=='financeiro') echo 'active'; ?>" id="cor-fonte">
-                                <i class="fs-4 bi-house"></i><img src="../../menu_principal/IMG/financeiro.png"> <span class="ms-1 d-none d-sm-inline">Financeiro</span></img>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0 <?php if($pagina=='vendas') echo 'active'; ?>" id="cor-fonte">
-                                <i class="fs-4 bi-house"></i><img src="../../menu_principal/IMG/vendaspai.png"> <span class="ms-1 d-none d-sm-inline">Vendas</span></img>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0 <?php if($pagina=='estoque') echo 'active'; ?>" id="cor-fonte">
-                                <i class="fs-4 bi-house"></i><img src="../../menu_principal/IMG/estoque.png"> <span class="ms-1 d-none d-sm-inline">Estoque</span></img>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/fws/FWS_ADM/produtos/HTML/cadastro_produto.php" class="nav-link align-middle px-0 <?php if($pagina=='produtos') echo 'active'; ?>" id="cor-fonte">
-                                <i class="fs-4 bi-house"></i><img src="../../menu_principal/IMG/produtos.png"> <span class="ms-1 d-none d-sm-inline">Produtos</span></img>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php" class="nav-link align-middle px-0 <?php if($pagina=='fornecedores') echo 'active'; ?>" id="cor-fonte">
+
+                        <li><a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/fastservice.png">
+                                <span class="ms-1 d-none d-sm-inline">Fast Service</span>
+                            </a></li>
+
+                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/financeiro.png">
+                                <span class="ms-1 d-none d-sm-inline">Financeiro</span>
+                            </a></li>
+
+                        <li><a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/vendaspai.png">
+                                <span class="ms-1 d-none d-sm-inline">Vendas</span>
+                            </a></li>
+
+                        <li><a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                                id="cor-fonte">
+                                <img src="../../menu_principal/IMG/estoque.png">
+                                <span class="ms-1 d-none d-sm-inline">Estoque</span>
+                            </a></li>
+
+                        <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php"
+                                class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/produtos.png">
+                                <span class="ms-1 d-none d-sm-inline">Produtos</span>
+                            </a></li>
+
+                        <li><a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
+                                class="nav-link align-middle px-0" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0 <?php if($pagina=='funcionarios') echo 'active'; ?>" id="cor-fonte">
-                                <i class="fs-4 bi-house"></i><img src="../../menu_principal/IMG/funcionarios.png"> <span class="ms-1 d-none d-sm-inline">Funcionários</span></img>
-                            </a>
-                        </li>
+                            </a></li>
+
+                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
+                                <img src="../../menu_principal/IMG/funcionarios.png">
+                                <span class="ms-1 d-none d-sm-inline">Funcionários</span>
+                            </a></li>
                     </ul>
+
                     <hr>
+
                     <div class="dropdown pb-4">
-                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="../../fotodeperfiladm.png " width="30" height="30" class="rounded-circle">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                            data-bs-toggle="dropdown">
+                            <img src="../../fotodeperfiladm.png" width="30" height="30" class="rounded-circle">
                             <span class="d-none d-sm-inline mx-1"><?= $nome_adm ?></span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                        <ul class="dropdown-menu dropdown-menu-dark shadow">
                             <li><a class="dropdown-item" href="../../perfil/HTML/perfil.php">Perfil</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="../../perfil/HTML/logout.php">Sair da conta</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="../../perfil/HTML/logout.php">Sair</a></li>
                         </ul>
                     </div>
+
                 </div>
             </div>
 
             <!-- Conteúdo principal -->
             <div class="col py-3">
                 <div class="container" style="max-width:1000px; margin-left:375px;">
-                    <h3 id="texto" style="color: #ff9100;">Fast Service</h3>
+                    <h3 id="texto">Fast Service</h3>
                     <hr>
                     <h2>Gerenciar Pedidos</h2>
 

@@ -18,7 +18,9 @@ $stmt->bind_result($nome, $cpf, $email, $nivel);
 $stmt->fetch();
 $stmt->close();
 
-$nome = explode(" ", trim($nome))[0];
+// Preserve full name and also prepare first name for the navbar
+$nome_completo = $nome;
+$primeiro_nome = explode(" ", trim($nome))[0];
 
 
 function nivel($n) {
@@ -294,7 +296,7 @@ $foto = "../../fotodeperfiladm.png";
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                             data-bs-toggle="dropdown">
                             <img src="<?= $foto ?>" width="30" height="30" class="rounded-circle">
-                            <span class="d-none d-sm-inline mx-1"><?= $nome ?></span>
+                            <span class="d-none d-sm-inline mx-1"><?= htmlspecialchars($primeiro_nome) ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark shadow">
                             <li><a class="dropdown-item" href="#">Perfil</a></li>
@@ -328,7 +330,7 @@ $foto = "../../fotodeperfiladm.png";
                     <form action="perfil_update.php" method="POST" id="formPerfil">
 
                         <label>Nome *</label>
-                        <input type="text" class="form-control campo" name="nome" value="<?= $nome ?>" readonly>
+                        <input type="text" class="form-control campo" name="nome" value="<?= htmlspecialchars($nome_completo) ?>" readonly>
 
                         <label class="mt-3">Email *</label>
                         <input type="email" class="form-control campo" name="email" value="<?= $email ?>" readonly>

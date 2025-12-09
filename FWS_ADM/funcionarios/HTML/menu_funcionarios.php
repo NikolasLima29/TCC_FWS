@@ -268,7 +268,7 @@ body {
                 </div>
 
                 <div class="action-card" onclick="window.location.href='lista_funcionarios.php'">
-                    <img src="../../menu_principal/IMG/fastservice.png">
+                    <img src="../../menu_principal/IMG/lista_funcionarios.png">
                     <span>Ver Lista de Funcionários</span>
                 </div>
 

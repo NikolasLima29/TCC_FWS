@@ -207,7 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .then(r => r.json())
             .then(resp => {
                 if (resp.status === "ok") {
-                    window.location.href = "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.html";
+                    window.location.href = "/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php";
                 } else {
                     alert("Erro ao logar: " + resp.msg);
                 }
