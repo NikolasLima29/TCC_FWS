@@ -109,16 +109,19 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
 <head>
     <title>Meus pedidos</title>
     <link rel="icon" type="image/x-icon" href="../../cadastro/IMG/Shell.png">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <!-- Bootstrap CSS v5.3.2 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="../CSS/Meus_pedidos.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-papm6QpQKQwQvQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQ=="
+        crossorigin="anonymous" />
 
-    <!-- JQuery -->
+    <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- JQuery UI -->
@@ -127,481 +130,658 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     <!-- JQuery UI css -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
 
-
     <style>
-    /* ========== CSS DO HEADER ========== */
-    @import url('../../Fonte_Config/fonte_geral.css');
+        /* ========== CSS DO HEADER ========== */
+        @import url('../../Fonte_Config/fonte_geral.css');
 
-    html,
-    body,
-    * {
-        font-family: 'Ubuntu', sans-serif !important;
-    }
-
-    html {
-        font-family: 'Ubuntu', sans-serif !important;
-        margin: 0;
-    }
-
-    body {
-        font-family: 'Ubuntu', sans-serif !important;
-        background-color: white;
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-    }
-
-    main {
-        flex: 1;
-    }
-
-    p,
-    div,
-    span,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    a,
-    button,
-    input,
-    select,
-    textarea,
-    label {
-        font-family: 'Ubuntu', sans-serif !important;
-    }
-
-    /* Estilos da HEADER */
-    header {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    nav.navbar {
-        width: 100%;
-        min-width: 100%;
-        margin: 0;
-        padding: 0;
-        border-radius: 0;
-    }
-
-    .container-fluid {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Logo */
-    .logo-shell {
-        width: 150px;
-        height: auto;
-    }
-
-    /* Menu Bold */
-    .menu-bold {
-        font-weight: 700 !important;
-    }
-
-    /* Icone de Pesquisa */
-    .bi-search {
-        fill: #000000 !important;
-    }
-
-    /* Ícone do Menu Hambúrguer */
-    .navbar-toggler-icon {
-        background-image: none !important;
-        width: 1.7em;
-        height: 1.7em;
-        display: inline-block;
-        position: relative;
-    }
-
-    .navbar-toggler-icon,
-    .navbar-toggler-icon::before,
-    .navbar-toggler-icon::after {
-        box-sizing: border-box;
-    }
-
-    .navbar-toggler-icon::before,
-    .navbar-toggler-icon::after,
-    .navbar-toggler-icon span {
-        content: '';
-        display: block;
-        height: 3.5px;
-        width: 100%;
-        background: #FFD100;
-        margin: 5px 0;
-        border-radius: 2px;
-    }
-
-    .navbar-toggler-icon span {
-        margin: 0;
-    }
-
-    /* Media Query - Mobile (até 576px) */
-    @media (max-width: 576px) {
-        .navbar-toggler {
-            position: absolute;
-            right: -55px;
-            top: 0px;
-            margin-right: 0 !important;
-            margin-left: 0 !important;
-            z-index: 1050;
-            background: #c40000 !important;
-            border-color: #c40000 !important;
-            box-shadow: none !important;
-        }
-
-        .navbar .d-flex.align-items-center.ms-3 {
-            position: relative;
-            justify-content: flex-start;
-            width: auto;
-            gap: 0.5rem;
-            position: absolute;
-            right: 60px;
-            top: 15px;
-            z-index: 1051;
-        }
-
-        .navbar .d-flex.align-items-center.ms-3 .d-flex.align-items-center.d-sm-none a.me-2:first-child {
-            margin-left: 0px !important;
-            transform: translateX(-6px);
-        }
-
-        .navbar .d-flex.align-items-center.ms-3 .me-2 {
-            display: flex;
-        }
-
-        .navbar .d-flex.align-items-center.ms-3 h5 {
-            display: none !important;
-        }
-
-        .navbar .d-flex.align-items-center.ms-3 a:last-child {
-            display: none !important;
-        }
-
-        .container-fluid .d-flex.align-items-center.ms-auto.me-4 {
-            display: none !important;
-        }
-
-        .navbar-collapse .search-area-mobile {
-            display: flex !important;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .navbar-collapse .search-area-mobile input {
-            width: 100% !important;
-        }
-
-        /* Centraliza os títulos do menu no mobile */
-        .navbar-nav {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            width: 100% !important;
-            flex-direction: column !important;
-            gap: 1rem !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-        }
-
-        .navbar-nav .menu-bold {
-            text-align: center !important;
-            width: 100% !important;
-        }
-    }
-
-    /* Media Query - Desktop (577px ou maior) */
-    @media (min-width: 577px) {
-        .search-area {
-            margin-right: -50px !important;
-        }
-
-        .d-flex.align-items-center.ms-auto.me-4 h5 {
-            font-size: 14px !important;
-            margin-bottom: 0px !important;
+        html,
+        body,
+        * {
             font-family: 'Ubuntu', sans-serif !important;
-            font-weight: bold !important;
-            margin-left: 0px !important;
-            white-space: nowrap !important;
-            margin-top: -2px !important;
-        }
-    }
-
-    /* Aumenta 30% o tamanho dos títulos do menu */
-    .navbar-nav .menu-bold {
-        font-size: 23.1px !important;
-    }
-
-    /* ========== FIM DO CSS DO HEADER ========== */
-
-    /* Paleta do site */
-    :root {
-        --primary-red: #c40000;
-        --accent-yellow: #FFD100;
-        --accent-orange: #f37a27;
-    }
-
-    .btn-acoes {
-        background-color: #f37a27;
-        color: white !important;
-        border-radius: 6px;
-        padding: 6px 10px;
-        border: none;
-        cursor: pointer;
-        text-decoration: none;
-    }
-
-    .btn-acoes:hover {
-        opacity: 0.9;
-    }
-
-    /* Estilos para os itens do pedido (restaurado para versão inicial)
-           Mantemos apenas espaçamento simples; removemos regras flex/widths customizadas. */
-    .pedido-box {
-        padding: 0.5rem 0.25rem;
-    }
-
-    .pedido-item {
-        font-size: 1.03rem;
-    }
-
-    .pedido-item>[class*="col-"] {
-        padding: .5rem .75rem;
-    }
-
-    .pedido-item .col-2 {
-        /* volta ao comportamento padrão do grid (quantidade pequena) */
-        text-align: center;
-    }
-
-    .pedido-item .col-7 {
-        /* ocupa o espaço restante via grid; sem regras flex customizadas */
-    }
-
-    .pedido-item .col-3 {
-        text-align: right;
-    }
-
-    .no-underline {
-        text-decoration: none !important;
-    }
-
-    /* Acentos usados nos outros arquivos do site */
-    .accent-text {
-        color: var(--primary-red) !important;
-    }
-
-    .card-accent {
-        border-color: var(--accent-yellow) !important;
-    }
-
-    .btn-accent {
-        background-color: var(--accent-yellow) !important;
-        color: #111 !important;
-        border: none;
-    }
-
-    /* Status style: bottom-right badge-like text */
-    .order-status {
-        margin-top: auto;
-        align-self: flex-end;
-        color: var(--primary-red);
-        font-weight: 700;
-        font-size: 0.95rem;
-        background: rgba(196, 0, 0, 0.06);
-        padding: .25rem .6rem;
-        border-radius: 6px;
-    }
-
-    /* Responsividade: ajustes para mobile */
-    @media (max-width: 767.98px) {
-        .card-body {
-            padding: 1rem !important;
         }
 
-        /* Empilha os itens do pedido verticalmente */
+        html {
+            font-family: 'Ubuntu', sans-serif !important;
+        }
+
+        body {
+            font-family: 'Ubuntu', sans-serif !important;
+            background-color: white;
+        }
+
+        p,
+        div,
+        span,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        a,
+        button,
+        input,
+        select,
+        textarea,
+        label {
+            font-family: 'Ubuntu', sans-serif !important;
+        }
+
+        /* Estilos da HEADER */
+        header {
+            width: 100vw;
+            max-width: 100vw;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        nav.navbar {
+            width: 100vw;
+            max-width: 100vw;
+            min-width: 100vw;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0;
+        }
+
+        .container-fluid {
+            width: 100vw;
+            max-width: 100vw;
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        /* Remove qualquer padding lateral padrão da navbar */
+        .navbar>.container,
+        .navbar>.container-fluid,
+        .navbar .container,
+        .navbar .container-fluid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        /* Garante que o header ocupe toda a largura também no mobile */
+        .search-mobile-container {
+            width: 100vw;
+            max-width: 100vw;
+            margin: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        /* Logo */
+        .logo-shell {
+            width: 150px;
+            height: auto;
+        }
+
+        /* Menu Bold */
+        .menu-bold {
+            font-weight: 700 !important;
+        }
+
+        /* Icone de Pesquisa */
+        .bi-search {
+            fill: #000000 !important;
+        }
+
+        /* Ícone do Menu Hambúrguer */
+        .navbar-toggler-icon {
+            background-image: none !important;
+            width: 1.7em;
+            height: 1.7em;
+            display: inline-block;
+            position: relative;
+        }
+
+        .navbar-toggler-icon,
+        .navbar-toggler-icon::before,
+        .navbar-toggler-icon::after {
+            box-sizing: border-box;
+        }
+
+        .navbar-toggler-icon::before,
+        .navbar-toggler-icon::after,
+        .navbar-toggler-icon span {
+            content: '';
+            display: block;
+            height: 3.5px;
+            width: 100%;
+            background: #FFD100;
+            margin: 5px 0;
+            border-radius: 2px;
+        }
+
+        .navbar-toggler-icon span {
+            margin: 0;
+        }
+
+        /* Media Query - Mobile (até 576px) */
+        @media (max-width: 576px) {
+            .navbar-toggler {
+                position: absolute;
+                right: -55px;
+                top: 0px;
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+                z-index: 1050;
+                background: #c40000 !important;
+                border-color: #c40000 !important;
+                box-shadow: none !important;
+            }
+
+            .navbar .d-flex.align-items-center.ms-3 {
+                position: relative;
+                justify-content: flex-start;
+                width: auto;
+                gap: 0.5rem;
+                position: absolute;
+                right: 60px;
+                top: 15px;
+                z-index: 1051;
+            }
+
+            .navbar .d-flex.align-items-center.ms-3 .d-flex.align-items-center.d-sm-none a.me-2:first-child {
+                margin-left: 0px !important;
+                transform: translateX(-6px);
+            }
+
+            .navbar .d-flex.align-items-center.ms-3 .me-2 {
+                display: flex;
+            }
+
+            .navbar .d-flex.align-items-center.ms-3 h5 {
+                display: none !important;
+            }
+
+            .navbar .d-flex.align-items-center.ms-3 a:last-child {
+                display: none !important;
+            }
+
+            .container-fluid .d-flex.align-items-center.ms-auto.me-4 {
+                display: none !important;
+            }
+
+            .navbar-collapse .search-area-mobile {
+                display: flex !important;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .navbar-collapse .search-area-mobile input {
+                width: 100% !important;
+            }
+
+            /* Centraliza os títulos do menu no mobile */
+            .navbar-nav {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                width: 100% !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+
+            .navbar-nav .menu-bold {
+                text-align: center !important;
+                width: 100% !important;
+            }
+        }
+
+        /* Media Query - Desktop (577px ou maior) */
+        @media (min-width: 577px) {
+            .search-area {
+                margin-right: -50px !important;
+            }
+
+            .d-flex.align-items-center.ms-auto.me-4 h5 {
+                font-size: 14px !important;
+                margin-bottom: 0px !important;
+                font-family: 'Ubuntu', sans-serif !important;
+                font-weight: bold !important;
+                margin-left: 0px !important;
+                white-space: nowrap !important;
+                margin-top: -2px !important;
+            }
+        }
+
+        /* Aumenta 30% o tamanho dos títulos do menu */
+        .navbar-nav .menu-bold {
+            font-size: 23.1px !important;
+        }
+
+        /* ========== FIM DO CSS DO HEADER ========== */
+
+        /* ========== CSS DO RESTO DA PÁGINA ========== */
+
+        /* ========== CSS DO RESTO DA PÁGINA ========== */
+        /* Paleta do site */
+        :root {
+            --primary-red: #c40000;
+            --accent-yellow: #FFD100;
+            --accent-orange: #f37a27;
+        }
+
+        /* Estilos para os itens do pedido (restaurado para versão inicial)
+               Mantemos apenas espaçamento simples; removemos regras flex/widths customizadas. */
+        .pedido-box {
+            padding: 0.5rem 0.25rem;
+        }
+
         .pedido-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: .35rem;
+            font-size: 1.03rem;
         }
 
         .pedido-item>[class*="col-"] {
-            padding: .35rem 0 !important;
+            padding: .5rem .75rem;
         }
 
-        .pedido-item .col-2,
+        .pedido-item .col-2 {
+            /* volta ao comportamento padrão do grid (quantidade pequena) */
+            text-align: center;
+        }
+
+        .pedido-item .col-7 {
+            /* ocupa o espaço restante via grid; sem regras flex customizadas */
+        }
+
         .pedido-item .col-3 {
-            flex: none !important;
-            max-width: none !important;
-            width: auto !important;
+            text-align: right;
         }
 
-        /* Botões e selects ficam em bloco e ocupam toda a largura */
-        .list-inline {
-            flex-direction: column;
-            gap: .5rem;
-            padding-left: 0;
+        .no-underline {
+            text-decoration: none !important;
         }
 
-        .list-inline-item.items-list {
-            width: 100%;
+        /* Acentos usados nos outros arquivos do site */
+        .accent-text {
+            color: var(--primary-red) !important;
         }
 
-        .btn-accent,
-        .no-underline.btn-accent,
-        .btn-acoes {
-            display: block !important;
-            width: 100% !important;
-            text-align: center !important;
+        .card-accent {
+            border-color: var(--accent-yellow) !important;
         }
 
-        /* Ajuste do badge de status para não colidir com conteúdo */
+        .btn-accent {
+            background-color: var(--accent-yellow) !important;
+            color: #111 !important;
+            border: none;
+        }
+
+        /* Status style: bottom-right badge-like text */
         .order-status {
+            margin-top: auto;
             align-self: flex-end;
-            margin-top: .8rem;
+            color: var(--primary-red);
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: rgba(196, 0, 0, 0.06);
+            padding: .25rem .6rem;
+            border-radius: 6px;
         }
 
-        /* Responsividade dos cards de pedidos */
-        .card {
-            margin-bottom: 1.5rem !important;
-            border-radius: 12px !important;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        /* ========== RESPONSIVIDADE DO CARD DE PEDIDOS ========== */
+        
+        /* Desktop (1200px+) */
+        @media (min-width: 1200px) {
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+                padding: 0.75rem;
+            }
+
+            .card {
+                margin-bottom: 1.5rem !important;
+                border-radius: 12px !important;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+                overflow: hidden;
+            }
+
+            .card-header-pedido {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                gap: 2rem !important;
+                flex-wrap: wrap;
+            }
+
+            .card-content {
+                padding: 1.5rem !important;
+            }
+
+            .row.align-items-center.mb-2 {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .col-3.text-center img {
+                max-width: 70px !important;
+                max-height: 70px !important;
+            }
+
+            .col-5 {
+                font-size: 1rem !important;
+                flex: 1;
+            }
+
+            .col-4.text-end {
+                text-align: right !important;
+                font-size: 0.95rem !important;
+            }
+
+            .d-flex.gap-2.justify-content-end.mt-2 {
+                flex-direction: row !important;
+                gap: 0.75rem !important;
+                justify-content: flex-end;
+            }
+
+            .btn-accent,
+            .btn-info,
+            .btn-success {
+                min-width: 140px;
+                padding: 8px 16px !important;
+                font-size: 0.95rem !important;
+            }
         }
 
-        .card-body {
-            padding: 1.1rem !important;
+        /* Tablet/Médio (768px - 1199px) */
+        @media (min-width: 768px) and (max-width: 1199px) {
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0.5rem;
+            }
+
+            .card {
+                margin-bottom: 1.2rem !important;
+                border-radius: 10px !important;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+            }
+
+            .card-header-pedido {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 1rem !important;
+                align-items: flex-start !important;
+            }
+
+            .card-header-pedido > div:last-child {
+                display: flex !important;
+                width: 100% !important;
+                gap: 1rem !important;
+                justify-content: space-between !important;
+                flex-wrap: wrap;
+            }
+
+            .card-content {
+                padding: 1.2rem !important;
+            }
+
+            .row.align-items-center.mb-2 {
+                display: flex;
+                gap: 0.75rem;
+            }
+
+            .col-3.text-center img {
+                max-width: 60px !important;
+                max-height: 60px !important;
+                flex: 0 0 auto;
+            }
+
+            .col-5 {
+                font-size: 0.95rem !important;
+                flex: 1;
+            }
+
+            .col-4.text-end {
+                text-align: right !important;
+                font-size: 0.9rem !important;
+            }
+
+            .d-flex.gap-2.justify-content-end.mt-2 {
+                flex-direction: row !important;
+                gap: 0.5rem !important;
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .btn-accent,
+            .btn-info,
+            .btn-success {
+                flex: 1;
+                min-width: 120px;
+                padding: 8px 12px !important;
+                font-size: 0.9rem !important;
+            }
         }
 
-        .d-flex.justify-content-between.align-items-center.mb-2 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 6px !important;
+        /* Mobile Grande (577px - 767px) */
+        @media (min-width: 577px) and (max-width: 767px) {
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0.5rem;
+            }
+
+            .card {
+                margin-bottom: 1rem !important;
+                border-radius: 10px !important;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+            }
+
+            .card-header-pedido {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.8rem !important;
+                align-items: flex-start !important;
+            }
+
+            .card-header-pedido > div:last-child {
+                display: flex !important;
+                width: 100% !important;
+                gap: 0.8rem !important;
+                justify-content: space-between !important;
+                flex-wrap: wrap;
+            }
+
+            .card-content {
+                padding: 1rem !important;
+            }
+
+            .row.align-items-center.mb-2 {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .col-3.text-center img {
+                max-width: 50px !important;
+                max-height: 50px !important;
+                flex: 0 0 auto;
+            }
+
+            .col-5 {
+                font-size: 0.9rem !important;
+                flex: 1;
+            }
+
+            .col-4.text-end {
+                text-align: right !important;
+                font-size: 0.85rem !important;
+            }
+
+            .d-flex.gap-2.justify-content-end.mt-2 {
+                flex-direction: row !important;
+                gap: 0.4rem !important;
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .btn-accent,
+            .btn-info,
+            .btn-success {
+                flex: 1;
+                min-width: 100px;
+                padding: 6px 8px !important;
+                font-size: 0.85rem !important;
+            }
+
+            .d-flex.justify-content-between.mt-3 {
+                gap: 0.5rem !important;
+                flex-direction: column;
+            }
         }
 
-        .badge {
-            font-size: 0.95rem !important;
-            padding: 6px 12px !important;
-            margin-bottom: 8px !important;
+        /* Mobile Pequeno (até 576px) */
+        @media (max-width: 576px) {
+            .container {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0.25rem;
+            }
+
+            .card {
+                margin-bottom: 0.8rem !important;
+                border-radius: 8px !important;
+                box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08) !important;
+                border: 2px solid var(--primary-red) !important;
+            }
+
+            .card-header-pedido {
+                display: block !important;
+                padding: 1rem !important;
+                background: linear-gradient(135deg, var(--primary-red) 0%, #a00000 100%) !important;
+            }
+
+            .card-header-pedido h2 {
+                font-size: 1.1rem !important;
+                margin: 0 0 0.5rem 0 !important;
+            }
+
+            .card-header-pedido p {
+                font-size: 0.8rem !important;
+                margin: 0 !important;
+            }
+
+            .card-header-pedido > div:last-child {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+                margin-top: 0.8rem !important;
+                width: 100%;
+            }
+
+            .card-header-pedido > div:last-child > div {
+                width: 100% !important;
+            }
+
+            .card-content {
+                padding: 0.8rem !important;
+            }
+
+            .row.align-items-center.mb-2 {
+                display: flex;
+                gap: 0.4rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .col-3.text-center img {
+                max-width: 45px !important;
+                max-height: 45px !important;
+                flex: 0 0 auto;
+            }
+
+            .col-5 {
+                font-size: 0.8rem !important;
+                flex: 1;
+            }
+
+            .col-5 > div:first-child {
+                font-weight: 500 !important;
+                margin-bottom: 0.2rem;
+            }
+
+            .col-4.text-end {
+                text-align: right !important;
+                font-size: 0.8rem !important;
+            }
+
+            .col-4.text-end > div:first-child {
+                color: #666 !important;
+                font-size: 0.7rem !important;
+            }
+
+            .d-flex.justify-content-between.mt-3 {
+                font-size: 0.95rem !important;
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+
+            .d-flex.gap-2.justify-content-end.mt-2 {
+                flex-direction: column !important;
+                gap: 0.3rem !important;
+                width: 100%;
+            }
+
+            .btn-accent,
+            .btn-info,
+            .btn-success {
+                width: 100% !important;
+                padding: 6px 10px !important;
+                font-size: 0.8rem !important;
+                margin-bottom: 0.3rem !important;
+            }
+
+            .small {
+                font-size: 0.7rem !important;
+            }
+
+            .fw-bold {
+                font-weight: 600 !important;
+                font-size: 0.85rem !important;
+            }
+
+            .mb-2 {
+                margin-bottom: 0.4rem !important;
+            }
+
+            .badge {
+                font-size: 0.8rem !important;
+                padding: 4px 8px !important;
+            }
         }
 
-        .mb-2 {
-            margin-bottom: 0.7rem !important;
+        /* Remove espaço abaixo do footer no mobile */
+        @media (max-width: 767.98px) {
+            html, body {
+                height: auto !important;
+                min-height: auto !important;
+            }
+            
+            .h-100, .h-custom {
+                height: auto !important;
+                min-height: auto !important;
+            }
+            
+            footer {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+            }
         }
-
-        .row.align-items-center.mb-2 {
-            flex-direction: row !important;
-            gap: 0 !important;
-        }
-
-        .col-3.text-center img {
-            max-width: 48px !important;
-            max-height: 48px !important;
-        }
-
-        .col-5 {
-            font-size: 0.95rem !important;
-        }
-
-        .col-4.text-end {
-            font-size: 0.9rem !important;
-        }
-
-        .d-flex.justify-content-between.mt-3 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 4px !important;
-        }
-
-        .btn-success.btn-sm,
-        .btn.btn-accent {
-            width: 100% !important;
-            font-size: 1rem !important;
-            padding: 10px 0 !important;
-            margin-bottom: 8px !important;
-        }
-
-        /* Responsividade dos botões de ação */
-        .d-flex.gap-2.justify-content-end.mt-2 {
-            flex-direction: column !important;
-            gap: 0.5rem !important;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .card {
-            border-radius: 10px !important;
-            margin-bottom: 1.2rem !important;
-        }
-
-        .card-body {
-            padding: 0.7rem !important;
-        }
-
-        .badge {
-            font-size: 0.85rem !important;
-            padding: 5px 10px !important;
-        }
-
-        .mb-2 {
-            margin-bottom: 0.5rem !important;
-        }
-
-        .col-3.text-center img {
-            max-width: 38px !important;
-            max-height: 38px !important;
-        }
-
-        .col-5 {
-            font-size: 0.9rem !important;
-        }
-
-        .col-4.text-end {
-            font-size: 0.85rem !important;
-        }
-
-        .btn-success.btn-sm,
-        .btn.btn-accent {
-            font-size: 0.95rem !important;
-            padding: 8px 0 !important;
-            margin-bottom: 6px !important;
-        }
-
-        .d-flex.justify-content-between.align-items-center.mb-2 {
-            gap: 4px !important;
-        }
-
-        .small {
-            font-size: 0.75rem !important;
-        }
-
-        .fw-bold {
-            font-size: 0.9rem !important;
-        }
-
-        /* Garantir que o container respeita a largura */
-        .row {
-            margin-right: -6px;
-            margin-left: -6px;
-        }
-
-        .col-md-6 {
-            padding-right: 6px;
-            padding-left: 6px;
-        }
-    }
     </style>
 </head>
 
 <body>
     <!-- ========== INÍCIO DO HEADER ========== -->
-    <header id="header">
+    <header>
         <!-- ========== NAVBAR PRINCIPAL ========== -->
         <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #c40000;">
             <!-- ========== LOGO ========== -->
@@ -722,7 +902,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
         </nav>
 
         <!-- ========== BARRA DE PESQUISA MOBILE ========== -->
-        <div class="search-mobile-container d-sm-none px-3 py-2">
+        <div class="search-mobile-container d-sm-none px-3 py-2" style="background-color: #c40000;">
             <!-- Texto "Bem-vindo(a)" Mobile com nome se logado -->
             <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
             <?php
@@ -756,7 +936,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     <main>
         <section class="h-100 h-custom" style="background-color: #eee;">
             <div class="container py-5 h-100">
-                <div class="row">
+                <div class="row justify-content-center">
                     <?php
                     $usuario_id = isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 0;
                     if ($usuario_id > 0) {
@@ -926,14 +1106,33 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
 
     </main>
 
-    <footer class="text-center" style="background-color: #eee;">
-        <!-- Copyright -->
-        <div class="text-center p-3" style="background-color: #FFD100;">
-            © 2025 Copyright:
-            <a class="text-body">FWS - Faster Way Service</a>
-        </div>
-        <!-- Copyright -->
-    </footer>
+    <footer class="text-center bg-body-tertiary">
+    <div class="container pt-4">
+      <!-- Section: Redes sociais -->
+      <section class="mb-4">
+        <!-- Facebook -->
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+          href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button" data-mdb-ripple-color="dark"><i
+            class="fab fa-facebook-f"></i></a>
+
+        <!-- Google -->
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button"
+          data-mdb-ripple-color="dark"><i class="fa-solid fa-phone"></i></a>
+
+        <!-- Instagram -->
+        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
+          href="https://www.instagram.com/shell.brasil/" role="button" data-mdb-ripple-color="dark"><i
+            class="fab fa-instagram"></i></a>
+      </section>
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: #FFD100;">
+      © 2025 Copyright:
+      <a class="text-body">FWS - Faster Way Service</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
 
     <script>
     // Contagem regressiva dos timers dos pedidos (igual ao modal do carrinho)
@@ -1281,6 +1480,19 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     });
     </script>
 
+    <!-- Bootstrap JS and Popper for 5.2.1 -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+        integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
     <script>
         $(function () {
             var autocomplete = $("#search").autocomplete({
@@ -1333,7 +1545,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                         }
                     });
                 },
-                minLength: 1,
+                minLength: 1, // Forçar abrir com 1 caractere para testar
                 select: function (event, ui) {
                     window.location.href =
                         '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
@@ -1407,6 +1619,28 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
             list-style: none;
         }
     </style>
-</body>
 
-</html>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.querySelector('.navbar-toggler');
+            const navCollapse = document.querySelector('.collapse.navbar-collapse');
+
+            if (!toggleButton || !navCollapse) return;
+
+            toggleButton.addEventListener('click', function() {
+                if (navCollapse.classList.contains('show')) {
+                    navCollapse.classList.remove('show');
+                } else {
+                    navCollapse.classList.add('show');
+                }
+            });
+
+            // Fecha o menu ao clicar em um item
+            const navItems = navCollapse.querySelectorAll('.nav-link');
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    navCollapse.classList.remove('show');
+                });
+            });
+        });
+    </script>
