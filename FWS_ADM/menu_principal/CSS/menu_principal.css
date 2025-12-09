@@ -1,5 +1,10 @@
 @import url('../../Fonte_Config/fonte_geral.css');
 
+/* Ajusta o conteúdo principal para não ficar sob a navbar fixa */
+.col {
+    margin-left: 250px;
+}
+
 #texto {
     text-align: center;
     font-size: 80px;
@@ -12,6 +17,12 @@
 
 #fund {
     background-color: black !important;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
 }
 
 #cor-fonte {
@@ -41,4 +52,34 @@
 .nav-link.active {
     background-color: #f4a21d67 !important;
     border-radius: 5px;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+    margin-top: 10px;
+}
+.dashboard-card {
+    border-radius: 16px;
+    min-height: 220px;
+    transition: box-shadow 0.2s;
+}
+.dashboard-card:hover {
+    box-shadow: 0 8px 32px rgba(255,145,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+    transform: translateY(-2px) scale(1.01);
+}
+.dashboard-card .card-header {
+    font-size: 1.2rem;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+.dashboard-card .list-group-item {
+    font-size: 1.05rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+}
+.dashboard-card .list-group-item:last-child {
+    border-bottom: none;
 }

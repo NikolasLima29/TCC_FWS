@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Chat API</title>
+</head>
+<body>
+    <h1>Test Chat API</h1>
+    <input id="message" type="text" placeholder="Digite sua mensagem">
+    <button onclick="sendMessage()">Enviar</button>
+    <div id="response"></div>
+
+    <script>
+    function sendMessage() {
+        const msg = document.getElementById('message').value;
+        const responseDiv = document.getElementById('response');
+        
+        fetch('../PHP/api_chat_gemini.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: msg })
+        })
+        .then(res => res.json())
+        .then(data => {
+            responseDiv.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+        })
+        .catch(err => {
+            responseDiv.innerHTML = '<pre>Error: ' + err.message + '</pre>';
+        });
+    }
+    </script>
+</body>
+</html>
