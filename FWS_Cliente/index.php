@@ -286,6 +286,8 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
 </head>
 
 <body>
+  <!-- ========== MODAL DE AVISO - SEGURANÇA AO DIRIGIR ========== -->
+
   <!-- ========== INÍCIO DO HEADER ========== -->
   <header>
     <!-- ========== NAVBAR PRINCIPAL ========== -->
@@ -830,6 +832,23 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
       </button>
 
     </div>
+
+
+      <div id="modal-aviso-dirigindo" class="modal-backdrop-aviso" style="display: flex;">
+    <div class="modal-aviso-content">
+      <div class="modal-aviso-header">
+        <h2>⚠️ Aviso Importante</h2>
+      </div>
+      <div class="modal-aviso-body">
+        <p>Caso esteja dirigindo, <strong>não recomendamos dirigir e usar celular no volante</strong>.</p>
+        <p>Passe o celular para o passageiro para o seu bem estar.</p>
+      </div>
+      <div class="modal-aviso-footer">
+        <button id="btn-ok-aviso" class="btn-ok-aviso">OK</button>
+      </div>
+    </div>
+  </div>
+
   </section>
 
   <footer class="text-center bg-body-tertiary">
@@ -1572,7 +1591,113 @@ if ($result_mais_vendidos && mysqli_num_rows($result_mais_vendidos) > 0) {
         padding: 8px 12px;
       }
     }
+
+    /* ========== MODAL DE AVISO - DIRIGINDO ========== */
+    .modal-backdrop-aviso {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal-aviso-content {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 450px;
+      animation: slideDown 0.4s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        transform: translateY(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-aviso-header {
+      background: linear-gradient(135deg, #c40000, #ff4444);
+      color: white;
+      padding: 20px;
+      border-radius: 12px 12px 0 0;
+      text-align: center;
+    }
+
+    .modal-aviso-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .modal-aviso-body {
+      padding: 25px;
+      color: #333;
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .modal-aviso-body p {
+      margin: 12px 0;
+    }
+
+    .modal-aviso-body strong {
+      color: #c40000;
+      font-weight: 700;
+    }
+
+    .modal-aviso-footer {
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-ok-aviso {
+      background-color: #c40000;
+      color: white;
+      border: none;
+      padding: 12px 40px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-ok-aviso:hover {
+      background-color: #a20000;
+      transform: scale(1.05);
+    }
+
+    .btn-ok-aviso:active {
+      transform: scale(0.98);
+    }
   </style>
+
+  <script>
+    // Fechar modal de aviso quando clicar em OK
+    document.getElementById('btn-ok-aviso').addEventListener('click', function() {
+      const modal = document.getElementById('modal-aviso-dirigindo');
+      modal.style.display = 'none';
+    });
+
+    // Opcionalmente, fechar ao clicar no fundo (backdrop)
+    document.getElementById('modal-aviso-dirigindo').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  </script>
 
 </body>
 
