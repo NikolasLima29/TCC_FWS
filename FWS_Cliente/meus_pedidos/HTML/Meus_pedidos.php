@@ -1133,7 +1133,7 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                 while ($item = mysqli_fetch_assoc($res_itens)) {
                                     echo '<div class="row align-items-center mb-2">';
                                     echo '<div class="col-3 text-center">';
-                                    echo '<img src="'.htmlspecialchars($item['foto_produto']).'" class="img-fluid rounded" style="max-height:60px;">';
+                                    echo '<img src="'.htmlspecialchars($item['foto_produto']).'" class="img-fluid rounded" style="max-height:140px; width:auto;">';
                                     echo '</div>';
                                     echo '<div class="col-5">';
                                     echo '<div style="font-size:1rem;font-weight:500;">'.htmlspecialchars($item['nome']).'</div>';
@@ -1151,16 +1151,30 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                 echo '<span>Total</span>';
                                 echo '<span>R$ '.number_format($venda['total'],2,',','.').'</span>';
                                 echo '</div>';
+                                // Forma de pagamento
+                                $metodo = isset($venda['metodo_pagamento']) ? $venda['metodo_pagamento'] : 'dinheiro';
+                                $metodo_map = [
+                                    'dinheiro' => ['Dinheiro', 'bi-cash-coin', '#2E7D32'],
+                                    'cartao_credito' => ['Cartão de Crédito', 'bi-credit-card-fill', '#1565C0'],
+                                    'cartao_debito' => ['Cartão de Débito', 'bi-credit-card', '#0277BD'],
+                                    'pix' => ['PIX', 'bi-qr-code', '#00695C'],
+                                    'boleto' => ['Boleto', 'bi-upc-scan', '#E65100'],
+                                    'outros' => ['Outros', 'bi-wallet2', '#616161']
+                                ];
+                                $metodo_label = isset($metodo_map[$metodo]) ? $metodo_map[$metodo][0] : ucfirst($metodo);
+                                $metodo_icon = isset($metodo_map[$metodo]) ? $metodo_map[$metodo][1] : 'bi-wallet2';
+                                $metodo_color = isset($metodo_map[$metodo]) ? $metodo_map[$metodo][2] : '#616161';
+                                echo '<div class="d-flex justify-content-between align-items-center mt-2" style="font-size:0.95rem; padding: 8px 12px; background-color: #f0f0f0; border-radius: 6px;">';
+                                echo '<span style="color:#666;"><i class="bi '.$metodo_icon.'" style="color:'.$metodo_color.'; margin-right:6px;"></i>Forma de Pagamento</span>';
+                                echo '<span style="font-weight:600; color:'.$metodo_color.';">'.$metodo_label.'</span>';
+                                echo '</div>';
                             // Botões de ação
                             echo '<div class="row mt-3">';
                             echo '<div class="col text-end">';
                             echo '<div class="d-flex gap-2 justify-content-end">';
                             
-                            // Botão Ver Detalhes (sempre visível para pedidos em preparação ou pronto para retirar)
+                            // Botão Adicionar 15 min (apenas para pedidos em preparação ou pronto para retirar, se ainda não foi adicionado)
                             if (in_array($status, ['em_preparo', 'pronto_para_retirar'])) {
-                                echo '<a href="../../pedido_detalhado/HTML/pedido_detalhado.php?id=' . $venda['id'] . '" class="btn btn-accent no-underline" style="background-color: var(--accent-yellow); color: #111; font-weight: bold; border-radius: 6px; min-width:130px; font-size:0.93rem; padding:6px 0; border: none; display: inline-block;">Ver detalhes</a>';
-                                // Botão Adicionar 15 min (apenas se ainda não foi adicionado)
-                                // Verifica se tempo_adicionado NÃO é 's' (case-insensitive, sem espaços)
                                 if (strtolower(trim($venda['tempo_adicionado'])) !== 's') {
                                     echo '<button class="btn btn-info btn-sm adicionar-tempo" data-venda-id="' . $venda['id'] . '" style="min-width:140px; font-size:0.93rem; font-weight:bold; border-radius:6px; padding:6px 0; color:white; display:inline-block;">Adicionar 15 min</button>';
                                 }
@@ -1182,7 +1196,6 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
                                 echo '<input type="hidden" name="itens" value=\''.$produtos_json.'\' />';
                                 echo '<button type="submit" name="pedir_novamente" class="btn btn-success btn-sm" style="min-width:140px; font-size:0.93rem; font-weight:bold; border-radius:6px; padding:6px 0;">Pedir novamente</button>';
                                 echo '</form>';
-                                echo '<a href="../../pedido_detalhado/HTML/pedido_detalhado.php?id=' . $venda['id'] . '" class="btn btn-accent no-underline" style="background-color: var(--accent-yellow); color: #111; font-weight: bold; border-radius: 6px; min-width:120px; font-size:0.93rem; padding:6px 0; border: none; display: inline-block;">Ver detalhes</a>';
                             }
                             
                             echo '</div>';

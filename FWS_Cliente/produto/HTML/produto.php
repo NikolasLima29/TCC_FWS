@@ -97,6 +97,9 @@ $sql = "SELECT p.id, p.nome, p.preco_venda, p.descricao, p.foto_produto, p.estoq
 $resultado = mysqli_query($conn, $sql);
 ?>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <!doctype html>
 <html lang="pt-BR">
 
@@ -111,9 +114,7 @@ $resultado = mysqli_query($conn, $sql);
 
   <link rel="stylesheet" href="../CSS/produto.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-    integrity="sha512-papm6QpQKQwQvQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQ=="
-    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
   <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -817,15 +818,7 @@ $resultado = mysqli_query($conn, $sql);
 
     <!-- Copyright -->
   </footer>
-  <!-- Bootstrap JS and Popper for 5.2.1 -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
-    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-  </script>
-
+  <!-- Bootstrap JS and Popper for 5.3.2 -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
@@ -1040,12 +1033,12 @@ $resultado = mysqli_query($conn, $sql);
   <script>
     $(function () {
 
-      var usuario_id = < ? php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ? > ;
+      var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
 
       // ------------------------------------------------------------
       // AO CLICAR NO BOTÃO DE CARRINHO
       // ------------------------------------------------------------
-      $(".Carrinho").on("click", function () {
+      $(document).on("click", ".Carrinho", function () {
         const dados = JSON.parse($(this).attr('data-produto'));
 
         // PRIMEIRO: verifica limite no backend com tratamento de 403
