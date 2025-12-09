@@ -38,6 +38,14 @@ $query = "
 ";
 
 $result = $sql->query($query);
+
+// Buscar todos os fornecedores
+$fornecedores_query = "SELECT id, nome FROM fornecedores ORDER BY nome ASC";
+$fornecedores_result = $sql->query($fornecedores_query);
+
+// Buscar todas as categorias
+$categorias_query = "SELECT id, nome FROM categorias ORDER BY nome ASC";
+$categorias_result = $sql->query($categorias_query);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -46,6 +54,7 @@ $result = $sql->query($query);
     <meta charset="UTF-8">
     <title>Lista de Produtos</title>
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
+      <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -224,6 +233,79 @@ $result = $sql->query($query);
     }
 
     @import url('../../Fonte_Config/fonte_geral.css');
+
+    /* ========== ESTILOS DO CAMPO DE PESQUISA E FILTROS ========== */
+    .search-filter-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 2px solid #ff9100;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 14px;
+        border: 2px solid #ff9100;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: #f4a01d;
+        box-shadow: 0 0 8px rgba(255, 145, 0, 0.3);
+        background-color: #fffbf0;
+    }
+
+    .filters-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .filter-select {
+        padding: 10px 12px;
+        border: 2px solid #ff9100;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+
+    .filter-select:focus {
+        outline: none;
+        border-color: #f4a01d;
+        box-shadow: 0 0 8px rgba(255, 145, 0, 0.2);
+    }
+
+    .filter-select option {
+        padding: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .filters-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    
     </style>
 </head>
 
@@ -316,6 +398,46 @@ $result = $sql->query($query);
 
                     <h2>Produtos Cadastrados</h2>
 
+                    <!-- ========== CAMPO DE PESQUISA E FILTROS ========== -->
+                    <div class="search-filter-container">
+                        <!-- Campo de Pesquisa -->
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="search-input" 
+                            placeholder="🔍 Pesquisar por nome do produto..."
+                        >
+
+                        <!-- Filtros de Fornecedor e Categoria -->
+                        <div class="filters-row">
+                            <!-- Filtro de Fornecedor -->
+                            <div class="filter-group">
+                                <label for="fornecedorFilter">Filtrar por Fornecedor:</label>
+                                <select id="fornecedorFilter" class="filter-select">
+                                    <option value="">-- Todos os Fornecedores --</option>
+                                    <?php
+                                    while ($fornecedor = $fornecedores_result->fetch_assoc()) {
+                                        echo "<option value='" . htmlspecialchars($fornecedor['nome']) . "'>" . htmlspecialchars($fornecedor['nome']) . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <!-- Filtro de Categoria -->
+                            <div class="filter-group">
+                                <label for="categoriaFilter">Filtrar por Categoria:</label>
+                                <select id="categoriaFilter" class="filter-select">
+                                    <option value="">-- Todas as Categorias --</option>
+                                    <?php
+                                    while ($categoria = $categorias_result->fetch_assoc()) {
+                                        echo "<option value='" . htmlspecialchars($categoria['nome']) . "'>" . htmlspecialchars($categoria['nome']) . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- BOTÃO NO TOPO (idêntico ao dos fornecedores) -->
                     <div class="d-flex justify-content-end mb-3">
                         <a href="cadastro_produto.php" class="btn btn-cadastro">
@@ -386,6 +508,55 @@ $result = $sql->query($query);
             tr.style.transform = "translateY(0)";
         }, 80 * i);
     });
+
+    // ========== FUNÇÃO DE FILTRO EM TEMPO REAL ==========
+    function filterTable() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const fornecedorFilter = document.getElementById('fornecedorFilter').value.toLowerCase();
+        const categoriaFilter = document.getElementById('categoriaFilter').value.toLowerCase();
+        const table = document.querySelector('tbody');
+        const rows = table.querySelectorAll('tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            if (row.querySelector('td:nth-child(1)') === null) return; // Pula linhas vazias
+
+            const nome = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const categoria = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            const fornecedor = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
+
+            // Verifica se atende aos critérios de filtro
+            const nomeMatch = nome.includes(searchInput);
+            const fornecedorMatch = fornecedorFilter === '' || fornecedor.includes(fornecedorFilter);
+            const categoriaMatch = categoriaFilter === '' || categoria.includes(categoriaFilter);
+
+            if (nomeMatch && fornecedorMatch && categoriaMatch) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Mensagem caso nenhum resultado seja encontrado
+        if (visibleCount === 0) {
+            const emptyRow = table.querySelector('tr[style*="display: none"]');
+            if (!table.querySelector('.no-results')) {
+                const noResults = document.createElement('tr');
+                noResults.className = 'no-results';
+                noResults.innerHTML = '<td colspan="9" style="text-align: center; padding: 20px; color: #999;">Nenhum produto encontrado com esses filtros.</td>';
+                table.appendChild(noResults);
+            }
+        } else {
+            const noResults = table.querySelector('.no-results');
+            if (noResults) noResults.remove();
+        }
+    }
+
+    // Adiciona os event listeners
+    document.getElementById('searchInput').addEventListener('keyup', filterTable);
+    document.getElementById('fornecedorFilter').addEventListener('change', filterTable);
+    document.getElementById('categoriaFilter').addEventListener('change', filterTable);
     </script>
 
 </body>

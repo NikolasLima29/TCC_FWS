@@ -211,6 +211,7 @@ if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
     <meta charset="UTF-8">
     <title>Cadastro de Produto</title>
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
+      <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

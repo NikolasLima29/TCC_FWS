@@ -16,7 +16,9 @@ session_start();
 
     <link rel="stylesheet" href="../CSS/sobre_nos.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-papm6QpQKQwQvQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQ==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-papm6QpQKQwQvQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQ=="
+        crossorigin="anonymous" />
 
     <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -30,19 +32,22 @@ session_start();
     <style>
         /* ========== CSS DO HEADER ========== */
         @import url('../../Fonte_Config/fonte_geral.css');
-        
+
         html,
         body,
         * {
             font-family: 'Ubuntu', sans-serif !important;
         }
+
         html {
             font-family: 'Ubuntu', sans-serif !important;
         }
+
         body {
             font-family: 'Ubuntu', sans-serif !important;
             background-color: white;
         }
+
         p,
         div,
         span,
@@ -65,6 +70,7 @@ session_start();
         header {
             width: 100%;
         }
+
         nav.navbar {
             width: 100%;
             min-width: 100%;
@@ -72,6 +78,7 @@ session_start();
             padding: 0;
             border-radius: 0;
         }
+
         .container-fluid {
             width: 100%;
             margin: 0;
@@ -102,11 +109,13 @@ session_start();
             display: inline-block;
             position: relative;
         }
+
         .navbar-toggler-icon,
         .navbar-toggler-icon::before,
         .navbar-toggler-icon::after {
             box-sizing: border-box;
         }
+
         .navbar-toggler-icon::before,
         .navbar-toggler-icon::after,
         .navbar-toggler-icon span {
@@ -118,6 +127,7 @@ session_start();
             margin: 5px 0;
             border-radius: 2px;
         }
+
         .navbar-toggler-icon span {
             margin: 0;
         }
@@ -135,6 +145,7 @@ session_start();
                 border-color: #c40000 !important;
                 box-shadow: none !important;
             }
+
             .navbar .d-flex.align-items-center.ms-3 {
                 position: relative;
                 justify-content: flex-start;
@@ -145,30 +156,38 @@ session_start();
                 top: 15px;
                 z-index: 1051;
             }
+
             .navbar .d-flex.align-items-center.ms-3 .d-flex.align-items-center.d-sm-none a.me-2:first-child {
                 margin-left: 0px !important;
                 transform: translateX(-6px);
             }
+
             .navbar .d-flex.align-items-center.ms-3 .me-2 {
                 display: flex;
             }
+
             .navbar .d-flex.align-items-center.ms-3 h5 {
                 display: none !important;
             }
+
             .navbar .d-flex.align-items-center.ms-3 a:last-child {
                 display: none !important;
             }
+
             .container-fluid .d-flex.align-items-center.ms-auto.me-4 {
                 display: none !important;
             }
+
             .navbar-collapse .search-area-mobile {
                 display: flex !important;
                 width: 100%;
                 margin-bottom: 15px;
             }
+
             .navbar-collapse .search-area-mobile input {
                 width: 100% !important;
             }
+
             /* Centraliza os títulos do menu no mobile */
             .navbar-nav {
                 display: flex !important;
@@ -180,6 +199,7 @@ session_start();
                 margin-left: 0 !important;
                 margin-right: 0 !important;
             }
+
             .navbar-nav .menu-bold {
                 text-align: center !important;
                 width: 100% !important;
@@ -191,6 +211,7 @@ session_start();
             .search-area {
                 margin-right: -50px !important;
             }
+
             .d-flex.align-items-center.ms-auto.me-4 h5 {
                 font-size: 14px !important;
                 margin-bottom: 0px !important;
@@ -200,12 +221,13 @@ session_start();
                 white-space: nowrap !important;
                 margin-top: -2px !important;
             }
-            }
-            /* Aumenta 30% o tamanho dos títulos do menu */
-            .navbar-nav .menu-bold {
-                font-size: 23.1px !important;
-            }
-        
+        }
+
+        /* Aumenta 30% o tamanho dos títulos do menu */
+        .navbar-nav .menu-bold {
+            font-size: 23.1px !important;
+        }
+
         /* ========== FIM DO CSS DO HEADER ========== */
 
         /* ========== CSS DO RESTO DA PÁGINA ========== */
@@ -241,11 +263,13 @@ session_start();
                 <div class="d-flex align-items-center d-sm-none">
                     <!-- Carrinho Mobile -->
                     <a href="../../carrinho/HTML/carrinho.php" class="me-2" style="margin-left: 2px;">
-                        <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30" style="object-fit: contain; filter: brightness(0) invert(1);">
+                        <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30"
+                            style="object-fit: contain; filter: brightness(0) invert(1);">
                     </a>
 
                     <!-- Perfil Mobile (com validação de login) -->
-                    <a href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>" class="me-2">
+                    <a href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>"
+                        class="me-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white"
                             class="bi bi-person-circle" viewBox="0 0 16 16">
                             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -260,8 +284,10 @@ session_start();
 
                 <!-- ========== BARRA DE PESQUISA (Desktop) ========== -->
                 <div class="search-area d-none d-sm-flex align-items-center ms-auto">
-                    <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get" style="margin: 0;">
-                        <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..." style="width: 300px;">
+                    <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get"
+                        style="margin: 0;">
+                        <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
+                            style="width: 300px;">
                         <button class="btn btn-outline-light" type="submit"
                             style="background-color: #FFD100; border-color: #FFD100;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-search"
@@ -278,7 +304,8 @@ session_start();
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="collapsibleNavId">
                     <!-- Itens de Menu Centralizados: Home, Produtos, Meus Pedidos, Sobre Nós -->
-                    <ul class="navbar-nav d-flex align-items-center gap-4 justify-content-center w-100" style="margin-right: 40px;">
+                    <ul class="navbar-nav d-flex align-items-center gap-4 justify-content-center w-100"
+                        style="margin-right: 40px;">
                         <li class="nav-item">
                             <a class="nav-link" href="../../index.php">
                                 <h5 class="m-0 text-white menu-bold">Home</h5>
@@ -305,22 +332,24 @@ session_start();
                     <div class="d-flex align-items-center ms-auto me-4">
                         <!-- Carrinho Desktop -->
                         <a href="../../carrinho/HTML/carrinho.php" style="margin-left: -70px;">
-                            <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30" class="me-4" style="object-fit: contain; filter: brightness(0) invert(1);">
+                            <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30"
+                                class="me-4" style="object-fit: contain; filter: brightness(0) invert(1);">
                         </a>
 
                         <!-- Texto "Bem-vindo(a)" Desktop (com nome se logado) -->
                         <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
-                            <?php
+                        <?php
                                 $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
                                 $primeiroNome = explode(' ', $nomeCompleto)[0];
                             ?>
-                            <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a), <?= $primeiroNome ?></h5>
+                        <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a), <?= $primeiroNome ?></h5>
                         <?php else: ?>
-                            <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a)</h5>
+                        <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a)</h5>
                         <?php endif; ?>
 
                         <!-- Perfil Desktop (com validação de login) -->
-                        <a href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>">
+                        <a
+                            href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>">
                             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white"
                                 class="bi bi-person-circle" viewBox="0 0 16 16">
                                 <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -337,13 +366,15 @@ session_start();
         <div class="search-mobile-container d-sm-none px-3 py-2" style="background-color: #c40000;">
             <!-- Texto "Bem-vindo(a)" Mobile com nome se logado -->
             <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
-                <?php
+            <?php
                     $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
                     $primeiroNome = explode(' ', $nomeCompleto)[0];
                 ?>
-                <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">Bem-vindo(a), <?= $primeiroNome ?></h5>
+            <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">
+                Bem-vindo(a), <?= $primeiroNome ?></h5>
             <?php else: ?>
-                <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">Bem-vindo(a)</h5>
+            <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">
+                Bem-vindo(a)</h5>
             <?php endif; ?>
 
             <!-- Formulário de Pesquisa Mobile -->
@@ -377,35 +408,49 @@ session_start();
         </p>
         <div id="carouselExample" class="carousel slide">
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="3" aria-label="Slide 4"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="4" aria-label="Slide 5"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="5" aria-label="Slide 6"></button>
-                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="6" aria-label="Slide 7"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="3"
+                    aria-label="Slide 4"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="4"
+                    aria-label="Slide 5"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="5"
+                    aria-label="Slide 6"></button>
+                <button type="button" data-bs-target="#carouselExample" data-bs-slide-to="6"
+                    aria-label="Slide 7"></button>
             </div>
             <div class="carousel-inner rounded shadow-lg" style="max-width: 700px; margin: 0 auto;">
                 <div class="carousel-item active">
-                    <img src="../IMG/exterior1.jpeg" class="d-block w-100" id="carrossel" alt="Fachada da loja" style="border-radius: 16px; height: 350px; object-fit: cover;">
+                    <img src="../IMG/exterior1.jpeg" class="d-block w-100" id="carrossel" alt="Fachada da loja"
+                        style="border-radius: 16px; height: 350px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="../IMG/interior1.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja" style="border-radius: 16px; height: 350px; object-fit: cover;">
+                    <img src="../IMG/interior1.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja"
+                        style="border-radius: 16px; height: 350px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="../IMG/interior2.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja" style="border-radius: 16px; height: 350px; object-fit: cover;">
+                    <img src="../IMG/interior2.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja"
+                        style="border-radius: 16px; height: 350px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="../IMG/interior3.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja" style="border-radius: 16px; height: 350px; object-fit: cover;">
+                    <img src="../IMG/interior3.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja"
+                        style="border-radius: 16px; height: 350px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="../IMG/interior4.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja" style="border-radius: 16px; height: 350px; object-fit: cover;">
+                    <img src="../IMG/interior4.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja"
+                        style="border-radius: 16px; height: 350px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="../IMG/interior5.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja" style="border-radius: 16px; height: 350px; object-fit: cover;">
+                    <img src="../IMG/interior5.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja"
+                        style="border-radius: 16px; height: 350px; object-fit: cover;">
                 </div>
                 <div class="carousel-item">
-                    <img src="../IMG/interior6.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja" style="border-radius: 16px; height: 350px; object-fit: cover;">
+                    <img src="../IMG/interior6.jpeg" class="d-block w-100" id="carrossel" alt="Interior da loja"
+                        style="border-radius: 16px; height: 350px; object-fit: cover;">
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -432,12 +477,15 @@ session_start();
             praticidade.
         </p>
         <img src="../IMG/interior7.jpeg" id="imagem">
-        <div id="mapa-container" style="margin-top: 40px; margin-bottom: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <h2 style="text-align: center; margin-bottom: 20px; width: 100%; font-weight: bold; color: #c40000; letter-spacing: 1px;">Nos Visite!</h2>
+        <div id="mapa-container"
+            style="margin-top: 40px; margin-bottom: 40px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <h2
+                style="text-align: center; margin-bottom: 20px; width: 100%; font-weight: bold; color: #c40000; letter-spacing: 1px;">
+                Nos Visite!</h2>
             <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.0842014343346!2d-46.65555!3d-23.55614!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c73d6c5555%3A0x1c1c1c1c1c1c1c!2sR.%20Col%C3%B4mbia%2C%2026%20-%20Jardim%20Am%C3%A9rica%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2001438-000!5e0!3m2!1spt-BR!2sbr!4v1734012345678"
-                width="70%" height="300" style="border:0; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
+                width="70%" height="300" style="border:0; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);"
+                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
             </iframe>
         </div>
     </main>
@@ -445,14 +493,19 @@ session_start();
     <footer class="text-center bg-body-tertiary">
         <div class="container pt-4">
             <section class="mb-4 d-flex justify-content-center gap-3">
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button" style="padding: 0;">
+                <a class="btn btn-link btn-floating btn-lg text-body m-1"
+                    href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button" style="padding: 0;">
                     <img src="../IMG/face.png" alt="Facebook" style="width: 32px; height: 32px; object-fit: contain;">
                 </a>
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="tel:+5511999999999" role="button" style="padding: 0;">
-                    <img src="../IMG/telefone.png" alt="Telefone" style="width: 32px; height: 32px; object-fit: contain;">
+                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="tel:+5511999999999" role="button"
+                    style="padding: 0;">
+                    <img src="../IMG/telefone.png" alt="Telefone"
+                        style="width: 32px; height: 32px; object-fit: contain;">
                 </a>
-                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="https://www.instagram.com/shell.brasil/" role="button" style="padding: 0;">
-                    <img src="../IMG/insatgram.png" alt="Instagram" style="width: 32px; height: 32px; object-fit: contain;">
+                <a class="btn btn-link btn-floating btn-lg text-body m-1" href="https://www.instagram.com/shell.brasil/"
+                    role="button" style="padding: 0;">
+                    <img src="../IMG/insatgram.png" alt="Instagram"
+                        style="width: 32px; height: 32px; object-fit: contain;">
                 </a>
             </section>
         </div>
@@ -494,16 +547,21 @@ session_start();
                 },
                 minLength: 2,
                 select: function (event, ui) {
-                    window.location.href = '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+                    window.location.href =
+                        '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
                 }
             }).data('ui-autocomplete') || $("#search").data('autocomplete');
 
             if (autocomplete) {
                 autocomplete._renderItem = function (ul, item) {
                     return $("<li class='autocomplete-item'>")
-                        .append("<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" + item.foto +
+                        .append(
+                            "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
+                            item.foto +
                             "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
-                            item.label + "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>")
+                            item.label +
+                            "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
+                            )
                         .appendTo(ul);
                 };
             }
@@ -526,16 +584,21 @@ session_start();
                 },
                 minLength: 1, // Forçar abrir com 1 caractere para testar
                 select: function (event, ui) {
-                    window.location.href = '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+                    window.location.href =
+                        '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
                 }
             }).data('ui-autocomplete') || $("#search-mobile").data('autocomplete');
 
             if (autocompleteMobile) {
                 autocompleteMobile._renderItem = function (ul, item) {
                     return $("<li class='autocomplete-item'>")
-                        .append("<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" + item.foto +
+                        .append(
+                            "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
+                            item.foto +
                             "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
-                            item.label + "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>")
+                            item.label +
+                            "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
+                            )
                         .appendTo(ul);
                 };
             }
@@ -552,23 +615,28 @@ session_start();
             overflow-y: auto;
             z-index: 9999 !important;
         }
+
         /* Garante que o autocomplete do mobile fique com a largura do input */
         @media (max-width: 576px) {
             #search-mobile.ui-autocomplete-input {
                 width: 100% !important;
             }
+
             .ui-autocomplete {
                 min-width: 90vw !important;
                 left: calc(5vw - 5px) !important;
             }
         }
+
         .ui-menu .ui-menu-item {
             padding: 0 !important;
             border-bottom: 1px solid #eee;
         }
+
         .ui-menu .ui-menu-item:last-child {
             border-bottom: none;
         }
+
         .ui-menu .ui-menu-item.ui-state-focus,
         .ui-menu .ui-menu-item:hover,
         .autocomplete-item:hover {
@@ -578,10 +646,12 @@ session_start();
             cursor: pointer;
             border-radius: 0 !important;
         }
+
         .ui-menu .ui-menu-item.ui-state-focus,
         .ui-menu .ui-menu-item:hover {
             box-shadow: none !important;
         }
+
         .autocomplete-item {
             list-style: none;
         }

@@ -52,6 +52,7 @@ function formatarTelefone($tel) {
     <title>Lista de Fornecedores</title>
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
 
     <style>
         body {
@@ -203,7 +204,33 @@ function formatarTelefone($tel) {
         .col-nome { max-width: 220px; white-space: normal; word-wrap: break-word; }
         .col-email { max-width: 280px; white-space: normal; word-wrap: break-word; }
 
-        @import url('../../Fonte_Config/fonte_geral.css');
+        /* ========== ESTILOS DO CAMPO DE PESQUISA ========== */
+        .search-filter-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ff9100;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 14px;
+            border: 2px solid #ff9100;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #f4a01d;
+            box-shadow: 0 0 8px rgba(255, 145, 0, 0.3);
+            background-color: #fffbf0;
+        }
+
+        @import url('../../../FWS_Cliente/Fonte_Config/fonte_geral.css');
     </style>
 </head>
 
@@ -297,6 +324,16 @@ function formatarTelefone($tel) {
 
                     <h2>Fornecedores Cadastrados</h2>
 
+                    <!-- ========== CAMPO DE PESQUISA ========== -->
+                    <div class="search-filter-container">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            class="search-input" 
+                            placeholder="🔍 Pesquisar por nome do fornecedor..."
+                        >
+                    </div>
+
                     <!-- BOTÃO NO TOPO -->
                     <div class="d-flex justify-content-end mb-3">
                         <a href="cadastrar_fornecedor.php" class="btn btn-cadastro">
@@ -368,6 +405,43 @@ function formatarTelefone($tel) {
             tr.style.transform = "translateY(0)";
         }, 80 * i);
     });
+
+    // ========== FUNÇÃO DE BUSCA EM TEMPO REAL ==========
+    function filterTable() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const table = document.querySelector('tbody');
+        const rows = table.querySelectorAll('tr');
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            if (row.querySelector('td:nth-child(1)') === null) return;
+
+            const nome = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+            if (nome.includes(searchInput)) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Mensagem quando não há resultados
+        if (visibleCount === 0) {
+            if (!table.querySelector('.no-results')) {
+                const noResults = document.createElement('tr');
+                noResults.className = 'no-results';
+                noResults.innerHTML = '<td colspan="7" style="text-align: center; padding: 20px; color: #999;">Nenhum fornecedor encontrado.</td>';
+                table.appendChild(noResults);
+            }
+        } else {
+            const noResults = table.querySelector('.no-results');
+            if (noResults) noResults.remove();
+        }
+    }
+
+    // Listener para a busca
+    document.getElementById('searchInput').addEventListener('keyup', filterTable);
 </script>
 
 </body>
