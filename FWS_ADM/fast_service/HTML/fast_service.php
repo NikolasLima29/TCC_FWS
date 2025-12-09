@@ -86,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Fast Service</title>
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
     <style>
     body {
         background-color: #fff8e1;
@@ -447,7 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Conteúdo principal -->
             <div class="col py-3">
                 <div class="container" style="max-width:1000px; margin-left:375px;">
-                    <h3 id="texto">Fast Service</h3>
+                    <h3 id="texto" style="color: #ff9100;">Fast Service</h3>
                     <hr>
                     <h2>Gerenciar Pedidos</h2>
 

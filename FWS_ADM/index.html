@@ -138,7 +138,7 @@
 
         if (status === "sucesso") {
           alerta.classList.add("alert-sucesso");
-          alerta.innerHTML = "✅ " + decodeURIComponent(msg);
+          alerta.innerHTML = decodeURIComponent(msg);
 
           setTimeout(() => {
             alerta.innerHTML += `
@@ -155,7 +155,7 @@
 
         } else {
           alerta.classList.add("alert-erro");
-          alerta.innerHTML = "❌ " + decodeURIComponent(msg);
+          alerta.innerHTML = decodeURIComponent(msg);
         }
       }
     });

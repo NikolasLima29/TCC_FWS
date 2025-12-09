@@ -24,6 +24,7 @@ if (isset($_GET['confirm']) && $_GET['confirm'] === 'sim') {
 <meta charset="UTF-8">
 <title>Logout</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
 <style>
 /* Fundo semi-transparente */
 .modal-fundo {
