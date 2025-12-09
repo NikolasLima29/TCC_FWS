@@ -144,7 +144,7 @@ function nivelPermissao($nivel) {
     }
 
     .btn-cadastrar {
-        background-color: #ff9100;
+        background-color: #e68000;
     }
 
     .btn-voltar:hover,

@@ -433,6 +433,43 @@ if(!$result_retiradas){
             background-color: #d32f2f;
         }
 
+        /* Botões de exportação (Fluxo de Caixa) - animação igual ao relatório */
+        .btn-excel {
+            background-color: #52c41a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all .2s ease;
+        }
+
+        .btn-excel:hover {
+            background-color: #389e0d !important;
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+
+        .btn-pdf {
+            background-color: #f5222d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all .2s ease;
+        }
+
+        .btn-pdf:hover {
+            background-color: #c41616 !important;
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+
         th {
             cursor: pointer;
             user-select: none;
@@ -487,6 +524,33 @@ if(!$result_retiradas){
         .tab-btn:hover {
             opacity: 0.8;
         }
+
+        /* Botão voltar animado (mesmo estilo usado em outras páginas) */
+        .btn-voltar,
+        .btn-cadastrar {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            transition: all .2s ease;
+            color: white !important;
+            text-decoration: none !important;
+            display: inline-block;
+        }
+
+        .btn-voltar { background-color: #e68000; }
+
+        .btn-voltar:hover,
+        .btn-voltar:focus,
+        .btn-voltar:active,
+        .btn-cadastrar:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 10px rgba(255, 138, 0, 0.4);
+            color: white !important;
+            text-decoration: none !important;
+        }
+
+        .btn-voltar.small { padding:5px 10px; font-size:0.85rem; border-radius:4px; }
 
         .tab-content {
             display: none;
@@ -663,9 +727,7 @@ if(!$result_retiradas){
             <div class="col py-3" id="conteudo-principal">
                 <div class="container">
                     <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px; justify-content:space-between;">
-                        <a href="menu_financeiro.php" class="btn btn-warning" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
-                            <span style="font-size:18px;"></span> ← Voltar
-                        </a>
+                        <a href="menu_financeiro.php" class="btn-voltar">← Voltar</a>
                         <h2 style="margin:0; flex:1; text-align:center;">Fluxo de Caixa</h2>
                         <div style="width:120px;"></div>
                     </div>
@@ -681,7 +743,7 @@ if(!$result_retiradas){
                                 <label for="data_fim">Data Final</label>
                                 <input type="date" id="data_fim" name="data_fim" value="<?= htmlspecialchars($data_fim) ?>" required>
                             </div>
-                            <button type="submit" class="btn-filtrar">Filtrar</button>
+                            <button type="submit" class="btn-voltar small">Filtrar</button>
                             <a href="fluxo_caixa.php" class="btn-limpar" style="text-decoration:none;">Limpar</a>
                         </div>
                     </form>
@@ -848,11 +910,11 @@ if(!$result_retiradas){
                             <input type="hidden" name="tipo" value="excel">
                             <input type="hidden" name="data_ini" value="<?= $data_inicio ?>">
                             <input type="hidden" name="data_fim" value="<?= $data_fim ?>">
-                            <button type="submit" style="background-color:#52c41a; color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer; margin-right:15px; font-size:1rem;">
+                            <button type="submit" class="btn-excel" style="margin-right:15px;">
                                 📊 Exportar Excel
                             </button>
                         </form>
-                        <button type="button" id="btnExportarPDF" style="background-color:#f5222d; color:white; border:none; padding:10px 20px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:1rem;">
+                        <button type="button" id="btnExportarPDF" class="btn-pdf">
                             📄 Exportar PDF
                         </button>
                     </div>

@@ -174,18 +174,29 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     .btn-cadastrar:hover {
         background-color: #ff9e22;
     }
+
     .btn-voltar {
-        margin-bottom: 20px;
-        background-color: #d11b1b;
-        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
         font-weight: bold;
+        border: none;
+        transition: all .2s ease;
+        color: white;
+        text-decoration: none !important;
+        display: inline-block;
     }
-    .btn-voltar:hover { 
-        background-color: #a00f0f; 
+
+    .btn-voltar {
+        background-color: #e68000;
+    }
+
+    .btn-voltar:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 4px 10px rgba(255, 138, 0, 0.4);
     }
 
 
-    
+
 
 
     /* ======= MODAL ======= */
@@ -226,6 +237,26 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         width: fit-content;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
+    /* Animações e entrada (igual à lista de funcionários) */
+    body {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .container-form {
+        animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @import url('../../Fonte_Config/fonte_geral.css');
     </style>
 </head>
 
@@ -271,8 +302,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php"
-                                class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php" class="nav-link align-middle px-0"
+                                id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png" alt="Produtos">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
@@ -294,7 +325,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     <div class="dropdown pb-4">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                             data-bs-toggle="dropdown">
-                            <img src="../../fotodeperfiladm.png" width="30" height="30" class="rounded-circle" alt="Foto Perfil">
+                            <img src="../../fotodeperfiladm.png" width="30" height="30" class="rounded-circle"
+                                alt="Foto Perfil">
                             <span class="d-none d-sm-inline mx-1"><?= htmlspecialchars($adm_nome) ?></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark shadow">
@@ -313,7 +345,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <div class="col py-3" id="conteudo-principal">
 
                 <div class="container-form">
-                     <a href="javascript:history.back()" class="btn btn-voltar">← Voltar</a>
+                    <div class="d-flex justify-content-between mb-3">
+                        <a href="menu_funcionarios.php" class="btn-voltar">← Voltar</a>
+                    </div>
                     <h2 class="form-title">Cadastrar Funcionário</h2>
 
                     <?php if (!empty($alertas_form)): ?>
@@ -420,25 +454,25 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
             document.getElementById("m2nao").onclick = () => {
 
-    fetch("salvar_senha_funcionario.php", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            senha_auto: senha // ← A senha automática gerada no JS
-        })
-    })
-    .then(r => r.json())
-    .then(resp => {
-        if (resp.status === "ok") {
-            modal2.remove();
-            alert("Senha automática salva com sucesso!");
-        } else {
-            alert("Erro ao salvar senha: " + resp.msg);
-        }
-    });
-};
+                fetch("salvar_senha_funcionario.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            senha_auto: senha // ← A senha automática gerada no JS
+                        })
+                    })
+                    .then(r => r.json())
+                    .then(resp => {
+                        if (resp.status === "ok") {
+                            modal2.remove();
+                            alert("Senha automática salva com sucesso!");
+                        } else {
+                            alert("Erro ao salvar senha: " + resp.msg);
+                        }
+                    });
+            };
 
 
             document.getElementById("m2sim").onclick = () => {
