@@ -672,18 +672,21 @@ echo '</div>'; // container
       <!-- Section: Redes sociais -->
       <section class="mb-4">
         <!-- Facebook -->
-        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
-          href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button" data-mdb-ripple-color="dark"><i
-            class="fab fa-facebook-f"></i></a>
+        <a class="btn btn-link btn-floating btn-lg text-body m-1"
+          href="https://www.facebook.com/ShellBrasil?locale=pt_BR" role="button">
+          <img src="../../tela_sobre_nos/IMG/face.png" alt="Facebook" style="width: 40px; height: 40px; object-fit: contain;">
+        </a>
 
-        <!-- Google -->
-        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1" href="#!" role="button"
-          data-mdb-ripple-color="dark"><i class="fa-solid fa-phone"></i></a>
+        <!-- Telefone -->
+        <a class="btn btn-link btn-floating btn-lg text-body m-1" href="tel:+55" role="button">
+          <img src="../../tela_sobre_nos/IMG/telefone.png" alt="Telefone" style="width: 40px; height: 40px; object-fit: contain;">
+        </a>
 
         <!-- Instagram -->
-        <a data-mdb-ripple-init class="btn btn-link btn-floating btn-lg text-body m-1"
-          href="https://www.instagram.com/shell.brasil/" role="button" data-mdb-ripple-color="dark"><i
-            class="fab fa-instagram"></i></a>
+        <a class="btn btn-link btn-floating btn-lg text-body m-1"
+          href="https://www.instagram.com/shell.brasil/" role="button">
+          <img src="../../tela_sobre_nos/IMG/insatgram.png" alt="Instagram" style="width: 40px; height: 40px; object-fit: contain;">
+        </a>
       </section>
     </div>
 
