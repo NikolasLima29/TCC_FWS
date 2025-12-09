@@ -228,6 +228,41 @@ $pagina = 'funcionarios';
         transform: scale(1.07);
     }
 
+    /* Melhorias responsivas para evitar corte da listagem */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+        padding: 6px 8px !important;
+        font-size: 0.95rem;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .col-nome {
+        max-width: 180px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    /* Em telas pequenas permitir quebra até mesmo em campos marcados como sem-quebra */
+    @media (max-width: 900px) {
+        .table th,
+        .table td {
+            font-size: 0.88rem;
+            padding: 6px 6px !important;
+        }
+        .sem-quebra {
+            white-space: normal;
+        }
+        .container {
+            padding: 20px;
+        }
+    }
+
     a {
         text-decoration: none !important;
     }
