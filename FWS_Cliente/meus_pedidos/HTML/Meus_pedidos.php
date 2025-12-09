@@ -169,45 +169,21 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
 
         /* Estilos da HEADER */
         header {
-            width: 100vw;
-            max-width: 100vw;
-            margin: 0 !important;
-            padding: 0 !important;
+            width: 100%;
         }
 
         nav.navbar {
-            width: 100vw;
-            max-width: 100vw;
-            min-width: 100vw;
-            margin: 0 !important;
-            padding: 0 !important;
+            width: 100%;
+            min-width: 100%;
+            margin: 0;
+            padding: 0;
             border-radius: 0;
         }
 
         .container-fluid {
-            width: 100vw;
-            max-width: 100vw;
-            margin: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-
-        /* Remove qualquer padding lateral padrão da navbar */
-        .navbar>.container,
-        .navbar>.container-fluid,
-        .navbar .container,
-        .navbar .container-fluid {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-
-        /* Garante que o header ocupe toda a largura também no mobile */
-        .search-mobile-container {
-            width: 100vw;
-            max-width: 100vw;
-            margin: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
+            width: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         /* Logo */
@@ -355,7 +331,55 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
 
         /* ========== FIM DO CSS DO HEADER ========== */
 
-        /* ========== CSS DO RESTO DA PÁGINA ========== */
+        /* ========== CSS DO AUTOCOMPLETE ========== */
+        .ui-autocomplete {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            border: 1px solid #ddd !important;
+            border-radius: 6px !important;
+            padding: 0 !important;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 9999 !important;
+        }
+
+        @media (max-width: 576px) {
+            #search-mobile.ui-autocomplete-input {
+                width: 100% !important;
+            }
+
+            .ui-autocomplete {
+                min-width: 90vw !important;
+                left: calc(5vw - 5px) !important;
+            }
+        }
+
+        .ui-menu .ui-menu-item {
+            padding: 0 !important;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ui-menu .ui-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .ui-menu .ui-menu-item.ui-state-focus,
+        .ui-menu .ui-menu-item:hover,
+        .autocomplete-item:hover {
+            background-color: #FFD100 !important;
+            background-image: none !important;
+            color: #000 !important;
+            cursor: pointer;
+            border-radius: 0 !important;
+        }
+
+        .ui-menu .ui-menu-item.ui-state-focus,
+        .ui-menu .ui-menu-item:hover {
+            box-shadow: none !important;
+        }
+
+        .autocomplete-item {
+            list-style: none;
+        }
 
         /* ========== CSS DO RESTO DA PÁGINA ========== */
         /* Paleta do site */
@@ -932,6 +956,79 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     </header>
     <!-- ========== FIM DO HEADER ========== -->
 
+    <script>
+        $(function () {
+            var autocomplete = $("#search").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '../../produto/PHP/api-produtos.php',
+                        dataType: 'json',
+                        data: {
+                            q: request.term
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    window.location.href =
+                        '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+                }
+            }).data('ui-autocomplete') || $("#search").data('autocomplete');
+
+            if (autocomplete) {
+                autocomplete._renderItem = function (ul, item) {
+                    return $("<li class='autocomplete-item'>")
+                        .append(
+                            "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
+                            item.foto +
+                            "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
+                            item.label +
+                            "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
+                        )
+                        .appendTo(ul);
+                };
+            }
+
+            // Autocomplete para mobile
+            var autocompleteMobile = $("#search-mobile").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: '../../produto/PHP/api-produtos.php',
+                        dataType: 'json',
+                        data: {
+                            q: request.term
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 2,
+                select: function (event, ui) {
+                    window.location.href =
+                        '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+                }
+            }).data('ui-autocomplete') || $("#search-mobile").data('autocomplete');
+
+            if (autocompleteMobile) {
+                autocompleteMobile._renderItem = function (ul, item) {
+                    return $("<li class='autocomplete-item'>")
+                        .append(
+                            "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
+                            item.foto +
+                            "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
+                            item.label +
+                            "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
+                        )
+                        .appendTo(ul);
+                };
+            }
+        });
+    </script>
+
     <!-- Corpo principal -->
     <main>
         <section class="h-100 h-custom" style="background-color: #eee;">
@@ -1177,15 +1274,6 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
             location.reload();
         }
     }, 30000);
-    </script>
-
-    <!-- Bootstrap JavaScript Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous">
     </script>
 
     <div id="modal-backdrop" class="custom-backdrop" style="display:none"></div>
@@ -1480,167 +1568,8 @@ if (isset($_POST['pedir_novamente']) && isset($_POST['itens']) && isset($_SESSIO
     });
     </script>
 
-    <!-- Bootstrap JS and Popper for 5.2.1 -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-    </script>
+    <!-- Bootstrap JavaScript Bundle with Popper - DEVE estar no final do body -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
-        integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-
-    <script>
-        $(function () {
-            var autocomplete = $("#search").autocomplete({
-                source: function (request, response) {
-                    $.ajax({
-                        url: '../../produto/PHP/api-produtos.php',
-                        dataType: 'json',
-                        data: {
-                            q: request.term
-                        },
-                        success: function (data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 2,
-                select: function (event, ui) {
-                    window.location.href =
-                        '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
-                }
-            }).data('ui-autocomplete') || $("#search").data('autocomplete');
-
-            if (autocomplete) {
-                autocomplete._renderItem = function (ul, item) {
-                    return $("<li class='autocomplete-item'>")
-                        .append(
-                            "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
-                            item.foto +
-                            "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
-                            item.label +
-                            "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
-                            )
-                        .appendTo(ul);
-                };
-            }
-
-            // Autocomplete para mobile
-            var autocompleteMobile = $("#search-mobile").autocomplete({
-                source: function (request, response) {
-                    console.log('AJAX mobile chamado:', request.term);
-                    $.ajax({
-                        url: '../../produto/PHP/api-produtos.php',
-                        dataType: 'json',
-                        data: {
-                            q: request.term
-                        },
-                        success: function (data) {
-                            console.log('Dados recebidos mobile:', data);
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1, // Forçar abrir com 1 caractere para testar
-                select: function (event, ui) {
-                    window.location.href =
-                        '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
-                }
-            }).data('ui-autocomplete') || $("#search-mobile").data('autocomplete');
-
-            if (autocompleteMobile) {
-                autocompleteMobile._renderItem = function (ul, item) {
-                    return $("<li class='autocomplete-item'>")
-                        .append(
-                            "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
-                            item.foto +
-                            "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
-                            item.label +
-                            "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
-                            )
-                        .appendTo(ul);
-                };
-            }
-        });
-    </script>
-
-    <style>
-        .ui-autocomplete {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-            border: 1px solid #ddd !important;
-            border-radius: 6px !important;
-            padding: 0 !important;
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 9999 !important;
-        }
-
-        /* Garante que o autocomplete do mobile fique com a largura do input */
-        @media (max-width: 576px) {
-            #search-mobile.ui-autocomplete-input {
-                width: 100% !important;
-            }
-
-            .ui-autocomplete {
-                min-width: 90vw !important;
-                left: calc(5vw - 5px) !important;
-            }
-        }
-
-        .ui-menu .ui-menu-item {
-            padding: 0 !important;
-            border-bottom: 1px solid #eee;
-        }
-
-        .ui-menu .ui-menu-item:last-child {
-            border-bottom: none;
-        }
-
-        .ui-menu .ui-menu-item.ui-state-focus,
-        .ui-menu .ui-menu-item:hover,
-        .autocomplete-item:hover {
-            background-color: #FFD100 !important;
-            background-image: none !important;
-            color: #000 !important;
-            cursor: pointer;
-            border-radius: 0 !important;
-        }
-
-        .ui-menu .ui-menu-item.ui-state-focus,
-        .ui-menu .ui-menu-item:hover {
-            box-shadow: none !important;
-        }
-
-        .autocomplete-item {
-            list-style: none;
-        }
-    </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleButton = document.querySelector('.navbar-toggler');
-            const navCollapse = document.querySelector('.collapse.navbar-collapse');
-
-            if (!toggleButton || !navCollapse) return;
-
-            toggleButton.addEventListener('click', function() {
-                if (navCollapse.classList.contains('show')) {
-                    navCollapse.classList.remove('show');
-                } else {
-                    navCollapse.classList.add('show');
-                }
-            });
-
-            // Fecha o menu ao clicar em um item
-            const navItems = navCollapse.querySelectorAll('.nav-link');
-            navItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    navCollapse.classList.remove('show');
-                });
-            });
-        });
-    </script>
+</body>
+</html>
