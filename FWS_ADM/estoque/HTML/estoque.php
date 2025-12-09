@@ -243,6 +243,9 @@ $result_retiradas = $sql->query($sql_retiradas);
 if(!$result_retiradas){
     die("Erro na consulta de retiradas: " . $sql->error);
 }
+
+$pagina = 'estoque';
+
 ?>
 <!doctype html>
 <html lang="pt-br">
@@ -255,9 +258,9 @@ if(!$result_retiradas){
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <style>
+        @import url('../../Fonte_Config/fonte_geral.css');
         body {
             background-color: #fff8e1;
-            font-family: "Poppins", sans-serif;
             margin: 0;
         }
 
@@ -272,26 +275,47 @@ if(!$result_retiradas){
             z-index: 1000;
         }
 
+        #texto {
+            text-align: center;
+            font-size: 80px;
+            height: 140px;
+        }
+
         #menu {
             background-color: black;
         }
 
+        #fund {
+            background-color: black !important;
+        }
+
         #cor-fonte {
             color: #ff9100;
-            font-size: 23px;
-            padding-bottom: 30px;
+            font-size: 21px;
+            padding-bottom: 13px;
+        }
+
+        #cor-fonte img{
+            width: 32px;
         }
 
         #cor-fonte:hover {
             background-color: #f4a21d67 !important;
         }
 
-        #cor-fonte img {
-            width: 44px;
+        #logo-linha img {
+            width: 150px;
         }
 
-        #logo-linha img {
-            width: 170px;
+        .nav-link {
+            width: 100%;
+            display: block;
+            border-radius: 10px;
+        }
+
+        .nav-link.active {
+            background-color: #f4a21d67 !important;
+            border-radius: 5px;
         }
 
         #conteudo-principal {
@@ -522,46 +546,46 @@ if(!$result_retiradas){
 
                         <li class="nav-item">
                             <a href="/fws/FWS_ADM/menu_principal/HTML/menu_principal1.php"
-                                class="nav-link align-middle px-0" id="cor-fonte">
+                                class="nav-link align-middle px-0 <?php if($pagina=='painel') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/painelgeral.png">
                                 <span class="ms-1 d-none d-sm-inline">Painel Geral</span>
                             </a>
                         </li>
 
-                        <li><a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/fast_service/HTML/fast_service.php" class="nav-link align-middle px-0 <?php if($pagina=='fast') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fastservice.png">
                                 <span class="ms-1 d-none d-sm-inline">Fast Service</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_financeiro/HTML/menu_financeiro.php" class="nav-link align-middle px-0 <?php if($pagina=='financeiro') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/financeiro.png">
                                 <span class="ms-1 d-none d-sm-inline">Financeiro</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/menu_vendas/HTML/menu_venda.php" class="nav-link align-middle px-0 <?php if($pagina=='vendas') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/vendaspai.png">
                                 <span class="ms-1 d-none d-sm-inline">Vendas</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0"
+                        <li><a href="/fws/FWS_ADM/estoque/HTML/estoque.php" class="nav-link align-middle px-0 <?php if($pagina=='estoque') echo 'active'; ?>"
                                 id="cor-fonte">
                                 <img src="../../menu_principal/IMG/estoque.png">
                                 <span class="ms-1 d-none d-sm-inline">Estoque</span>
                             </a></li>
 
                         <li><a href="/fws/FWS_ADM/produtos/HTML/lista_produtos.php"
-                                class="nav-link align-middle px-0" id="cor-fonte">
+                                class="nav-link align-middle px-0 <?php if($pagina=='produtos') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/produtos.png">
                                 <span class="ms-1 d-none d-sm-inline">Produtos</span>
                             </a></li>
 
                         <li><a href="/fws/FWS_ADM/fornecedores/HTML/lista_fornecedores.php"
-                                class="nav-link align-middle px-0" id="cor-fonte">
+                                class="nav-link align-middle px-0 <?php if($pagina=='fornecedores') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/fornecedor.png">
                                 <span class="ms-1 d-none d-sm-inline">Fornecedores</span>
                             </a></li>
 
-                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0" id="cor-fonte">
+                        <li><a href="/fws/FWS_ADM/funcionarios/HTML/menu_funcionarios.php" class="nav-link align-middle px-0 <?php if($pagina=='funcionarios') echo 'active'; ?>" id="cor-fonte">
                                 <img src="../../menu_principal/IMG/funcionarios.png">
                                 <span class="ms-1 d-none d-sm-inline">Funcionários</span>
                             </a></li>

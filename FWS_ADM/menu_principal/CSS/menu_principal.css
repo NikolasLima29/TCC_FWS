@@ -24,6 +24,10 @@
     width: 32px;
 }
 
+#cor-fonte:hover {
+    background-color: #f4a21d67 !important;
+}
+
 #logo-linha img {
     width: 150px;
 }
@@ -31,9 +35,10 @@
 .nav-link {
     width: 100%;
     display: block;
+    border-radius: 10px;
 }
 
 .nav-link.active {
     background-color: #f4a21d67 !important;
-    border-radius: 0 !important;
+    border-radius: 5px;
 }

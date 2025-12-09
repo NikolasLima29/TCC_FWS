@@ -16,18 +16,29 @@
 
 #cor-fonte {
     color: #ff9100;
-    font-size: 23px;
-    padding-bottom: 30px;
+    font-size: 21px;
+    padding-bottom: 13px;
+}
+
+#cor-fonte img{
+    width: 32px;
 }
 
 #cor-fonte:hover {
     background-color: #f4a21d67 !important;
 }
 
-#cor-fonte img{
-    width: 44px;
+#logo-linha img {
+    width: 150px;
 }
 
-#logo-linha img {
-    width: 170px;
+.nav-link {
+    width: 100%;
+    display: block;
+    border-radius: 10px;
+}
+
+.nav-link.active {
+    background-color: #f4a21d67 !important;
+    border-radius: 5px;
 }
