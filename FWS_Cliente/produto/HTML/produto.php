@@ -101,392 +101,388 @@ $resultado = mysqli_query($conn, $sql);
 <html lang="pt-BR">
 
 <head>
-    <title>Produtos</title>
-    <link rel="icon" type="image/x-icon" href="../../cadastro/IMG/Shell.png">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Produtos</title>
+  <link rel="icon" type="image/x-icon" href="../../cadastro/IMG/Shell.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <!-- Bootstrap CSS v5.3.2 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap CSS v5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <link rel="stylesheet" href="../CSS/produto.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-papm6QpQKQwQvQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQ=="
-        crossorigin="anonymous" />
+  <link rel="stylesheet" href="../CSS/produto.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-papm6QpQKQwQvQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQpQwQ=="
+    crossorigin="anonymous" />
 
-    <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- LINKS PARA FUNCIONAR A PESQUISA INSTANTANEA -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- JQuery UI -->
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+  <!-- JQuery UI -->
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
 
-    <!-- JQuery UI css -->
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
+  <!-- JQuery UI css -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" />
 
-    <style>
-        /* ========== CSS DO HEADER ========== */
-        @import url('../../Fonte_Config/fonte_geral.css');
+  <style>
+    /* ========== CSS DO HEADER ========== */
+    @import url('../../Fonte_Config/fonte_geral.css');
 
-        html,
-        body,
-        * {
-            font-family: 'Ubuntu', sans-serif !important;
-        }
+    html,
+    body,
+    * {
+      font-family: 'Ubuntu', sans-serif !important;
+    }
 
-        html {
-            font-family: 'Ubuntu', sans-serif !important;
-        }
+    html {
+      font-family: 'Ubuntu', sans-serif !important;
+    }
 
-        body {
-            font-family: 'Ubuntu', sans-serif !important;
-            background-color: white;
-        }
+    body {
+      font-family: 'Ubuntu', sans-serif !important;
+      background-color: white;
+    }
 
-        p,
-        div,
-        span,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        a,
-        button,
-        input,
-        select,
-        textarea,
-        label {
-            font-family: 'Ubuntu', sans-serif !important;
-        }
+    p,
+    div,
+    span,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    label {
+      font-family: 'Ubuntu', sans-serif !important;
+    }
 
-        /* Estilos da HEADER */
-        header {
-            width: 100%;
-        }
+    /* Estilos da HEADER */
+    header {
+      width: 100%;
+    }
 
-        nav.navbar {
-            width: 100%;
-            min-width: 100%;
-            margin: 0;
-            padding: 0;
-            border-radius: 0;
-        }
+    nav.navbar {
+      width: 100%;
+      min-width: 100%;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
+    }
 
-        .container-fluid {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
+    .container-fluid {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* Logo */
-        .logo-shell {
-            width: 150px;
-            height: auto;
-        }
+    /* Logo */
+    .logo-shell {
+      width: 150px;
+      height: auto;
+    }
 
-        /* Menu Bold */
-        .menu-bold {
-            font-weight: 700 !important;
-        }
+    /* Menu Bold */
+    .menu-bold {
+      font-weight: 700 !important;
+    }
 
-        /* Icone de Pesquisa */
-        .bi-search {
-            fill: #000000 !important;
-        }
+    /* Icone de Pesquisa */
+    .bi-search {
+      fill: #000000 !important;
+    }
 
-        /* Ícone do Menu Hambúrguer */
-        .navbar-toggler-icon {
-            background-image: none !important;
-            width: 1.7em;
-            height: 1.7em;
-            display: inline-block;
-            position: relative;
-        }
+    /* Ícone do Menu Hambúrguer */
+    .navbar-toggler-icon {
+      background-image: none !important;
+      width: 1.7em;
+      height: 1.7em;
+      display: inline-block;
+      position: relative;
+    }
 
-        .navbar-toggler-icon,
-        .navbar-toggler-icon::before,
-        .navbar-toggler-icon::after {
-            box-sizing: border-box;
-        }
+    .navbar-toggler-icon,
+    .navbar-toggler-icon::before,
+    .navbar-toggler-icon::after {
+      box-sizing: border-box;
+    }
 
-        .navbar-toggler-icon::before,
-        .navbar-toggler-icon::after,
-        .navbar-toggler-icon span {
-            content: '';
-            display: block;
-            height: 3.5px;
-            width: 100%;
-            background: #FFD100;
-            margin: 5px 0;
-            border-radius: 2px;
-        }
+    .navbar-toggler-icon::before,
+    .navbar-toggler-icon::after,
+    .navbar-toggler-icon span {
+      content: '';
+      display: block;
+      height: 3.5px;
+      width: 100%;
+      background: #FFD100;
+      margin: 5px 0;
+      border-radius: 2px;
+    }
 
-        .navbar-toggler-icon span {
-            margin: 0;
-        }
+    .navbar-toggler-icon span {
+      margin: 0;
+    }
 
-        /* Media Query - Mobile (até 576px) */
-        @media (max-width: 576px) {
-            .navbar-toggler {
-                position: absolute;
-                right: -55px;
-                top: 0px;
-                margin-right: 0 !important;
-                margin-left: 0 !important;
-                z-index: 1050;
-                background: #c40000 !important;
-                border-color: #c40000 !important;
-                box-shadow: none !important;
-            }
+    /* Media Query - Mobile (até 576px) */
+    @media (max-width: 576px) {
+      .navbar-toggler {
+        position: absolute;
+        right: -55px;
+        top: 0px;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        z-index: 1050;
+        background: #c40000 !important;
+        border-color: #c40000 !important;
+        box-shadow: none !important;
+      }
 
-            .navbar .d-flex.align-items-center.ms-3 {
-                position: relative;
-                justify-content: flex-start;
-                width: auto;
-                gap: 0.5rem;
-                position: absolute;
-                right: 60px;
-                top: 15px;
-                z-index: 1051;
-            }
+      .navbar .d-flex.align-items-center.ms-3 {
+        position: relative;
+        justify-content: flex-start;
+        width: auto;
+        gap: 0.5rem;
+        position: absolute;
+        right: 60px;
+        top: 15px;
+        z-index: 1051;
+      }
 
-            .navbar .d-flex.align-items-center.ms-3 .d-flex.align-items-center.d-sm-none a.me-2:first-child {
-                margin-left: 0px !important;
-                transform: translateX(-6px);
-            }
+      .navbar .d-flex.align-items-center.ms-3 .d-flex.align-items-center.d-sm-none a.me-2:first-child {
+        margin-left: 0px !important;
+        transform: translateX(-6px);
+      }
 
-            .navbar .d-flex.align-items-center.ms-3 .me-2 {
-                display: flex;
-            }
+      .navbar .d-flex.align-items-center.ms-3 .me-2 {
+        display: flex;
+      }
 
-            .navbar .d-flex.align-items-center.ms-3 h5 {
-                display: none !important;
-            }
+      .navbar .d-flex.align-items-center.ms-3 h5 {
+        display: none !important;
+      }
 
-            .navbar .d-flex.align-items-center.ms-3 a:last-child {
-                display: none !important;
-            }
+      .navbar .d-flex.align-items-center.ms-3 a:last-child {
+        display: none !important;
+      }
 
-            .container-fluid .d-flex.align-items-center.ms-auto.me-4 {
-                display: none !important;
-            }
+      .container-fluid .d-flex.align-items-center.ms-auto.me-4 {
+        display: none !important;
+      }
 
-            .navbar-collapse .search-area-mobile {
-                display: flex !important;
-                width: 100%;
-                margin-bottom: 15px;
-            }
+      .navbar-collapse .search-area-mobile {
+        display: flex !important;
+        width: 100%;
+        margin-bottom: 15px;
+      }
 
-            .navbar-collapse .search-area-mobile input {
-                width: 100% !important;
-            }
+      .navbar-collapse .search-area-mobile input {
+        width: 100% !important;
+      }
 
-            /* Centraliza os títulos do menu no mobile */
-            .navbar-nav {
-                display: flex !important;
-                justify-content: center !important;
-                align-items: center !important;
-                width: 100% !important;
-                flex-direction: column !important;
-                gap: 1rem !important;
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-            }
+      /* Centraliza os títulos do menu no mobile */
+      .navbar-nav {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
 
-            .navbar-nav .menu-bold {
-                text-align: center !important;
-                width: 100% !important;
-            }
-        }
+      .navbar-nav .menu-bold {
+        text-align: center !important;
+        width: 100% !important;
+      }
+    }
 
-        /* Media Query - Desktop (577px ou maior) */
-        @media (min-width: 577px) {
-            .search-area {
-                margin-right: -50px !important;
-            }
+    /* Media Query - Desktop (577px ou maior) */
+    @media (min-width: 577px) {
+      .search-area {
+        margin-right: -50px !important;
+      }
 
-            .d-flex.align-items-center.ms-auto.me-4 h5 {
-                font-size: 14px !important;
-                margin-bottom: 0px !important;
-                font-family: 'Ubuntu', sans-serif !important;
-                font-weight: bold !important;
-                margin-left: 0px !important;
-                white-space: nowrap !important;
-                margin-top: -2px !important;
-            }
-        }
+      .d-flex.align-items-center.ms-auto.me-4 h5 {
+        font-size: 14px !important;
+        margin-bottom: 0px !important;
+        font-family: 'Ubuntu', sans-serif !important;
+        font-weight: bold !important;
+        margin-left: 0px !important;
+        white-space: nowrap !important;
+        margin-top: -2px !important;
+      }
+    }
 
-        /* Aumenta 30% o tamanho dos títulos do menu */
-        .navbar-nav .menu-bold {
-            font-size: 23.1px !important;
-        }
+    /* Aumenta 30% o tamanho dos títulos do menu */
+    .navbar-nav .menu-bold {
+      font-size: 23.1px !important;
+    }
 
-        /* ========== FIM DO CSS DO HEADER ========== */
+    /* ========== FIM DO CSS DO HEADER ========== */
 
-        /* ========== CSS DO RESTO DA PÁGINA ========== */
-        /* Estiliza os botões do carrossel */
-        .carousel-indicators button {
-            background-color: #c40000 !important;
-            margin-top: 0 !important;
-            transform: translateY(10px);
-        }
-    </style>
+    /* ========== CSS DO RESTO DA PÁGINA ========== */
+    /* Estiliza os botões do carrossel */
+    .carousel-indicators button {
+      background-color: #c40000 !important;
+      margin-top: 0 !important;
+      transform: translateY(10px);
+    }
+  </style>
 </head>
 
 <body>
-    <!-- ========== INÍCIO DO HEADER ========== -->
-    <header>
-        <!-- ========== NAVBAR PRINCIPAL ========== -->
-        <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #c40000;">
-            <!-- ========== LOGO ========== -->
-            <a class="navbar-brand ms-3" href="../../index.php">
-                <img src="../../index/IMG/shell_select.png" alt="Logo" class="logo-shell">
+  <!-- ========== INÍCIO DO HEADER ========== -->
+  <header>
+    <!-- ========== NAVBAR PRINCIPAL ========== -->
+    <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #c40000;">
+      <!-- ========== LOGO ========== -->
+      <a class="navbar-brand ms-3" href="../../index.php">
+        <img src="../../index/IMG/shell_select.png" alt="Logo" class="logo-shell">
+      </a>
+
+      <!-- ========== SEÇÃO MOBILE (BOTÃO TOGGLE + CARRINHO + PERFIL) ========== -->
+      <div class="d-flex align-items-center ms-3">
+        <!-- Botão do menu hambúrguer -->
+        <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavId"
+          aria-controls="collapsibleNavId" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"><span></span></span>
+        </button>
+
+        <!-- Ícones de Carrinho e Perfil (apenas mobile) -->
+        <div class="d-flex align-items-center d-sm-none">
+          <!-- Carrinho Mobile -->
+          <a href="../../carrinho/HTML/carrinho.php" class="me-2" style="margin-left: 2px;">
+            <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30"
+              style="object-fit: contain; filter: brightness(0) invert(1);">
+          </a>
+
+          <!-- Perfil Mobile (com validação de login) -->
+          <a href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>"
+            class="me-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white" class="bi bi-person-circle"
+              viewBox="0 0 16 16">
+              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+              <path fill-rule="evenodd"
+                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+            </svg>
+          </a>
+
+          <!-- Texto "Bem-vindo(a)" Mobile -->
+          <h5 class="text-white me-2 m-0">Bem-vindo(a)</h5>
+        </div>
+
+        <!-- ========== BARRA DE PESQUISA (Desktop) ========== -->
+        <div class="search-area d-none d-sm-flex align-items-center ms-auto">
+          <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get" style="margin: 0;">
+            <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
+              style="width: 300px;">
+            <button class="btn btn-outline-light" type="submit"
+              style="background-color: #FFD100; border-color: #FFD100;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-search" viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ========== MENU TOGGLE (DESKTOP) ========== -->
+      <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="collapsibleNavId">
+          <!-- Itens de Menu Centralizados: Home, Produtos, Meus Pedidos, Sobre Nós -->
+          <ul class="navbar-nav d-flex align-items-center gap-4 justify-content-center w-100"
+            style="margin-right: 40px;">
+            <li class="nav-item">
+              <a class="nav-link" href="../../index.php">
+                <h5 class="m-0 text-white menu-bold">Home</h5>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../produto/HTML/produto.php">
+                <h5 class="m-0 text-white menu-bold">Produtos</h5>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../meus_pedidos/HTML/Meus_pedidos.php">
+                <h5 class="m-0 text-white menu-bold">Meus Pedidos</h5>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../../tela_sobre_nos/HTML/sobre_nos.php">
+                <h5 class="m-0 text-white menu-bold">Sobre Nós</h5>
+              </a>
+            </li>
+          </ul>
+
+          <!-- ========== SEÇÃO DESKTOP (CARRINHO + BEM-VINDO + PERFIL) ========== -->
+          <div class="d-flex align-items-center ms-auto me-4">
+            <!-- Carrinho Desktop -->
+            <a href="../../carrinho/HTML/carrinho.php" style="margin-left: -70px;">
+              <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30" class="me-4"
+                style="object-fit: contain; filter: brightness(0) invert(1);">
             </a>
 
-            <!-- ========== SEÇÃO MOBILE (BOTÃO TOGGLE + CARRINHO + PERFIL) ========== -->
-            <div class="d-flex align-items-center ms-3">
-                <!-- Botão do menu hambúrguer -->
-                <button class="navbar-toggler me-2" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapsibleNavId" aria-controls="collapsibleNavId" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"><span></span></span>
-                </button>
-
-                <!-- Ícones de Carrinho e Perfil (apenas mobile) -->
-                <div class="d-flex align-items-center d-sm-none">
-                    <!-- Carrinho Mobile -->
-                    <a href="../../carrinho/HTML/carrinho.php" class="me-2" style="margin-left: 2px;">
-                        <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30"
-                            style="object-fit: contain; filter: brightness(0) invert(1);">
-                    </a>
-
-                    <!-- Perfil Mobile (com validação de login) -->
-                    <a href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>"
-                        class="me-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white"
-                            class="bi bi-person-circle" viewBox="0 0 16 16">
-                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                            <path fill-rule="evenodd"
-                                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                        </svg>
-                    </a>
-
-                    <!-- Texto "Bem-vindo(a)" Mobile -->
-                    <h5 class="text-white me-2 m-0">Bem-vindo(a)</h5>
-                </div>
-
-                <!-- ========== BARRA DE PESQUISA (Desktop) ========== -->
-                <div class="search-area d-none d-sm-flex align-items-center ms-auto">
-                    <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get"
-                        style="margin: 0;">
-                        <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
-                            style="width: 300px;">
-                        <button class="btn btn-outline-light" type="submit"
-                            style="background-color: #FFD100; border-color: #FFD100;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="bi bi-search"
-                                viewBox="0 0 16 16">
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                            </svg>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- ========== MENU TOGGLE (DESKTOP) ========== -->
-            <div class="container-fluid">
-                <div class="collapse navbar-collapse" id="collapsibleNavId">
-                    <!-- Itens de Menu Centralizados: Home, Produtos, Meus Pedidos, Sobre Nós -->
-                    <ul class="navbar-nav d-flex align-items-center gap-4 justify-content-center w-100"
-                        style="margin-right: 40px;">
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../index.php">
-                                <h5 class="m-0 text-white menu-bold">Home</h5>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../produto/HTML/produto.php">
-                                <h5 class="m-0 text-white menu-bold">Produtos</h5>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../meus_pedidos/HTML/Meus_pedidos.php">
-                                <h5 class="m-0 text-white menu-bold">Meus Pedidos</h5>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../../tela_sobre_nos/HTML/sobre_nos.php">
-                                <h5 class="m-0 text-white menu-bold">Sobre Nós</h5>
-                            </a>
-                        </li>
-                    </ul>
-
-                    <!-- ========== SEÇÃO DESKTOP (CARRINHO + BEM-VINDO + PERFIL) ========== -->
-                    <div class="d-flex align-items-center ms-auto me-4">
-                        <!-- Carrinho Desktop -->
-                        <a href="../../carrinho/HTML/carrinho.php" style="margin-left: -70px;">
-                            <img src="../../carrinho/IMG/carrinho.png" alt="Carrinho" width="30" height="30"
-                                class="me-4" style="object-fit: contain; filter: brightness(0) invert(1);">
-                        </a>
-
-                        <!-- Texto "Bem-vindo(a)" Desktop (com nome se logado) -->
-                        <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
-                        <?php
+            <!-- Texto "Bem-vindo(a)" Desktop (com nome se logado) -->
+            <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
+            <?php
                                 $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
                                 $primeiroNome = explode(' ', $nomeCompleto)[0];
                             ?>
-                        <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a), <?= $primeiroNome ?></h5>
-                        <?php else: ?>
-                        <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a)</h5>
-                        <?php endif; ?>
+            <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a), <?= $primeiroNome ?></h5>
+            <?php else: ?>
+            <h5 class="text-white me-2" style="margin-top: 10px;">Bem-vindo(a)</h5>
+            <?php endif; ?>
 
-                        <!-- Perfil Desktop (com validação de login) -->
-                        <a
-                            href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white"
-                                class="bi bi-person-circle" viewBox="0 0 16 16">
-                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                                <path fill-rule="evenodd"
-                                    d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+            <!-- Perfil Desktop (com validação de login) -->
+            <a
+              href="<?php echo (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])) ? '../../info_usuario/HTML/info_usuario.php' : '../../login/HTML/login.html'; ?>">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white" class="bi bi-person-circle"
+                viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                <path fill-rule="evenodd"
+                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-        <!-- ========== BARRA DE PESQUISA MOBILE ========== -->
-        <div class="search-mobile-container d-sm-none px-3 py-2" style="background-color: #c40000;">
-            <!-- Texto "Bem-vindo(a)" Mobile com nome se logado -->
-            <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
-            <?php
+    <!-- ========== BARRA DE PESQUISA MOBILE ========== -->
+    <div class="search-mobile-container d-sm-none px-3 py-2" style="background-color: #c40000;">
+      <!-- Texto "Bem-vindo(a)" Mobile com nome se logado -->
+      <?php if (isset($_SESSION['usuario_nome']) && !empty($_SESSION['usuario_nome'])): ?>
+      <?php
                     $nomeCompleto = htmlspecialchars($_SESSION['usuario_nome']);
                     $primeiroNome = explode(' ', $nomeCompleto)[0];
                 ?>
-            <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">
-                Bem-vindo(a), <?= $primeiroNome ?></h5>
-            <?php else: ?>
-            <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">
-                Bem-vindo(a)</h5>
-            <?php endif; ?>
+      <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">
+        Bem-vindo(a), <?= $primeiroNome ?></h5>
+      <?php else: ?>
+      <h5 class="text-white mb-2 w-100 text-center" style="font-size: 1.1rem; position: relative; left: -2px;">
+        Bem-vindo(a)</h5>
+      <?php endif; ?>
 
-            <!-- Formulário de Pesquisa Mobile -->
-            <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get">
-                <input id="search-mobile" class="form-control me-2" type="search" name="q" placeholder="Pesquisar...">
-                <button class="btn btn-outline-light" type="submit"
-                    style="background-color: #FFD100; border-color: #FFD100;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" class="bi bi-search"
-                        viewBox="0 0 16 16">
-                        <path
-                            d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                    </svg>
-                </button>
-            </form>
-        </div>
-    </header>
-    <!-- ========== FIM DO HEADER ========== -->
+      <!-- Formulário de Pesquisa Mobile -->
+      <form class="d-flex" role="search" action="../../produto/HTML/produto.php" method="get">
+        <input id="search-mobile" class="form-control me-2" type="search" name="q" placeholder="Pesquisar...">
+        <button class="btn btn-outline-light" type="submit" style="background-color: #FFD100; border-color: #FFD100;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" class="bi bi-search"
+            viewBox="0 0 16 16">
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </header>
+  <!-- ========== FIM DO HEADER ========== -->
 
   <main class="my-5">
     <div class="container">
@@ -502,80 +498,89 @@ $resultado = mysqli_query($conn, $sql);
             $saudacao = "Boa noite";
           }
         ?>
-        <h1 style="font-size: 2.5rem; font-weight: bold; color: #c40000; margin-bottom: 8px;"><?php echo $saudacao; ?>! O que você está procurando?</h1>
+        <h1 style="font-size: 2.5rem; font-weight: bold; color: #c40000; margin-bottom: 8px;"><?php echo $saudacao; ?>!
+          O que você está procurando?</h1>
       </div>
 
       <!-- Barra de pesquisa -->
-    <form class="d-flex mb-4" role="search" method="get" action="">
-  <style>
-    /* Espaçamento de 1px entre Buscar e Filtro */
-    #search + .btn.btn-warning {
-        margin-right: 5px;
-    }
-    
-    /* Borda vermelha na barra de pesquisa */
-    #search {
-      border: 2px solid #c40000 !important;
-    }
-    
-    /* Dropdown de ordenação */
-    #ordenar {
-      border: 2px solid #c40000 !important;
-      border-radius: 4px;
-      padding: 0.25rem 0.5rem;
-      margin-left: 5px;
-      font-size: 0.85rem;
-      max-width: 150px;
-    }
-    
+      <form class="d-flex mb-4" role="search" method="get" action="">
+        <style>
+          /* Espaçamento de 1px entre Buscar e Filtro */
+          #search+.btn.btn-warning {
+            margin-right: 5px;
+          }
 
-  </style>
+          /* Borda vermelha na barra de pesquisa */
+          #search {
+            border: 2px solid #c40000 !important;
+          }
 
-  <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
-    aria-label="Pesquisar" value="<?php echo htmlspecialchars($busca); ?>" />
+          /* Dropdown de ordenação */
+          #ordenar {
+            border: 2px solid #c40000 !important;
+            border-radius: 4px;
+            padding: 0.25rem 0.5rem;
+            margin-left: 5px;
+            font-size: 0.85rem;
+            max-width: 150px;
+          }
+        </style>
 
-  <button class="btn btn-warning" type="submit">Buscar</button>
-  <button type="button" id="btn-filtro" class="btn btn-outline-secondary">
-    <i class="fas fa-filter"></i>
-  </button>
+        <input id="search" class="form-control me-2" type="search" name="q" placeholder="Pesquisar..."
+          aria-label="Pesquisar" value="<?php echo htmlspecialchars($busca); ?>" />
 
-  <select id="ordenar" class="form-select" name="ordenar">
-    <option value="">Ordenar por</option>
-    <option value="nome_asc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'nome_asc') ? 'selected' : ''; ?>>Nome (A-Z)</option>
-    <option value="nome_desc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'nome_desc') ? 'selected' : ''; ?>>Nome (Z-A)</option>
-    <option value="preco_asc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'preco_asc') ? 'selected' : ''; ?>>Menor preço</option>
-    <option value="preco_desc" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'preco_desc') ? 'selected' : ''; ?>>Maior preço</option>
-    <option value="mais_vendidos" <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'mais_vendidos') ? 'selected' : ''; ?>>Mais vendidos</option>
-  </select>
+        <button class="btn btn-warning" type="submit">Buscar</button>
+        <button type="button" id="btn-filtro" class="btn btn-outline-secondary">
+          <i class="bi bi-funnel"></i>
+        </button>
 
-  <script>
-    document.getElementById('ordenar').addEventListener('change', function() {
-      this.form.submit();
-    });
-  </script>
+        <select id="ordenar" class="form-select" name="ordenar">
+          <option value="">Ordenar por</option>
+          <option value="nome_asc"
+            <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'nome_asc') ? 'selected' : ''; ?>>Nome (A-Z)
+          </option>
+          <option value="nome_desc"
+            <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'nome_desc') ? 'selected' : ''; ?>>Nome (Z-A)
+          </option>
+          <option value="preco_asc"
+            <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'preco_asc') ? 'selected' : ''; ?>>Menor preço
+          </option>
+          <option value="preco_desc"
+            <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'preco_desc') ? 'selected' : ''; ?>>Maior preço
+          </option>
+          <option value="mais_vendidos"
+            <?php echo (isset($_GET['ordenar']) && $_GET['ordenar'] === 'mais_vendidos') ? 'selected' : ''; ?>>Mais
+            vendidos</option>
+        </select>
 
-  <div id="popup-filtro" class="custom-modal" style="display:none;">
-    <h5>Filtrar produtos</h5>
-    <div>
-      <label>Preço mínimo:</label>
-      <input type="number" id="min_price" name="min_price" class="form-control" placeholder="R$"
-        value="<?php echo isset($_GET['min_price']) ? floatval($_GET['min_price']) : 1; ?>" />
-    </div>
-    <div>
-      <label>Preço máximo:</label>
-      <input type="number" id="max_price" name="max_price" class="form-control" placeholder="R$"
-        value="<?php echo isset($_GET['max_price']) ? floatval($_GET['max_price']) : 1000; ?>" />
-    </div>
-    <div style="margin-top:10px;">
-      <label>Categorias:</label>
-      <div id="categorias_filtro" style="
+        <script>
+          document.getElementById('ordenar').addEventListener('change', function () {
+            this.form.submit();
+          });
+        </script>
+
+        <div id="popup-filtro" class="custom-modal" style="display:none;">
+          <h5>Filtrar produtos</h5>
+          <div>
+            <label>Preço mínimo:</label>
+            <input type="number" id="min_price" name="min_price" class="form-control" placeholder="R$"
+              value="<?php echo isset($_GET['min_price']) ? floatval($_GET['min_price']) : 1; ?>" />
+          </div>
+          <div>
+            <label>Preço máximo:</label>
+            <input type="number" id="max_price" name="max_price" class="form-control" placeholder="R$"
+              value="<?php echo isset($_GET['max_price']) ? floatval($_GET['max_price']) : 1000; ?>" />
+          </div>
+          <div style="margin-top:10px;">
+            <label>Categorias:</label>
+            <div id="categorias_filtro" style="
         display: flex;
         flex-wrap: wrap;
         gap: 1px;
         justify-content: center;
         max-width: 400px;
         margin: 0 auto;">
-        <?php
+              <?php
         $sql_cats = "SELECT id, nome, cor FROM categorias";
         $res_cats = mysqli_query($conn, $sql_cats);
         // Pega categorias selecionadas do GET, se houver
@@ -607,18 +612,18 @@ $resultado = mysqli_query($conn, $sql);
 
 
         ?>
-      </div>
-    </div>
-    <div class="modal-actions" style="margin-top:15px;">
-      <button type="button" class="btn-popup cancel" id="cancel-filtro">Cancelar</button>
-      <button type="submit" class="btn-popup add" id="aplicar-filtro">Buscar</button>
-    </div>
-  </div>
-  
-  <!-- Hidden inputs para manter parâmetros -->
-  <input type="hidden" name="page" value="<?php echo $pagina_atual; ?>">
-  
-</form>
+            </div>
+          </div>
+          <div class="modal-actions" style="margin-top:15px;">
+            <button type="button" class="btn-popup cancel" id="cancel-filtro">Cancelar</button>
+            <button type="submit" class="btn-popup add" id="aplicar-filtro">Buscar</button>
+          </div>
+        </div>
+
+        <!-- Hidden inputs para manter parâmetros -->
+        <input type="hidden" name="page" value="<?php echo $pagina_atual; ?>">
+
+      </form>
 
 
 
@@ -815,11 +820,11 @@ $resultado = mysqli_query($conn, $sql);
   <!-- Bootstrap JS and Popper for 5.2.1 -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
-    </script>
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
     integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
-    </script>
+  </script>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -827,186 +832,186 @@ $resultado = mysqli_query($conn, $sql);
 
   <script>
     $(function () {
-        var autocomplete = $("#search").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: '../../produto/PHP/api-produtos.php',
-                    dataType: 'json',
-                    data: {
-                        q: request.term
-                    },
-                    success: function (data) {
-                        response(data);
-                    }
-                });
+      var autocomplete = $("#search").autocomplete({
+        source: function (request, response) {
+          $.ajax({
+            url: '../../produto/PHP/api-produtos.php',
+            dataType: 'json',
+            data: {
+              q: request.term
             },
-            minLength: 2,
-            select: function (event, ui) {
-                window.location.href =
-                    '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+            success: function (data) {
+              response(data);
             }
-        }).data('ui-autocomplete') || $("#search").data('autocomplete');
-
-        if (autocomplete) {
-            autocomplete._renderItem = function (ul, item) {
-                return $("<li class='autocomplete-item'>")
-                    .append(
-                        "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
-                        item.foto +
-                        "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
-                        item.label +
-                        "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
-                        )
-                    .appendTo(ul);
-            };
+          });
+        },
+        minLength: 2,
+        select: function (event, ui) {
+          window.location.href =
+            '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
         }
+      }).data('ui-autocomplete') || $("#search").data('autocomplete');
 
-        // Autocomplete para mobile
-        var autocompleteMobile = $("#search-mobile").autocomplete({
-            source: function (request, response) {
-                console.log('AJAX mobile chamado:', request.term);
-                $.ajax({
-                    url: '../../produto/PHP/api-produtos.php',
-                    dataType: 'json',
-                    data: {
-                        q: request.term
-                    },
-                    success: function (data) {
-                        console.log('Dados recebidos mobile:', data);
-                        response(data);
-                    }
-                });
+      if (autocomplete) {
+        autocomplete._renderItem = function (ul, item) {
+          return $("<li class='autocomplete-item'>")
+            .append(
+              "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
+              item.foto +
+              "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
+              item.label +
+              "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
+            )
+            .appendTo(ul);
+        };
+      }
+
+      // Autocomplete para mobile
+      var autocompleteMobile = $("#search-mobile").autocomplete({
+        source: function (request, response) {
+          console.log('AJAX mobile chamado:', request.term);
+          $.ajax({
+            url: '../../produto/PHP/api-produtos.php',
+            dataType: 'json',
+            data: {
+              q: request.term
             },
-            minLength: 1, // Forçar abrir com 1 caractere para testar
-            select: function (event, ui) {
-                window.location.href =
-                    '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
+            success: function (data) {
+              console.log('Dados recebidos mobile:', data);
+              response(data);
             }
-        }).data('ui-autocomplete') || $("#search-mobile").data('autocomplete');
-
-        if (autocompleteMobile) {
-            autocompleteMobile._renderItem = function (ul, item) {
-                return $("<li class='autocomplete-item'>")
-                    .append(
-                        "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
-                        item.foto +
-                        "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
-                        item.label +
-                        "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
-                        )
-                    .appendTo(ul);
-            };
+          });
+        },
+        minLength: 1, // Forçar abrir com 1 caractere para testar
+        select: function (event, ui) {
+          window.location.href =
+            '../../produto_especifico/HTML/produto_especifico.php?id=' + ui.item.id;
         }
+      }).data('ui-autocomplete') || $("#search-mobile").data('autocomplete');
+
+      if (autocompleteMobile) {
+        autocompleteMobile._renderItem = function (ul, item) {
+          return $("<li class='autocomplete-item'>")
+            .append(
+              "<div style='display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee;'><img src='" +
+              item.foto +
+              "' style='width: 70px; height: 70px; object-fit: cover; margin-right: 12px; background-color: #FFD100; border-radius: 4px;'/><div style='flex: 1;'><div style='font-weight: 500; color: #333; font-size: 14px;'>" +
+              item.label +
+              "</div><div style='color: #999; font-size: 12px; margin-top: 4px;'>Clique para ver detalhes</div></div></div>"
+            )
+            .appendTo(ul);
+        };
+      }
     });
   </script>
 
   <style>
     .ui-autocomplete {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-        border: 1px solid #ddd !important;
-        border-radius: 6px !important;
-        padding: 0 !important;
-        max-height: 400px;
-        overflow-y: auto;
-        z-index: 9999 !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+      border: 1px solid #ddd !important;
+      border-radius: 6px !important;
+      padding: 0 !important;
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 9999 !important;
     }
 
     /* Garante que o autocomplete do mobile fique com a largura do input */
     @media (max-width: 576px) {
-        #search-mobile.ui-autocomplete-input {
-            width: 100% !important;
-        }
+      #search-mobile.ui-autocomplete-input {
+        width: 100% !important;
+      }
 
-        .ui-autocomplete {
-            min-width: 90vw !important;
-            left: calc(5vw - 5px) !important;
-        }
+      .ui-autocomplete {
+        min-width: 90vw !important;
+        left: calc(5vw - 5px) !important;
+      }
     }
 
     .ui-menu .ui-menu-item {
-        padding: 0 !important;
-        border-bottom: 1px solid #eee;
+      padding: 0 !important;
+      border-bottom: 1px solid #eee;
     }
 
     .ui-menu .ui-menu-item:last-child {
-        border-bottom: none;
+      border-bottom: none;
     }
 
     .ui-menu .ui-menu-item.ui-state-focus,
     .ui-menu .ui-menu-item:hover,
     .autocomplete-item:hover {
-        background-color: #FFD100 !important;
-        background-image: none !important;
-        color: #000 !important;
-        cursor: pointer;
-        border-radius: 0 !important;
+      background-color: #FFD100 !important;
+      background-image: none !important;
+      color: #000 !important;
+      cursor: pointer;
+      border-radius: 0 !important;
     }
 
     .ui-menu .ui-menu-item.ui-state-focus,
     .ui-menu .ui-menu-item:hover {
-        box-shadow: none !important;
+      box-shadow: none !important;
     }
 
     .autocomplete-item {
-        list-style: none;
+      list-style: none;
     }
   </style>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const toggleButton = document.querySelector('.menu-toggle');
-        const navLinks = document.querySelector('nav ul.ul');
+      const toggleButton = document.querySelector('.menu-toggle');
+      const navLinks = document.querySelector('nav ul.ul');
 
-        if (!toggleButton || !navLinks) return;
+      if (!toggleButton || !navLinks) return;
 
-        toggleButton.setAttribute('aria-expanded', 'false');
+      toggleButton.setAttribute('aria-expanded', 'false');
 
-        function setMenu(open) {
-            if (open) {
-                navLinks.classList.add('active');
-                toggleButton.setAttribute('aria-expanded', 'true');
-                toggleButton.innerHTML = '<i class="fas fa-times"></i>';
-                navLinks.setAttribute('aria-hidden', 'false');
-            } else {
-                navLinks.classList.remove('active');
-                toggleButton.setAttribute('aria-expanded', 'false');
-                toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
-                navLinks.setAttribute('aria-hidden', 'true');
-            }
+      function setMenu(open) {
+        if (open) {
+          navLinks.classList.add('active');
+          toggleButton.setAttribute('aria-expanded', 'true');
+          toggleButton.innerHTML = '<i class="fas fa-times"></i>';
+          navLinks.setAttribute('aria-hidden', 'false');
+        } else {
+          navLinks.classList.remove('active');
+          toggleButton.setAttribute('aria-expanded', 'false');
+          toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+          navLinks.setAttribute('aria-hidden', 'true');
         }
+      }
 
-        toggleButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            setMenu(!navLinks.classList.contains('active'));
-        });
+      toggleButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setMenu(!navLinks.classList.contains('active'));
+      });
 
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => setMenu(false));
-        });
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => setMenu(false));
+      });
 
-        document.addEventListener('click', (e) => {
-            if (!navLinks.classList.contains('active')) return;
-            if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
-                setMenu(false);
-            }
-        });
+      document.addEventListener('click', (e) => {
+        if (!navLinks.classList.contains('active')) return;
+        if (!navLinks.contains(e.target) && !toggleButton.contains(e.target)) {
+          setMenu(false);
+        }
+      });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && navLinks.classList.contains('active')) {
-                setMenu(false);
-            }
-        });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navLinks.classList.contains('active')) {
+          setMenu(false);
+        }
+      });
 
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                navLinks.classList.remove('active');
-                toggleButton.setAttribute('aria-expanded', 'false');
-                toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
-                navLinks.setAttribute('aria-hidden', 'false');
-            } else {
-                navLinks.setAttribute('aria-hidden', 'true');
-            }
-        });
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+          navLinks.classList.remove('active');
+          toggleButton.setAttribute('aria-expanded', 'false');
+          toggleButton.innerHTML = '<i class="fas fa-bars"></i>';
+          navLinks.setAttribute('aria-hidden', 'false');
+        } else {
+          navLinks.setAttribute('aria-hidden', 'true');
+        }
+      });
     });
   </script>
 
@@ -1015,7 +1020,7 @@ $resultado = mysqli_query($conn, $sql);
       // Fazer os cards inteiros serem clicáveis
       const cards = document.querySelectorAll('.card');
       cards.forEach(card => {
-        card.addEventListener('click', function(e) {
+        card.addEventListener('click', function (e) {
           // Não redirecionar se clicou em um botão
           if (e.target.closest('button')) return;
 
@@ -1033,58 +1038,58 @@ $resultado = mysqli_query($conn, $sql);
 
 
   <script>
-$(function () {
+    $(function () {
 
-  var usuario_id = <?php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ?>;
+      var usuario_id = < ? php echo isset($_SESSION['usuario_id']) ? intval($_SESSION['usuario_id']) : 'null'; ? > ;
 
-  // ------------------------------------------------------------
-  // AO CLICAR NO BOTÃO DE CARRINHO
-  // ------------------------------------------------------------
-  $(".Carrinho").on("click", function () {
-    const dados = JSON.parse($(this).attr('data-produto'));
+      // ------------------------------------------------------------
+      // AO CLICAR NO BOTÃO DE CARRINHO
+      // ------------------------------------------------------------
+      $(".Carrinho").on("click", function () {
+        const dados = JSON.parse($(this).attr('data-produto'));
 
-    // PRIMEIRO: verifica limite no backend com tratamento de 403
-    $.ajax({
-      url: '/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
-      method: 'POST',
-      data: {
-        verificar_limite: 1,
-        id_produto: dados.id
-      },
-      success: function(raw) {
-        let resp;
-        try {
-          resp = JSON.parse(raw);
-        } catch (e) {
-          console.error("Erro ao ler resposta:", raw);
-          return;
-        }
+        // PRIMEIRO: verifica limite no backend com tratamento de 403
+        $.ajax({
+          url: '/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php',
+          method: 'POST',
+          data: {
+            verificar_limite: 1,
+            id_produto: dados.id
+          },
+          success: function (raw) {
+            let resp;
+            try {
+              resp = JSON.parse(raw);
+            } catch (e) {
+              console.error("Erro ao ler resposta:", raw);
+              return;
+            }
 
-        if (resp.restante <= 0) {
-          mostrarAvisoLimite(dados.nome);
-          return;
-        }
+            if (resp.restante <= 0) {
+              mostrarAvisoLimite(dados.nome);
+              return;
+            }
 
-        abrirPopupAdicionar(dados, resp.restante);
-      },
-      error: function(xhr) {
-        if (xhr.status === 403) {
-          showLoginModal();
-        } else {
-          console.error("Erro inesperado:", xhr.status, xhr.responseText);
-        }
-      }
-    });
+            abrirPopupAdicionar(dados, resp.restante);
+          },
+          error: function (xhr) {
+            if (xhr.status === 403) {
+              showLoginModal();
+            } else {
+              console.error("Erro inesperado:", xhr.status, xhr.responseText);
+            }
+          }
+        });
 
-    return;
-  });
+        return;
+      });
 
-  // ------------------------------------------------------------
-  // FUNÇÃO: Aviso quando bate limite
-  // ------------------------------------------------------------
-  function mostrarAvisoLimite(nomeProd) {
+      // ------------------------------------------------------------
+      // FUNÇÃO: Aviso quando bate limite
+      // ------------------------------------------------------------
+      function mostrarAvisoLimite(nomeProd) {
 
-    $("#modal-add-carrinho").html(`
+        $("#modal-add-carrinho").html(`
       <div style="color:#b30000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
           Limite atingido
       </div>
@@ -1096,34 +1101,40 @@ $(function () {
       </div>
     `).show();
 
-    $("#modal-backdrop").show();
+        $("#modal-backdrop").show();
 
-    $(".ok-close").on("click", function () {
-      $("#modal-add-carrinho, #modal-backdrop").hide();
-    });
-  }
+        $(".ok-close").on("click", function () {
+          $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
+      }
 
-  // ------------------------------------------------------------
-  // FUNÇÃO: Abrir popup de adicionar ao carrinho
-  // ------------------------------------------------------------
-  function abrirPopupAdicionar(dados, maxPermitido) {
+      // ------------------------------------------------------------
+      // FUNÇÃO: Abrir popup de adicionar ao carrinho
+      // ------------------------------------------------------------
+      function abrirPopupAdicionar(dados, maxPermitido) {
 
-    if (!usuario_id) {
-      showLoginModal();
-      return;
-    }
+        if (!usuario_id) {
+          showLoginModal();
+          return;
+        }
 
-    let qtd = 1;
-    const preco = parseFloat(dados.preco);
+        let qtd = 1;
+        const preco = parseFloat(dados.preco);
 
-    function atualizarPreco() {
-      $("#valor-unit").text(preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
-      $("#valor-total").text((preco * qtd).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
-      $(".quantidade-number").text(qtd);
-    }
+        function atualizarPreco() {
+          $("#valor-unit").text(preco.toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+          }));
+          $("#valor-total").text((preco * qtd).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL"
+          }));
+          $(".quantidade-number").text(qtd);
+        }
 
-    $("#modal-backdrop").show();
-    $("#modal-add-carrinho").html(`
+        $("#modal-backdrop").show();
+        $("#modal-add-carrinho").html(`
       <div style="margin-bottom:10px">Você está adicionando ao carrinho:</div>
       <img src="${dados.foto}" alt="${dados.nome}">
       <div class="produto-titulo">${dados.nome}</div>
@@ -1144,38 +1155,38 @@ $(function () {
       </div>
     `).show();
 
-    atualizarPreco();
-
-    // Botão diminuir
-    $(".contador-btn.menos").on("click", function () {
-      if (qtd > 1) {
-        qtd--;
         atualizarPreco();
-      }
-    });
 
-    // Botão aumentar com limite real
-    $(".contador-btn.mais").on("click", function () {
-      if (qtd < maxPermitido) {
-        qtd++;
-        atualizarPreco();
-      }
-    });
+        // Botão diminuir
+        $(".contador-btn.menos").on("click", function () {
+          if (qtd > 1) {
+            qtd--;
+            atualizarPreco();
+          }
+        });
 
-    $(".btn-popup.cancel").on("click", function () {
-      $("#modal-add-carrinho, #modal-backdrop").hide();
-    });
+        // Botão aumentar com limite real
+        $(".contador-btn.mais").on("click", function () {
+          if (qtd < maxPermitido) {
+            qtd++;
+            atualizarPreco();
+          }
+        });
 
-    // CONFIRMAR ADIÇÃO
-    $(".btn-popup.add").on("click", function () {
+        $(".btn-popup.cancel").on("click", function () {
+          $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
 
-      $.post('/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
-        id_produto: dados.id,
-        quantidade: qtd,
-        ajax: 1
-      }, function (resp) {
+        // CONFIRMAR ADIÇÃO
+        $(".btn-popup.add").on("click", function () {
 
-        $("#modal-add-carrinho").html(`
+          $.post('/fws/FWS_Cliente/carrinho/PHP/adicionar_ao_carrinho.php', {
+            id_produto: dados.id,
+            quantidade: qtd,
+            ajax: 1
+          }, function (resp) {
+
+            $("#modal-add-carrinho").html(`
             <div style="color:#090;font-weight:600;font-size:1.08rem;margin-bottom:10px;">
                 ✔️ ${dados.nome} foi adicionado ao seu carrinho!
             </div>
@@ -1188,20 +1199,20 @@ $(function () {
             </div>
         `);
 
-        $(".ok-close").on("click", function () {
-          $("#modal-add-carrinho, #modal-backdrop").hide();
+            $(".ok-close").on("click", function () {
+              $("#modal-add-carrinho, #modal-backdrop").hide();
+            });
+          });
         });
-      });
-    });
 
-  }
+      }
 
-  // ------------------------------------------------------------
-  // FUNÇÃO: Exibir modal de login
-  // ------------------------------------------------------------
-  function showLoginModal() {
-    $("#modal-backdrop").show();
-    $("#modal-add-carrinho").html(`
+      // ------------------------------------------------------------
+      // FUNÇÃO: Exibir modal de login
+      // ------------------------------------------------------------
+      function showLoginModal() {
+        $("#modal-backdrop").show();
+        $("#modal-add-carrinho").html(`
         <div style="color:#c40000;font-weight:700;font-size:1.15rem;margin-bottom:14px;text-align:center">
             É necessário fazer login para adicionar produtos
         </div>
@@ -1212,17 +1223,18 @@ $(function () {
         </div>
     `).show();
 
-    $(".btn-voltar").off('click').click(function() {
-        $("#modal-add-carrinho, #modal-backdrop").hide();
+        $(".btn-voltar").off('click').click(function () {
+          $("#modal-add-carrinho, #modal-backdrop").hide();
+        });
+      }
+
     });
-}
-
-});
-</script>
+  </script>
 
 
 
-  <script>$(function () {
+  <script>
+    $(function () {
       $('#btn-filtro').on('click', function () {
         $('#popup-filtro, #modal-backdrop').show();
       });
@@ -1530,94 +1542,95 @@ $(function () {
       z-index: 3000;
     }
 
-  
-/* ---------------------------- */
-/* Botão filtro */
-#btn-filtro {
-    background-color: #c82333; /* vermelho */
-    border: 2px solid #991f2b;
-    color: white;
-}
 
-/* Ícone dentro do botão filtro herda cor */
-#btn-filtro i {
-    color: inherit;
-}
+    /* ---------------------------- */
+    /* Botão filtro */
+    #btn-filtro {
+      background-color: #c82333;
+      /* vermelho */
+      border: 2px solid #991f2b;
+      color: white;
+    }
 
-/* Hover do botão filtro: inverte cores */
-#btn-filtro:hover {
-    background-color: white;
-    color: #c82333;
-}
+    /* Ícone dentro do botão filtro herda cor */
+    #btn-filtro i {
+      color: inherit;
+    }
 
-/* ---------------------------- */
-/* Botão buscar */
-.btn.btn-warning {
-    background-color: #ffc107; /* amarelo */
-    border: 2px solid #d39e00;
-    color: black;
-}
+    /* Hover do botão filtro: inverte cores */
+    #btn-filtro:hover {
+      background-color: white;
+      color: #c82333;
+    }
 
-/* Hover botão buscar: inverte cores */
-.btn.btn-warning:hover {
-    background-color: white;
-    color: black;
-}
+    /* ---------------------------- */
+    /* Botão buscar */
+    .btn.btn-warning {
+      background-color: #ffc107;
+      /* amarelo */
+      border: 2px solid #d39e00;
+      color: black;
+    }
 
-/* Paginação com cores Shell */
-.pagination {
-  display: flex;
-  gap: 5px;
-  justify-content: center;
-  margin-top: 30px;
-}
+    /* Hover botão buscar: inverte cores */
+    .btn.btn-warning:hover {
+      background-color: white;
+      color: black;
+    }
 
-.page-item .page-link {
-  background-color: #FFD100;
-  color: #c40000;
-  border: 1px solid #c40000;
-  border-radius: 5px;
-  padding: 8px 12px;
-  text-decoration: none;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
+    /* Paginação com cores Shell */
+    .pagination {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin-top: 30px;
+    }
 
-.page-item .page-link:hover {
-  background-color: #c40000;
-  color: #FFD100;
-  border-color: #c40000;
-}
+    .page-item .page-link {
+      background-color: #FFD100;
+      color: #c40000;
+      border: 1px solid #c40000;
+      border-radius: 5px;
+      padding: 8px 12px;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
 
-.page-item.active .page-link {
-  background-color: #c40000;
-  color: #FFD100;
-  border-color: #c40000;
-}
+    .page-item .page-link:hover {
+      background-color: #c40000;
+      color: #FFD100;
+      border-color: #c40000;
+    }
 
-.page-item.disabled .page-link {
-  background-color: #e0e0e0;
-  color: #999;
-  cursor: not-allowed;
-  border-color: #999;
-}
+    .page-item.active .page-link {
+      background-color: #c40000;
+      color: #FFD100;
+      border-color: #c40000;
+    }
 
-.page-item:first-child .page-link,
-.page-item:last-child .page-link {
-  background-color: #FFD100;
-  color: #c40000;
-  border-color: #c40000;
-  font-weight: 700;
-}
+    .page-item.disabled .page-link {
+      background-color: #e0e0e0;
+      color: #999;
+      cursor: not-allowed;
+      border-color: #999;
+    }
 
-.page-item:first-child .page-link:hover,
-.page-item:last-child .page-link:hover {
-  background-color: #c40000;
-  color: #FFD100;
-  border-color: #c40000;
-}
+    .page-item:first-child .page-link,
+    .page-item:last-child .page-link {
+      background-color: #FFD100;
+      color: #c40000;
+      border-color: #c40000;
+      font-weight: 700;
+    }
 
+    .page-item:first-child .page-link:hover,
+    .page-item:last-child .page-link:hover {
+      background-color: #c40000;
+      color: #FFD100;
+      border-color: #c40000;
+    }
   </style>
 
 </body>
