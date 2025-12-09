@@ -34,7 +34,7 @@ $nome_adm = explode(" ", trim($nome_adm))[0];
 
     <link rel="icon" type="image/x-icon" href="../../logotipo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+  <link rel="stylesheet" href="../../menu_principal/CSS/menu_principal.css">
     <style>
         body {
             background-color: #fff8e1;
